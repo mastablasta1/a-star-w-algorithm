@@ -1,0 +1,14 @@
+package edu.agh.idziak.astarw;
+
+import java.util.List;
+
+/**
+ * Created by Tomasz on 29.06.2016.
+ */
+public interface GlobalState<U extends Comparable<U>> {
+    List<EntityState<U>> getEntityStates();
+
+    int getSize();
+
+    EntityState<U> getEntityState(int globalStateIndex);
+}

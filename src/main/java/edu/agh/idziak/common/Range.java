@@ -5,20 +5,13 @@ import com.google.common.base.Preconditions;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public class Range<T extends Comparable<T>> {
+public class Range<T> {
     private final T lower;
     private final T higher;
 
-    private Range(T one, T two) {
-        Preconditions.checkNotNull(one);
-        Preconditions.checkNotNull(two);
-        if (one.compareTo(two) < 0) {
-            lower = one;
-            higher = two;
-        } else {
-            lower = two;
-            higher = one;
-        }
+    private Range(T lower, T higher) {
+        this.lower = Preconditions.checkNotNull(lower);
+        this.higher = Preconditions.checkNotNull(higher);
     }
 
     public T getLower() {
@@ -29,7 +22,7 @@ public class Range<T extends Comparable<T>> {
         return higher;
     }
 
-    public static <T extends Comparable<T>> Range<T> of(T one, T two) {
-        return new Range<>(one, two);
+    public static <T> Range<T> of(T lower, T higher) {
+        return new Range<>(lower, higher);
     }
 }
