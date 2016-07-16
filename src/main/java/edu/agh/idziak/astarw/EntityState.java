@@ -5,5 +5,4 @@ package edu.agh.idziak.astarw;
  */
 public interface EntityState<U extends Comparable<U>> extends Position<U>{
 
-    int getGlobalStateIndex();
 }

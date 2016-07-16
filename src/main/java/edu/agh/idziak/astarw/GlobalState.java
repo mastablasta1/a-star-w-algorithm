@@ -10,5 +10,4 @@ public interface GlobalState<U extends Comparable<U>> {
 
     int getSize();
 
-    EntityState<U> getEntityState(int globalStateIndex);
 }

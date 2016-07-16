@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class DoubleIterator<E> implements Iterator<Pair<E>> {
+public class DoubleIterator<E> implements Iterator<SingleTypePair<E>> {
 
     private final Iterator<E> one;
     private final Iterator<E> two;
@@ -22,7 +22,7 @@ public class DoubleIterator<E> implements Iterator<Pair<E>> {
     }
 
     @Override
-    public Pair<E> next() {
-        return Pair.of(one.next(), two.next());
+    public SingleTypePair<E> next() {
+        return new SingleTypePair<>(one.next(), two.next());
     }
 }

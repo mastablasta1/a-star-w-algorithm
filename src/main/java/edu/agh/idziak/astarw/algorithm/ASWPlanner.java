@@ -3,14 +3,14 @@ package edu.agh.idziak.astarw.algorithm;
 import com.google.common.base.Preconditions;
 import edu.agh.idziak.astarw.*;
 import edu.agh.idziak.common.DoubleIterator;
-import edu.agh.idziak.common.Pair;
+import edu.agh.idziak.common.SingleTypePair;
 
 import java.util.List;
 
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class ASWPlanner<SS extends GlobalStateSpace<U>, S extends GlobalState<U>, U extends Comparable<U>> implements Planner<SS, S, U> {
+public class ASWPlanner<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Comparable<U>> implements Planner<SS, S, U> {
 
     private final AStar<SS, S, U> aStar;
 
@@ -20,9 +20,7 @@ public class ASWPlanner<SS extends GlobalStateSpace<U>, S extends GlobalState<U>
     }
 
     private void validate(InputPlan<SS, S, U> inputPlan) {
-        int stateSize = inputPlan.getStateSpace().getStateSize();
-        Preconditions.checkArgument(stateSize == inputPlan.getInitialGlobalState().getSize(), "Initial state size mismatch");
-        Preconditions.checkArgument(stateSize == inputPlan.getTargetGlobalState().getSize(), "Target state size mismatch");
+        Preconditions.checkArgument(inputPlan.getTargetGlobalState().getSize() == inputPlan.getInitialGlobalState().getSize(), "Initial and target state sizes mismatch");
     }
 
     @Override
@@ -33,11 +31,11 @@ public class ASWPlanner<SS extends GlobalStateSpace<U>, S extends GlobalState<U>
 
         List<EntityState<U>> initialEntityStates = inputPlan.getInitialGlobalState().getEntityStates();
         List<EntityState<U>> targetEntityStates = inputPlan.getTargetGlobalState().getEntityStates();
+
         DoubleIterator<EntityState<U>> it = new DoubleIterator<>(initialEntityStates, targetEntityStates);
 
-
         while (it.hasNext()) {
-            Pair<EntityState<U>> entityStates = it.next();
+            SingleTypePair<EntityState<U>> entityStates = it.next();
             ImmutableListPath<U> path = aStar.calculatePath(entityStates.getOne(), entityStates.getTwo(), planningOperation);
             planningOperation.getPaths().add(path);
         }

@@ -5,19 +5,34 @@ import edu.agh.idziak.astarw.InputPlan;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DInputPlan implements InputPlan<Grid2DGlobalStateSpace, Grid2DGlobalState, Integer> {
+public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer> {
+
+    private final Grid2DGlobalState initialState;
+    private final Grid2DGlobalState targetState;
+    private final Grid2DStateSpace globalStateSpace;
+
+    public Grid2DInputPlan(Grid2DStateSpace globalStateSpace,
+                           Grid2DGlobalState initialState,
+                           Grid2DGlobalState targetState) {
+        this.globalStateSpace = globalStateSpace;
+        this.targetState = targetState;
+        this.initialState = initialState;
+    }
+
     @Override
     public Grid2DGlobalState getInitialGlobalState() {
-        return null;
+        return initialState;
     }
 
     @Override
     public Grid2DGlobalState getTargetGlobalState() {
-        return null;
+        return targetState;
     }
 
     @Override
-    public Grid2DGlobalStateSpace getStateSpace() {
-        return null;
+    public Grid2DStateSpace getStateSpace() {
+        return globalStateSpace;
     }
+
+
 }

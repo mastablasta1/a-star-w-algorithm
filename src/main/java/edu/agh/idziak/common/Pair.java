@@ -1,26 +1,29 @@
 package edu.agh.idziak.common;
 
+import com.google.common.base.Preconditions;
+
 /**
- * Created by Tomasz on 29.06.2016.
+ * Created by Tomasz on 13.07.2016.
  */
-public class Pair<T> {
-    private final T one;
-    private final T two;
+public class Pair<X, Y> {
 
-    public Pair(T one, T two) {
-        this.one = one;
-        this.two = two;
+    private final X one;
+    private final Y two;
+
+    Pair(X one, Y two) {
+        this.one = Preconditions.checkNotNull(one);
+        this.two = Preconditions.checkNotNull(two);
     }
 
-    public static <T> Pair<T> of(T one, T two) {
-        return new Pair<T>(one, two);
+    public static <X, Y> Pair<X, Y> of(X one, Y two) {
+        return new Pair<>(one, two);
     }
 
-    public T getTwo() {
+    public Y getTwo() {
         return two;
     }
 
-    public T getOne() {
+    public X getOne() {
         return one;
     }
 }
