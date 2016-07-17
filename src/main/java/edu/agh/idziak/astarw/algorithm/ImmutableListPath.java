@@ -24,4 +24,12 @@ class ImmutableListPath<U extends Comparable<U>> implements Path<U> {
     public List<EntityState<U>> get() {
         return path;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("{");
+        path.forEach(uEntityState -> sb.append(uEntityState).append("->"));
+        sb.setLength(sb.length() - 2);
+        return sb.append("}").toString();
+    }
 }

@@ -2,6 +2,8 @@ package edu.agh.idziak.astarw.algorithm;
 
 import edu.agh.idziak.astarw.*;
 import edu.agh.idziak.common.ValueSortedMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -9,6 +11,7 @@ import java.util.*;
  * Created by Tomasz on 29.06.2016.
  */
 class AStar<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Comparable<U>> {
+    private static final Logger LOG = LoggerFactory.getLogger(AStar.class);
 
     private AbstractNumberHandler<U> numHandler;
 
@@ -16,10 +19,7 @@ class AStar<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Compar
         this.numHandler = abstractNumberHandler;
     }
 
-    ImmutableListPath<U> calculatePath(EntityState<U> start, EntityState<U> goal, PlanningOperation<SS, S, U> planningOperation) {
-        InputPlan<SS, S, U> inputPlan = planningOperation.getInputPlan();
-        StateSpace<U> stateSpace = inputPlan.getStateSpace();
-
+    ImmutableListPath<U> calculatePath(EntityState<U> start, EntityState<U> goal, StateSpace<U> stateSpace) {
         ValueSortedMap<EntityState<U>, U> openSetWithFScore = new ValueSortedMap<>();
         Set<EntityState<U>> closedSet = new HashSet<>();
         Map<EntityState<U>, U> gScore = new HashMap<>();
@@ -28,9 +28,13 @@ class AStar<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Compar
         gScore.put(start, numHandler.getZero());
         openSetWithFScore.put(start, stateSpace.getHeuristicDistance(start, goal));
 
+        LOG.trace("Starting A*, start={}, end={}, stateSpace:\n{}", start, goal, stateSpace);
+
         while (!openSetWithFScore.isEmpty()) {
             EntityState<U> current = openSetWithFScore.pollKeyWithLowestValue();
-            if (current == goal) {
+            LOG.trace("Processing state {}", current);
+            if (current.equals(goal)) {
+                LOG.trace("Goal reached");
                 return reconstructPath(cameFrom, current);
             }
             closedSet.add(current);
@@ -54,6 +58,7 @@ class AStar<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Compar
             }
         }
 
+        LOG.trace("Goal not reached");
         return null;
     }
 
@@ -63,7 +68,7 @@ class AStar<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Compar
         totalPath.add(current);
 
         while ((current = cameFrom.get(current)) != null) {
-            totalPath.add(current);
+            totalPath.add(0, current);
         }
         return ImmutableListPath.from(totalPath);
     }

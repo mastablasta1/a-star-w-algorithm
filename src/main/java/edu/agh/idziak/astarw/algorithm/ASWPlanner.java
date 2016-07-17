@@ -36,7 +36,8 @@ public class ASWPlanner<SS extends StateSpace<U>, S extends GlobalState<U>, U ex
 
         while (it.hasNext()) {
             SingleTypePair<EntityState<U>> entityStates = it.next();
-            ImmutableListPath<U> path = aStar.calculatePath(entityStates.getOne(), entityStates.getTwo(), planningOperation);
+            SS stateSpace = planningOperation.getInputPlan().getStateSpace();
+            ImmutableListPath<U> path = aStar.calculatePath(entityStates.getOne(), entityStates.getTwo(), stateSpace);
             planningOperation.getPaths().add(path);
         }
 

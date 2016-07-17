@@ -26,7 +26,6 @@ public class Grid2DEntityState implements EntityState<Integer> {
         return this == o
                 || !(o == null || getClass() != o.getClass())
                 && state.equals(((Grid2DEntityState) o).state);
-
     }
 
     @Override
@@ -36,8 +35,6 @@ public class Grid2DEntityState implements EntityState<Integer> {
 
     @Override
     public String toString() {
-        return "Grid2DEntityState{" +
-                "state=" + state +
-                '}';
+        return state.toString();
     }
 }

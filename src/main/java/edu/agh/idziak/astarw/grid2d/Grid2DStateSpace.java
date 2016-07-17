@@ -1,10 +1,12 @@
 package edu.agh.idziak.astarw.grid2d;
 
+import com.google.common.base.Preconditions;
 import edu.agh.idziak.astarw.EntityState;
 import edu.agh.idziak.astarw.GlobalState;
-import edu.agh.idziak.astarw.StateSpace;
 import edu.agh.idziak.astarw.Position;
+import edu.agh.idziak.astarw.StateSpace;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,12 +16,11 @@ import java.util.Set;
  */
 public class Grid2DStateSpace implements StateSpace<Integer> {
 
-    private int[][] space = new int[][]{
-            {1, 1, 1, 1},
-            {1, 2, 2, 1},
-            {1, 2, 2, 1},
-            {1, 100, 1, 1}
-    };
+    private final int[][] space;
+
+    public Grid2DStateSpace(int[][] space) {
+        this.space = Preconditions.checkNotNull(space);
+    }
 
     @Override
     public Set<GlobalState<Integer>> getNeighborStatesOf(GlobalState<Integer> globalState) {
@@ -63,11 +64,25 @@ public class Grid2DStateSpace implements StateSpace<Integer> {
 
     @Override
     public Integer getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
-        Integer startRow = start.get().get(0);
-        Integer startCol = start.get().get(1);
-        Integer endRow = end.get().get(0);
-        Integer endCol = end.get().get(1);
+        int startRow = start.get().get(0);
+        int startCol = start.get().get(1);
+        int endRow = end.get().get(0);
+        int endCol = end.get().get(1);
 
-        return Math.abs(startRow - endRow) + Math.abs(startCol - endCol);
+        int colDist = Math.abs(startCol - endCol);
+
+        if (startRow == endRow && colDist == 1) {
+            //FIXME
+        }
+        return Math.abs(startRow - endRow) + colDist;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int[] row : space) {
+            sb.append(Arrays.toString(row)).append("\n");
+        }
+        return sb.toString();
     }
 }
