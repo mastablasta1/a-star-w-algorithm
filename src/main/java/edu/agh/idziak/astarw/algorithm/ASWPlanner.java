@@ -6,6 +6,7 @@ import edu.agh.idziak.common.DoubleIterator;
 import edu.agh.idziak.common.SingleTypePair;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Tomasz on 29.06.2016.
@@ -13,10 +14,12 @@ import java.util.List;
 public class ASWPlanner<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Comparable<U>> implements Planner<SS, S, U> {
 
     private final AStar<SS, S, U> aStar;
+    private final DeviationZonesDetector<SS, U> deviationZonesDetector;
 
     public ASWPlanner(AbstractNumberHandler<U> abstractNumberHandler) {
         Preconditions.checkNotNull(abstractNumberHandler, "Number handler was null");
         aStar = new AStar<>(abstractNumberHandler);
+        deviationZonesDetector = new DeviationZonesDetector<>();
     }
 
     private void validate(InputPlan<SS, S, U> inputPlan) {
@@ -40,6 +43,8 @@ public class ASWPlanner<SS extends StateSpace<U>, S extends GlobalState<U>, U ex
             ImmutableListPath<U> path = aStar.calculatePath(entityStates.getOne(), entityStates.getTwo(), stateSpace);
             planningOperation.getPaths().add(path);
         }
+
+        Set<DeviationZone<U>> deviationZones = deviationZonesDetector.detectDeviationZones(planningOperation.getPaths(), inputPlan.getStateSpace());
 
         return new ASWOutputPlan<>(inputPlan.getStateSpace(),
                 inputPlan.getInitialGlobalState(),

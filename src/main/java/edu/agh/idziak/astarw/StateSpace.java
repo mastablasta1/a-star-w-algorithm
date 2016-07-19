@@ -11,5 +11,7 @@ public interface StateSpace<U extends Comparable<U>> {
 
     Set<EntityState<U>> getNeighborStatesOf(EntityState<U> entityState);
 
+    Set<EntityState<U>> getNeighborStatesOf(Iterable<EntityState<U>> entityStates);
+
     U getHeuristicDistance(Position<U> start, Position<U> end);
 }
