@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ASWOutputPlan<SS extends StateSpace<U>, GS extends GlobalState<U>, U extends Comparable<U>> implements OutputPlan<SS, GS, U> {
+class ASWOutputPlan<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> implements OutputPlan<SS, GS, U> {
     private SS stateSpace;
     private GS initialState;
     private GS targetState;

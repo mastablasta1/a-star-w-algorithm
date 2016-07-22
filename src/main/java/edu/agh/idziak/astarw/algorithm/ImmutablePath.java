@@ -12,11 +12,11 @@ import java.util.List;
 class ImmutablePath<U extends Comparable<U>> implements GlobalPath<U> {
     private List<GlobalState<U>> path;
 
-    private ImmutablePath(List<GlobalState<U>> path) {
+    private ImmutablePath(List<? extends GlobalState<U>> path) {
         this.path = ImmutableList.copyOf(path);
     }
 
-    static <T extends Comparable<T>> ImmutablePath<T> from(List<GlobalState<T>> path) {
+    static <T extends Comparable<T>> ImmutablePath<T> from(List<? extends GlobalState<T>> path) {
         return new ImmutablePath<T>(path);
     }
 

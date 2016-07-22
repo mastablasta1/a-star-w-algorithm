@@ -1,6 +1,5 @@
 package edu.agh.idziak.common;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -11,7 +10,7 @@ public class DoubleIterator<E> implements Iterator<SingleTypePair<E>> {
     private final Iterator<E> one;
     private final Iterator<E> two;
 
-    public DoubleIterator(Collection<E> one, Collection<E> two) {
+    public DoubleIterator(Iterable<E> one, Iterable<E> two) {
         this.one = one.iterator();
         this.two = two.iterator();
     }

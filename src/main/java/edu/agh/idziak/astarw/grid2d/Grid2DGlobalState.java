@@ -11,7 +11,6 @@ import java.util.List;
  */
 public class Grid2DGlobalState implements GlobalState<Integer> {
 
-    private List<Integer> state;
     private List<EntityState<Integer>> entityStates;
 
     private Grid2DGlobalState() {
@@ -22,28 +21,15 @@ public class Grid2DGlobalState implements GlobalState<Integer> {
         return entityStates;
     }
 
-    @Override
-    public List<Integer> get() {
-        return state;
-    }
-
     public static Grid2DGlobalState fromEntityStates(List<EntityState<Integer>> entityStates) {
         Grid2DGlobalState obj = new Grid2DGlobalState();
         obj.entityStates = ImmutableList.copyOf(entityStates);
         return obj;
     }
 
-    public static Grid2DGlobalState from(List<Integer> globalState) {
-        if (globalState.size() % 2 != 0)
-            throw new IllegalArgumentException("Grid2D global state must consist of pairs of coordinates");
-        Grid2DGlobalState obj = new Grid2DGlobalState();
-        obj.state = ImmutableList.copyOf(globalState);
-        return obj;
-    }
-
     @Override
     public int getEntitiesCount() {
-        return state.size() / 2;
+        return entityStates.size();
     }
 
     @Override
@@ -55,11 +41,16 @@ public class Grid2DGlobalState implements GlobalState<Integer> {
     public boolean equals(Object o) {
         return this == o
                 || !(o == null || getClass() != o.getClass())
-                && state.equals(((Grid2DGlobalState) o).state);
+                && entityStates.equals(((Grid2DGlobalState) o).entityStates);
     }
 
     @Override
     public int hashCode() {
         return entityStates.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "GS:"+entityStates.toString();
     }
 }

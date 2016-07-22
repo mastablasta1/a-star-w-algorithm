@@ -6,7 +6,7 @@ import edu.agh.idziak.astarw.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class ASWPlanner<SS extends StateSpace<U>, GS extends GlobalState<U>, U extends Comparable<U>> implements Planner<SS, GS, U> {
+public class ASWPlanner<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> implements Planner<SS, GS, U> {
 
     private final GlobalAStar<SS, GS, U> globalAStar;
     private final DeviationZonesDetector<SS, GS, U> entityDeviationZonesDetector;
@@ -29,7 +29,7 @@ public class ASWPlanner<SS extends StateSpace<U>, GS extends GlobalState<U>, U e
 
         globalAStar.calculatePath(planningData);
 
-        entityDeviationZonesDetector.detectDeviationZones(planningData);
+        //entityDeviationZonesDetector.detectDeviationZones(planningData);
 
         return new ASWOutputPlan<>(inputPlan.getStateSpace(),
                 inputPlan.getInitialGlobalState(),

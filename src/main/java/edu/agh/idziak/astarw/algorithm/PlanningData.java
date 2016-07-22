@@ -8,17 +8,17 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class PlanningData<SS extends StateSpace<U>, S extends GlobalState<U>, U extends Comparable<U>> {
-    private final InputPlan<SS, S, U> inputPlan;
+class PlanningData<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> {
+    private final InputPlan<SS, GS, U> inputPlan;
     private GlobalPath<U> path;
     private Set<DeviationZone<U>> deviationZones;
 
-    PlanningData(InputPlan<SS, S, U> inputPlan) {
+    PlanningData(InputPlan<SS, GS, U> inputPlan) {
         this.inputPlan = inputPlan;
         deviationZones = new HashSet<>();
     }
 
-    public InputPlan<SS, S, U> getInputPlan() {
+    public InputPlan<SS, GS, U> getInputPlan() {
         return inputPlan;
     }
 
