@@ -2,7 +2,6 @@ package edu.agh.idziak.astarw.algorithm;
 
 import edu.agh.idziak.astarw.*;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,18 +11,17 @@ class ASWOutputPlan<SS extends StateSpace<U>, GS extends GlobalState<U>, U exten
     private SS stateSpace;
     private GS initialState;
     private GS targetState;
-    private List<Path<U>> paths;
+    private GlobalPath<U> path;
 
-    ASWOutputPlan(SS stateSpace, GS initialState, GS targetState, List<Path<U>> paths) {
+    ASWOutputPlan(SS stateSpace, GS initialState, GS targetState, GlobalPath<U> path) {
         this.stateSpace = stateSpace;
         this.initialState = initialState;
         this.targetState = targetState;
-        this.paths = paths;
+        this.path = path;
     }
 
-    @Override
-    public List<Path<U>> getPaths() {
-        return paths;
+    public GlobalPath<U> getGlobalPath() {
+        return path;
     }
 
     @Override

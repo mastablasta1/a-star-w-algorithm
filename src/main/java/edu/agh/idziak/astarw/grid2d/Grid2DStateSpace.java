@@ -1,15 +1,13 @@
 package edu.agh.idziak.astarw.grid2d;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import edu.agh.idziak.astarw.EntityState;
 import edu.agh.idziak.astarw.GlobalState;
 import edu.agh.idziak.astarw.Position;
 import edu.agh.idziak.astarw.StateSpace;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Tomasz on 29.06.2016.
@@ -24,6 +22,18 @@ public class Grid2DStateSpace implements StateSpace<Integer> {
 
     @Override
     public Set<GlobalState<Integer>> getNeighborStatesOf(GlobalState<Integer> globalState) {
+        List<List<Integer>> choiceArray = new ArrayList<>();
+        List<Integer> thisState = new ArrayList<>(globalState.get());
+
+        for (int i = 0; i < thisState.size(); i++) {
+            Integer dim = thisState.get(i);
+            List<Integer> acc = new ArrayList<>();
+            if (dim > 0)
+                acc.add(dim-1);
+            if(dim<)
+                choiceArray.add(ImmutableList.of(dim + 1, dim - 1));
+        }
+
         return null;
     }
 
@@ -54,6 +64,11 @@ public class Grid2DStateSpace implements StateSpace<Integer> {
         return states;
     }
 
+    @Override
+    public Set<EntityState<Integer>> getNeighborStatesOf(Iterable<EntityState<Integer>> entityStates) {
+        return null;
+    }
+
 
     private void addState(int destRow, int destCol, Set<EntityState<Integer>> states) {
         int weight = space[destRow][destCol];
@@ -71,10 +86,12 @@ public class Grid2DStateSpace implements StateSpace<Integer> {
 
         int colDist = Math.abs(startCol - endCol);
 
-        if (startRow == endRow && colDist == 1) {
-            //FIXME
-        }
         return Math.abs(startRow - endRow) + colDist;
+    }
+
+    @Override
+    public Integer getHeuristicDistance(GlobalState<Integer> start, GlobalState<Integer> end) {
+        return null;
     }
 
     @Override

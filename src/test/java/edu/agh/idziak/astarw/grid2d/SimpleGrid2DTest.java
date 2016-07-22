@@ -17,14 +17,13 @@ public class SimpleGrid2DTest {
         Grid2DPlanner planner = new Grid2DPlanner();
 
         Grid2DStateSpace stateSpace = new Grid2DStateSpace(createStateSpace());
-        Grid2DGlobalState initialState = Grid2DGlobalState.from(createInitialState());
-        Grid2DGlobalState targetState = Grid2DGlobalState.from(createTargetState());
+        Grid2DGlobalState initialState = Grid2DGlobalState.fromEntityStates(createInitialState());
+        Grid2DGlobalState targetState = Grid2DGlobalState.fromEntityStates(createTargetState());
 
         Grid2DInputPlan inputPlan = new Grid2DInputPlan(stateSpace, initialState, targetState);
 
         OutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer> outputPlan = planner.calculatePlan(inputPlan);
 
-        outputPlan.getPaths().forEach(System.out::println);
     }
 
     private int[][] createStateSpace() {

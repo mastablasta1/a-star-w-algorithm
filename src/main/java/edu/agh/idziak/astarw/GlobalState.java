@@ -7,7 +7,9 @@ import java.util.List;
  */
 public interface GlobalState<U extends Comparable<U>> {
     List<EntityState<U>> getEntityStates();
+    List<U> get();
 
-    int getSize();
+    int getEntitiesCount();
+    int getDimensionsPerEntity();
 
 }

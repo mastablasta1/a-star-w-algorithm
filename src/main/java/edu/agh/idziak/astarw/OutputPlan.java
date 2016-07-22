@@ -1,6 +1,5 @@
 package edu.agh.idziak.astarw;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -8,7 +7,7 @@ import java.util.Set;
  */
 public interface OutputPlan<SS extends StateSpace<U>, GS extends GlobalState<U>, U extends Comparable<U>> extends InputPlan<SS, GS, U> {
 
-    List<Path<U>> getPaths();
+    GlobalPath<U> getGlobalPath();
 
     Set<DeviationZone<U>> getDeviationZones();
 }
