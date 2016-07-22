@@ -8,4 +8,5 @@ public class SingleTypePair<T> extends Pair<T, T> {
     public SingleTypePair(T one, T two) {
         super(one, two);
     }
+
 }

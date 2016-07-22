@@ -1,9 +1,6 @@
 package edu.agh.idziak.astarw.algorithm;
 
-import edu.agh.idziak.astarw.AbstractNumberHandler;
-import edu.agh.idziak.astarw.GlobalState;
-import edu.agh.idziak.astarw.InputPlan;
-import edu.agh.idziak.astarw.StateSpace;
+import edu.agh.idziak.astarw.*;
 import edu.agh.idziak.common.Statistics;
 import edu.agh.idziak.common.StatisticsSource;
 import edu.agh.idziak.common.ValueSortedMap;
@@ -36,12 +33,12 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
 
         boolean pathFound = findPath(acc);
 
-        ImmutablePath<U> path = finalizeAlgorithm(pathFound, acc);
+        ImmutablePath<U> path = finalizeCalculation(pathFound, acc);
         planningData.setPath(path);
         return path;
     }
 
-    private ImmutablePath<U> finalizeAlgorithm(boolean pathFound, Accumulator acc) {
+    private ImmutablePath<U> finalizeCalculation(boolean pathFound, Accumulator acc) {
         ImmutablePath<U> path = null;
         if (pathFound)
             path = reconstructPath(acc);
@@ -70,6 +67,7 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
     }
 
     private void iterateNeighbors(Accumulator acc, GS current) {
+
         Set<GS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
 
         for (GS neighbor : neighborsOfCurrent) {
@@ -88,7 +86,6 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
             acc.openSetWithFScore.put(neighbor, fScore);
         }
     }
-
 
     private ImmutablePath<U> reconstructPath(Accumulator acc) {
         List<GS> totalPath = new LinkedList<>();

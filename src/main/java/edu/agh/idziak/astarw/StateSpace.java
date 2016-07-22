@@ -7,8 +7,7 @@ import java.util.Set;
  */
 public interface StateSpace<GS extends GlobalState<U>, U extends Comparable<U>> {
 
-    Set<GS> getNeighborStatesOf(GS globalState);
-
     U getHeuristicDistance(GS start, GS end);
 
+    Set<GS> getNeighborStatesOf(GS globalState);
 }

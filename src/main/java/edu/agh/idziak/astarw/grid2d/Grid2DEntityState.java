@@ -16,6 +16,10 @@ public class Grid2DEntityState implements EntityState<Integer> {
         this.state = ImmutableList.of(row, col);
     }
 
+    public static Grid2DEntityState of(int row, int col) {
+        return new Grid2DEntityState(row, col);
+    }
+
     @Override
     public List<Integer> get() {
         return state;

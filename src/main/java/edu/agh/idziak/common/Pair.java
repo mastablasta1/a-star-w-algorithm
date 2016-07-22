@@ -19,6 +19,10 @@ public class Pair<X, Y> {
         return new Pair<>(one, two);
     }
 
+    public static <T> SingleTypePair<T> ofSingleType(T one, T two) {
+        return new SingleTypePair<>(one, two);
+    }
+
     public Y getTwo() {
         return two;
     }

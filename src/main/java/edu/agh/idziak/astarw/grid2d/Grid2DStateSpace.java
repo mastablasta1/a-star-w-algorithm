@@ -26,24 +26,6 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
         this.space = Preconditions.checkNotNull(space);
     }
 
-    @Override
-    public Set<Grid2DGlobalState> getNeighborStatesOf(Grid2DGlobalState globalState) {
-        List<List<EntityState<Integer>>> choiceArray = new ArrayList<>();
-
-        for (EntityState<Integer> state : globalState.getEntityStates()) {
-            List<EntityState<Integer>> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state));
-            choiceArray.add(neighborStates);
-        }
-
-        List<List<EntityState<Integer>>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
-
-        Set<Grid2DGlobalState> neighborStates = combinations.stream()
-                .map(Grid2DGlobalState::fromEntityStates)
-                .collect(Collectors.toSet());
-        LOG.trace("Neighbor states of {} are {}",globalState,neighborStates);
-        return neighborStates;
-    }
-
     private boolean areAllStatesUnique(List<EntityState<Integer>> entityStates) {
         Set<EntityState<Integer>> set = new HashSet<>();
         for (EntityState<Integer> entityState : entityStates) {
@@ -56,14 +38,12 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
 
     public Set<EntityState<Integer>> getNeighborStatesOf(EntityState<Integer> entityState) {
         List<Integer> positions = entityState.get();
-        if (positions.size() != 2) {
-            throw new IllegalStateException("Invalid state size, required=2, got=" + positions.size());
-        }
         int row = positions.get(0);
         int col = positions.get(1);
 
         Set<EntityState<Integer>> states = new HashSet<>();
 
+        addState(row, col, states);
         if (row > 0) {
             addState(row - 1, col, states);
         }
@@ -87,7 +67,7 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
         }
     }
 
-    public Integer getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
+    private Integer getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
         int startRow = start.get().get(0);
         int startCol = start.get().get(1);
         int endRow = end.get().get(0);
@@ -111,6 +91,26 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
         }
 
         return sum;
+    }
+
+    @Override
+    public Set<Grid2DGlobalState> getNeighborStatesOf(Grid2DGlobalState globalState) {
+        List<List<EntityState<Integer>>> choiceArray = new ArrayList<>();
+
+        List<EntityState<Integer>> entityStates = globalState.getEntityStates();
+
+        for (EntityState<Integer> state : entityStates) {
+            List<EntityState<Integer>> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state));
+            choiceArray.add(neighborStates);
+        }
+
+        List<List<EntityState<Integer>>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
+
+        Set<Grid2DGlobalState> neighborStates = combinations.stream()
+                .map(Grid2DGlobalState::fromEntityStates)
+                .collect(Collectors.toSet());
+        LOG.trace("Neighbor states of {} are {}", globalState, neighborStates);
+        return neighborStates;
     }
 
     @Override
