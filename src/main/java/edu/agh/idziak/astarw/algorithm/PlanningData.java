@@ -8,33 +8,26 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class PlanningData<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> {
-    private final InputPlan<SS, GS, U> inputPlan;
-    private GlobalPath<U> path;
-    private Set<DeviationZone<U>> deviationZones;
+class PlanningData<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+    private final InputPlan<SS, GS, P, D> inputPlan;
+    private GlobalPath<P> path;
+    private Set<DeviationZone<P>> deviationZones;
 
-    PlanningData(InputPlan<SS, GS, U> inputPlan) {
+    PlanningData(InputPlan<SS, GS, P, D> inputPlan) {
         this.inputPlan = inputPlan;
         deviationZones = new HashSet<>();
     }
 
-    public InputPlan<SS, GS, U> getInputPlan() {
+    public InputPlan<SS, GS, P, D> getInputPlan() {
         return inputPlan;
     }
 
-    public GlobalPath<U> getPath() {
+    public GlobalPath<P> getPath() {
         return path;
     }
 
-    public void setPath(GlobalPath<U> path) {
+    public void setPath(GlobalPath<P> path) {
         this.path = path;
     }
 
-    public Set<DeviationZone<U>> getDeviationZones() {
-        return deviationZones;
-    }
-
-    public void setDeviationZones(Set<DeviationZone<U>> deviationZones) {
-        this.deviationZones = deviationZones;
-    }
 }

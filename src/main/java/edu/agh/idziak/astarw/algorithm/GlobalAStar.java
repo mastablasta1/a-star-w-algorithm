@@ -1,8 +1,11 @@
 package edu.agh.idziak.astarw.algorithm;
 
 import edu.agh.idziak.astarw.*;
+import edu.agh.idziak.common.BasicValueSortedMap;
+import edu.agh.idziak.common.Pair;
 import edu.agh.idziak.common.Statistics;
 import edu.agh.idziak.common.StatisticsSource;
+import edu.agh.idziak.common.TwoLevelValueSortedMap;
 import edu.agh.idziak.common.ValueSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,18 +15,19 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> implements StatisticsSource {
+class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements StatisticsSource {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalAStar.class);
     private static final String STATISTICS_STATES_VISITED = "statesVisited";
+    private static final String STATISTICS_MAX_SIZE_OF_OPENSET = "maxSizeOfOpenSet";
     private final Statistics statistics = new Statistics("globalAStar");
 
-    private AbstractNumberHandler<U> numHandler;
+    private AbstractNumberHandler<D> numHandler;
 
-    GlobalAStar(AbstractNumberHandler<U> abstractNumberHandler) {
+    GlobalAStar(AbstractNumberHandler<D> abstractNumberHandler) {
         this.numHandler = abstractNumberHandler;
     }
 
-    ImmutablePath<U> calculatePath(PlanningData<SS, GS, U> planningData) {
+    ImmutablePath<P> calculatePath(PlanningData<SS, GS, P, D> planningData) {
         Accumulator acc = new Accumulator(planningData.getInputPlan());
 
         LOG.debug("Starting A*, start={}, end={}, stateSpace:\n{}", acc.start, acc.goal, acc.stateSpace);
@@ -33,17 +37,19 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
 
         boolean pathFound = findPath(acc);
 
-        ImmutablePath<U> path = finalizeCalculation(pathFound, acc);
+        ImmutablePath<P> path = finalizeCalculation(pathFound, acc);
         planningData.setPath(path);
         return path;
     }
 
-    private ImmutablePath<U> finalizeCalculation(boolean pathFound, Accumulator acc) {
-        ImmutablePath<U> path = null;
-        if (pathFound)
+    private ImmutablePath<P> finalizeCalculation(boolean pathFound, Accumulator acc) {
+        ImmutablePath<P> path = null;
+        if (pathFound) {
             path = reconstructPath(acc);
-
-        LOG.info(pathFound ? "Path found: {}" : "Path not found", path);
+            LOG.info("Path of length {} found: {}", path.get().size(), path);
+        } else {
+            LOG.info("Path not found");
+        }
         LOG.info(statistics.toString());
 
         return path;
@@ -51,10 +57,11 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
 
     private boolean findPath(Accumulator acc) {
         while (!acc.openSetWithFScore.isEmpty()) {
-            assert statistics.countStat(STATISTICS_STATES_VISITED);
+            assert updateStats(acc);
 
-            GS current = acc.openSetWithFScore.pollKeyWithLowestValue();
-            LOG.trace("Processing state {}", current);
+            Pair<GS, D> currentPair = acc.openSetWithFScore.pollEntryWithLowestValue();
+            GS current = currentPair.getOne();
+            LOG.debug("Entering state {}", currentPair);
 
             if (current.equals(acc.goal)) {
                 return true;
@@ -66,28 +73,35 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
         return false;
     }
 
-    private void iterateNeighbors(Accumulator acc, GS current) {
+    private boolean updateStats(Accumulator acc) {
+        statistics.countStat(STATISTICS_STATES_VISITED);
+        statistics.maxStat(STATISTICS_MAX_SIZE_OF_OPENSET, acc.openSetWithFScore.size());
+        return true;
+    }
 
+    private void iterateNeighbors(Accumulator acc, GS current) {
         Set<GS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
 
         for (GS neighbor : neighborsOfCurrent) {
             if (acc.closedSet.contains(neighbor))
                 continue;
 
-            U tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicDistance(current, neighbor));
+            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicDistance(current, neighbor));
 
-            if (acc.openSetWithFScore.containsKey(neighbor) && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
+            if (acc.openSetWithFScore.containsKey(neighbor)
+                    && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
                 continue;
             }
 
             acc.cameFrom.put(neighbor, current);
             acc.gScore.put(neighbor, tentativeGScore);
-            U fScore = numHandler.add(tentativeGScore, acc.stateSpace.getHeuristicDistance(neighbor, acc.goal));
+            D heuristicDistNeighborToGoal = acc.stateSpace.getHeuristicDistance(neighbor, acc.goal);
+            D fScore = numHandler.add(tentativeGScore, heuristicDistNeighborToGoal);
             acc.openSetWithFScore.put(neighbor, fScore);
         }
     }
 
-    private ImmutablePath<U> reconstructPath(Accumulator acc) {
+    private ImmutablePath<P> reconstructPath(Accumulator acc) {
         List<GS> totalPath = new LinkedList<>();
         GS current = acc.goal;
         totalPath.add(current);
@@ -108,20 +122,22 @@ class GlobalAStar<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U ext
         private SS stateSpace;
         private GS start;
         private GS goal;
-        private ValueSortedMap<GS, U> openSetWithFScore;
+        private ValueSortedMap<GS, D> openSetWithFScore;
         private Set<GS> closedSet;
-        private Map<GS, U> gScore;
+        private Map<GS, D> gScore;
         private Map<GS, GS> cameFrom;
 
-        Accumulator(InputPlan<SS, GS, U> inputPlan) {
+        Accumulator(InputPlan<SS, GS, P, D> inputPlan) {
             stateSpace = inputPlan.getStateSpace();
             start = inputPlan.getInitialGlobalState();
             goal = inputPlan.getTargetGlobalState();
 
-            openSetWithFScore = new ValueSortedMap<>();
+            openSetWithFScore = new BasicValueSortedMap<>();
             closedSet = new HashSet<>();
             gScore = new HashMap<>();
             cameFrom = new HashMap<>();
         }
     }
+
+
 }

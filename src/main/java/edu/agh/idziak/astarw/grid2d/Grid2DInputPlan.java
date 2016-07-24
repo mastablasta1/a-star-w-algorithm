@@ -5,7 +5,7 @@ import edu.agh.idziak.astarw.InputPlan;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer> {
+public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> {
 
     private final Grid2DGlobalState initialState;
     private final Grid2DGlobalState targetState;

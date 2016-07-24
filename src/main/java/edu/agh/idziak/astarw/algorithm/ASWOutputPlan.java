@@ -7,25 +7,25 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ASWOutputPlan<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> implements OutputPlan<SS, GS, U> {
+class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements OutputPlan<SS, GS, P, D> {
     private SS stateSpace;
     private GS initialState;
     private GS targetState;
-    private GlobalPath<U> path;
+    private GlobalPath<P> path;
 
-    ASWOutputPlan(SS stateSpace, GS initialState, GS targetState, GlobalPath<U> path) {
+    ASWOutputPlan(SS stateSpace, GS initialState, GS targetState, GlobalPath<P> path) {
         this.stateSpace = stateSpace;
         this.initialState = initialState;
         this.targetState = targetState;
         this.path = path;
     }
 
-    public GlobalPath<U> getGlobalPath() {
+    public GlobalPath<P> getGlobalPath() {
         return path;
     }
 
     @Override
-    public Set<DeviationZone<U>> getDeviationZones() {
+    public Set<DeviationZone<P>> getDeviationZones() {
         return null;
     }
 

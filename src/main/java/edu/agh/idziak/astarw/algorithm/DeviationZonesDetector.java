@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 18.07.2016.
  */
-public class DeviationZonesDetector<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> {
+public class DeviationZonesDetector<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
 
     private int minSafeDistance;
 
@@ -20,8 +20,8 @@ public class DeviationZonesDetector<SS extends StateSpace<GS, U>, GS extends Glo
         this.minSafeDistance = minSafeDistance;
     }
 
-    Set<DeviationZone<U>> detectDeviationZones(PlanningData<SS, GS, U> planningData) {
-        Multiset<EntityState<U>> statesForPaths = HashMultiset.create();
+    Set<DeviationZone<P>> detectDeviationZones(PlanningData<SS, GS, P, D> planningData) {
+        Multiset<EntityState<P>> statesForPaths = HashMultiset.create();
 
         statesForPaths.removeIf(state -> statesForPaths.count(state) < 2);
 

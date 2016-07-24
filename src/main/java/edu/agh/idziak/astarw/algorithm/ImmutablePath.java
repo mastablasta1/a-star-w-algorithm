@@ -9,10 +9,10 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ImmutablePath<U extends Comparable<U>> implements GlobalPath<U> {
-    private List<GlobalState<U>> path;
+class ImmutablePath<P extends Comparable<P>> implements GlobalPath<P> {
+    private List<GlobalState<P>> path;
 
-    private ImmutablePath(List<? extends GlobalState<U>> path) {
+    private ImmutablePath(List<? extends GlobalState<P>> path) {
         this.path = ImmutableList.copyOf(path);
     }
 
@@ -21,15 +21,15 @@ class ImmutablePath<U extends Comparable<U>> implements GlobalPath<U> {
     }
 
     @Override
-    public List<GlobalState<U>> get() {
+    public List<GlobalState<P>> get() {
         return path;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("{");
-        path.forEach(uEntityState -> sb.append(uEntityState).append("->"));
-        sb.setLength(sb.length() - 2);
+        StringBuilder sb = new StringBuilder("{\n");
+        path.forEach(uEntityState -> sb.append(uEntityState).append("->\n"));
+        sb.setLength(sb.length() - 3);
         return sb.append("}").toString();
     }
 }

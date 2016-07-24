@@ -5,9 +5,9 @@ import java.util.Set;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface OutputPlan<SS extends StateSpace<GS, U>, GS extends GlobalState<U>, U extends Comparable<U>> extends InputPlan<SS, GS, U> {
+public interface OutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> extends InputPlan<SS, GS, P, D> {
 
-    GlobalPath<U> getGlobalPath();
+    GlobalPath<P> getGlobalPath();
 
-    Set<DeviationZone<U>> getDeviationZones();
+    Set<DeviationZone<P>> getDeviationZones();
 }

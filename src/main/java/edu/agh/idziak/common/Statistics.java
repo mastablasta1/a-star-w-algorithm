@@ -20,6 +20,12 @@ public class Statistics {
         return true;
     }
 
+    public boolean maxStat(String statId, int value) {
+        int oldValue = counters.getOrDefault(statId, 0);
+        counters.put(statId, Math.max(value, oldValue));
+        return true;
+    }
+
     public Integer getValue(String statId) {
         return counters.get(statId);
     }

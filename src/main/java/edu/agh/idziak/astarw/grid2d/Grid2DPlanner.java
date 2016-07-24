@@ -1,16 +1,16 @@
 package edu.agh.idziak.astarw.grid2d;
 
 import edu.agh.idziak.astarw.algorithm.ASWPlanner;
-import edu.agh.idziak.common.IntegerHandler;
+import edu.agh.idziak.common.DoubleHandler;
 
 /**
  * Created by Tomasz on 09.07.2016.
  */
-public class Grid2DPlanner extends ASWPlanner<Grid2DStateSpace, Grid2DGlobalState, Integer> {
+public class Grid2DPlanner extends ASWPlanner<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> {
 
-    private static final IntegerHandler integerHandler = IntegerHandler.getInstance();
+    private static final DoubleHandler DOUBLE_HANDLER = DoubleHandler.getInstance();
 
     public Grid2DPlanner() {
-        super(integerHandler);
+        super(DOUBLE_HANDLER);
     }
 }

@@ -5,6 +5,6 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public interface GlobalPath<U extends Comparable<U>> {
-    List<GlobalState<U>> get();
+public interface GlobalPath<P extends Comparable<P>> {
+    List<GlobalState<P>> get();
 }

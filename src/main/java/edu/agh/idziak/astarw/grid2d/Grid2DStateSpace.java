@@ -6,7 +6,7 @@ import edu.agh.idziak.astarw.EntityState;
 import edu.agh.idziak.astarw.Position;
 import edu.agh.idziak.astarw.StateSpace;
 import edu.agh.idziak.common.CombinationsGenerator;
-import edu.agh.idziak.common.DoubleIterator;
+import edu.agh.idziak.common.PairIterator;
 import edu.agh.idziak.common.SingleTypePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> {
+public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, Double> {
     private static final Logger LOG = LoggerFactory.getLogger(Grid2DStateSpace.class);
 
     private final int[][] space;
@@ -67,23 +67,25 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
         }
     }
 
-    private Integer getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
+    private Double getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
         int startRow = start.get().get(0);
         int startCol = start.get().get(1);
         int endRow = end.get().get(0);
         int endCol = end.get().get(1);
 
-        return (int) Math.sqrt(Math.pow(startRow - endRow, 2) + Math.pow(startCol - endCol, 2));
+//        return Math.sqrt(Math.pow(startRow - endRow, 2)
+//                + Math.pow(startCol - endCol, 2));
+        return (double) Math.abs(startRow - endRow) + Math.abs(startCol - endCol);
     }
 
     @Override
-    public Integer getHeuristicDistance(Grid2DGlobalState start, Grid2DGlobalState end) {
+    public Double getHeuristicDistance(Grid2DGlobalState start, Grid2DGlobalState end) {
         List<EntityState<Integer>> startEntityStates = start.getEntityStates();
         List<EntityState<Integer>> endEntityStates = end.getEntityStates();
 
-        DoubleIterator<EntityState<Integer>> it = new DoubleIterator<>(startEntityStates, endEntityStates);
+        PairIterator<EntityState<Integer>> it = new PairIterator<>(startEntityStates, endEntityStates);
 
-        int sum = 0;
+        double sum = 0;
 
         while (it.hasNext()) {
             SingleTypePair<EntityState<Integer>> pair = it.next();
@@ -109,7 +111,7 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer> 
         Set<Grid2DGlobalState> neighborStates = combinations.stream()
                 .map(Grid2DGlobalState::fromEntityStates)
                 .collect(Collectors.toSet());
-        LOG.trace("Neighbor states of {} are {}", globalState, neighborStates);
+        LOG.trace("State {} has {} neighbors: {}", globalState, neighborStates.size(), neighborStates);
         return neighborStates;
     }
 

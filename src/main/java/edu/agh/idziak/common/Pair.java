@@ -30,4 +30,9 @@ public class Pair<X, Y> {
     public X getOne() {
         return one;
     }
+
+    @Override
+    public String toString() {
+        return "[" + one + ", " + two + ']';
+    }
 }

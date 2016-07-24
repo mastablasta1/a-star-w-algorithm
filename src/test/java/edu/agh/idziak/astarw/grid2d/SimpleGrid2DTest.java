@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by Tomasz on 17.07.2016.
  */
@@ -27,9 +29,9 @@ public class SimpleGrid2DTest {
 
         Grid2DInputPlan inputPlan = new Grid2DInputPlan(stateSpace, initialState, targetState);
 
-        OutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer> outputPlan = planner.calculatePlan(inputPlan);
+        OutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
 
-        System.out.println(outputPlan.getGlobalPath());
+        assertNotNull(outputPlan.getGlobalPath());
     }
 
     private int[][] createStateSpace() {
@@ -42,9 +44,10 @@ public class SimpleGrid2DTest {
 
     private List<SingleTypePair<Grid2DEntityState>> startsAndGoals() {
         return ImmutableList.of(
+                Pair.ofSingleType(Grid2DEntityState.of(0, 2), Grid2DEntityState.of(2, 0)),
+                Pair.ofSingleType(Grid2DEntityState.of(2, 0), Grid2DEntityState.of(0, 2)),
                 Pair.ofSingleType(Grid2DEntityState.of(0, 0), Grid2DEntityState.of(2, 2)),
-                //Pair.ofSingleType(Grid2DEntityState.of(2, 2), Grid2DEntityState.of(0, 0)),
-                Pair.ofSingleType(Grid2DEntityState.of(0, 2), Grid2DEntityState.of(2, 0))
+                Pair.ofSingleType(Grid2DEntityState.of(2, 2), Grid2DEntityState.of(0, 0))
         );
     }
 

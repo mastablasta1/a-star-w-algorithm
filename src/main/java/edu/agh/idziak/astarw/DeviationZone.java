@@ -5,6 +5,6 @@ import java.util.Set;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface DeviationZone<U extends Comparable<U>> {
-    Set<EntityState<U>> getStates();
+public interface DeviationZone<P extends Comparable<P>> {
+    Set<EntityState<P>> getStates();
 }

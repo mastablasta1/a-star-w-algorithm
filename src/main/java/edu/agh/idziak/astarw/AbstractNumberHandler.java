@@ -3,12 +3,10 @@ package edu.agh.idziak.astarw;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public interface AbstractNumberHandler<U extends Comparable<U>> {
-    U add(U one, U two);
+public interface AbstractNumberHandler<D extends Comparable<D>> {
+    D add(D one, D two);
 
-    boolean lessThan(U one, U two);
+    boolean greaterOrEqual(D one, D two);
 
-    boolean greaterOrEqual(U one, U two);
-
-    U getZero();
+    D getZero();
 }

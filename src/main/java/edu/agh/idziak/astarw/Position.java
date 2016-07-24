@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public interface Position<U extends Comparable<U>> {
+public interface Position<P extends Comparable<P>> {
 
-    List<U> get();
+    List<P> get();
 }
