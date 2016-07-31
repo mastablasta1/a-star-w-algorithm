@@ -67,7 +67,8 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, 
         }
     }
 
-    private Double getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
+    @Override
+    public Double getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
         int startRow = start.get().get(0);
         int startCol = start.get().get(1);
         int endRow = end.get().get(0);

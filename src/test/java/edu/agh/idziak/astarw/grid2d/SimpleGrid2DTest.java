@@ -32,6 +32,7 @@ public class SimpleGrid2DTest {
         OutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
 
         assertNotNull(outputPlan.getGlobalPath());
+
     }
 
     private int[][] createStateSpace() {

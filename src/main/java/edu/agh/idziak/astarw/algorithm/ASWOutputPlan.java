@@ -2,7 +2,7 @@ package edu.agh.idziak.astarw.algorithm;
 
 import edu.agh.idziak.astarw.*;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by Tomasz on 29.06.2016.
@@ -12,12 +12,21 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
     private GS initialState;
     private GS targetState;
     private GlobalPath<P> path;
+    private List<DeviationZone<P>> deviationZones;
 
-    ASWOutputPlan(SS stateSpace, GS initialState, GS targetState, GlobalPath<P> path) {
-        this.stateSpace = stateSpace;
-        this.initialState = initialState;
-        this.targetState = targetState;
-        this.path = path;
+    private ASWOutputPlan() {
+    }
+
+    private ASWOutputPlan(Builder<SS, GS, P, D> builder) {
+        stateSpace = builder.stateSpace;
+        initialState = builder.initialState;
+        targetState = builder.targetState;
+        path = builder.path;
+        deviationZones = builder.deviationZones;
+    }
+
+    static <SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> Builder<SS, GS, P, D> builder() {
+        return new Builder<>();
     }
 
     public GlobalPath<P> getGlobalPath() {
@@ -25,8 +34,8 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
     }
 
     @Override
-    public Set<DeviationZone<P>> getDeviationZones() {
-        return null;
+    public List<DeviationZone<P>> getDeviationZones() {
+        return deviationZones;
     }
 
     @Override
@@ -44,5 +53,43 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
         return stateSpace;
     }
 
+    static final class Builder<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+        private SS stateSpace;
+        private GS initialState;
+        private GS targetState;
+        private GlobalPath<P> path;
+        private List<DeviationZone<P>> deviationZones;
 
+        private Builder() {
+        }
+
+        Builder<SS, GS, P, D> stateSpace(SS val) {
+            stateSpace = val;
+            return this;
+        }
+
+        Builder<SS, GS, P, D> initialState(GS val) {
+            initialState = val;
+            return this;
+        }
+
+        Builder<SS, GS, P, D> targetState(GS val) {
+            targetState = val;
+            return this;
+        }
+
+        Builder<SS, GS, P, D> path(GlobalPath<P> val) {
+            path = val;
+            return this;
+        }
+
+        Builder<SS, GS, P, D> deviationZones(List<DeviationZone<P>> val) {
+            deviationZones = val;
+            return this;
+        }
+
+        ASWOutputPlan<SS, GS, P, D> build() {
+            return new ASWOutputPlan<>(this);
+        }
+    }
 }

@@ -3,18 +3,21 @@ package edu.agh.idziak.astarw.algorithm;
 import com.google.common.base.Preconditions;
 import edu.agh.idziak.astarw.*;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Created by Tomasz on 29.06.2016.
  */
 public class ASWPlanner<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements Planner<SS, GS, P, D> {
 
     private final GlobalAStar<SS, GS, P, D> globalAStar;
-    private final DeviationZonesDetector<SS, GS, P, D> entityDeviationZonesDetector;
+    private final DeviationZonesDetector<SS, GS, P, D> deviationZonesDetector;
 
-    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler) {
+    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler, DeviationZonesDetector<SS, GS, P, D> deviationZonesDetector) {
+        this.deviationZonesDetector = Preconditions.checkNotNull(deviationZonesDetector);
         Preconditions.checkNotNull(abstractNumberHandler, "Number handler was null");
         globalAStar = new GlobalAStar<>(abstractNumberHandler);
-        entityDeviationZonesDetector = new DeviationZonesDetector<>(1);
     }
 
     private void validate(InputPlan<SS, GS, P, D> inputPlan) {
@@ -29,11 +32,14 @@ public class ASWPlanner<SS extends StateSpace<GS, P, D>, GS extends GlobalState<
 
         globalAStar.calculatePath(planningData);
 
-        //entityDeviationZonesDetector.detectDeviationZones(planningData);
+        List<DeviationZone<P>> deviationZones = deviationZonesDetector.detectDeviationZones(planningData);
 
-        return new ASWOutputPlan<>(inputPlan.getStateSpace(),
-                inputPlan.getInitialGlobalState(),
-                inputPlan.getTargetGlobalState(),
-                planningData.getPath());
+        return ASWOutputPlan.<SS, GS, P, D>builder()
+                .deviationZones(deviationZones)
+                .initialState(inputPlan.getInitialGlobalState())
+                .targetState(inputPlan.getTargetGlobalState())
+                .stateSpace(inputPlan.getStateSpace())
+                .path(planningData.getPath())
+                .build();
     }
 }
