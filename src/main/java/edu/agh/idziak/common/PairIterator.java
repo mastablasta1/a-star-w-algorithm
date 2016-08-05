@@ -5,12 +5,12 @@ import java.util.Iterator;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class PairIterator<E> implements Iterator<SingleTypePair<E>> {
+public class PairIterator<A, B> implements Iterator<Pair<A, B>> {
 
-    private final Iterator<E> one;
-    private final Iterator<E> two;
+    private final Iterator<A> one;
+    private final Iterator<B> two;
 
-    public PairIterator(Iterable<E> one, Iterable<E> two) {
+    public PairIterator(Iterable<A> one, Iterable<B> two) {
         this.one = one.iterator();
         this.two = two.iterator();
     }
@@ -21,7 +21,7 @@ public class PairIterator<E> implements Iterator<SingleTypePair<E>> {
     }
 
     @Override
-    public SingleTypePair<E> next() {
-        return new SingleTypePair<>(one.next(), two.next());
+    public Pair<A, B> next() {
+        return new Pair<>(one.next(), two.next());
     }
 }

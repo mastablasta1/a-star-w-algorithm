@@ -3,7 +3,6 @@ package edu.agh.idziak.astarw.algorithm;
 import com.google.common.base.Preconditions;
 import edu.agh.idziak.astarw.*;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,21 +24,21 @@ public class ASWPlanner<SS extends StateSpace<GS, P, D>, GS extends GlobalState<
     }
 
     @Override
-    public OutputPlan<SS, GS, P, D> calculatePlan(InputPlan<SS, GS, P, D> inputPlan) {
+    public GlobalOutputPlan<SS, GS, P, D> calculatePlan(InputPlan<SS, GS, P, D> inputPlan) {
         validate(inputPlan);
 
         PlanningData<SS, GS, P, D> planningData = new PlanningData<>(inputPlan);
 
         globalAStar.calculatePath(planningData);
 
-        List<DeviationZone<P>> deviationZones = deviationZonesDetector.detectDeviationZones(planningData);
+        List<EntityOutputPlan<P>> entityOutputPlans = deviationZonesDetector.detectDeviationZones(planningData);
 
-        return ASWOutputPlan.<SS, GS, P, D>builder()
-                .deviationZones(deviationZones)
+        return ASWGlobalOutputPlan.<SS, GS, P, D>builder()
+                .entityOutputPlans(entityOutputPlans)
                 .initialState(inputPlan.getInitialGlobalState())
                 .targetState(inputPlan.getTargetGlobalState())
                 .stateSpace(inputPlan.getStateSpace())
-                .path(planningData.getPath())
+                .path(planningData.getGlobalPath())
                 .build();
     }
 }

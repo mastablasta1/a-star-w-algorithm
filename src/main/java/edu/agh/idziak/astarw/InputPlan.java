@@ -9,4 +9,6 @@ public interface InputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalSta
     GS getTargetGlobalState();
 
     SS getStateSpace();
+
+    int getEntitiesCount();
 }

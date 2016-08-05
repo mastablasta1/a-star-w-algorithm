@@ -6,7 +6,7 @@ import edu.agh.idziak.astarw.EntityState;
 import edu.agh.idziak.astarw.Position;
 import edu.agh.idziak.astarw.StateSpace;
 import edu.agh.idziak.common.CombinationsGenerator;
-import edu.agh.idziak.common.PairIterator;
+import edu.agh.idziak.common.SingleTypePairIterator;
 import edu.agh.idziak.common.SingleTypePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, 
         List<EntityState<Integer>> startEntityStates = start.getEntityStates();
         List<EntityState<Integer>> endEntityStates = end.getEntityStates();
 
-        PairIterator<EntityState<Integer>> it = new PairIterator<>(startEntityStates, endEntityStates);
+        SingleTypePairIterator<EntityState<Integer>> it = new SingleTypePairIterator<>(startEntityStates, endEntityStates);
 
         double sum = 0;
 
@@ -114,6 +114,10 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, 
                 .collect(Collectors.toSet());
         LOG.trace("State {} has {} neighbors: {}", globalState, neighborStates.size(), neighborStates);
         return neighborStates;
+    }
+
+    int[][] getTable() {
+        return space;
     }
 
     @Override

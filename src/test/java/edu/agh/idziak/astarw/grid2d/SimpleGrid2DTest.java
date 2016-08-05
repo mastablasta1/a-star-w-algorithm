@@ -2,7 +2,7 @@ package edu.agh.idziak.astarw.grid2d;
 
 import com.google.common.collect.ImmutableList;
 import edu.agh.idziak.astarw.EntityState;
-import edu.agh.idziak.astarw.OutputPlan;
+import edu.agh.idziak.astarw.GlobalOutputPlan;
 import edu.agh.idziak.common.Pair;
 import edu.agh.idziak.common.SingleTypePair;
 import org.junit.Test;
@@ -29,9 +29,9 @@ public class SimpleGrid2DTest {
 
         Grid2DInputPlan inputPlan = new Grid2DInputPlan(stateSpace, initialState, targetState);
 
-        OutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
+        GlobalOutputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> globalOutputPlan = planner.calculatePlan(inputPlan);
 
-        assertNotNull(outputPlan.getGlobalPath());
+        assertNotNull(globalOutputPlan.getGlobalPath());
 
     }
 

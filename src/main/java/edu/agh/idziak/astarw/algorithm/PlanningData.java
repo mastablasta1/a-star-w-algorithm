@@ -1,33 +1,34 @@
 package edu.agh.idziak.astarw.algorithm;
 
-import edu.agh.idziak.astarw.*;
+import edu.agh.idziak.astarw.GlobalPath;
+import edu.agh.idziak.astarw.GlobalState;
+import edu.agh.idziak.astarw.InputPlan;
+import edu.agh.idziak.astarw.StateSpace;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by Tomasz on 29.06.2016.
  */
 public class PlanningData<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
     private final InputPlan<SS, GS, P, D> inputPlan;
-    private GlobalPath<P> path;
-    private Set<DeviationZone<P>> deviationZones;
+    private GlobalPath<P> globalPath;
+    private List<MutableEntityOutputPlan<P>> mutableEntityOutputPlan;
 
     PlanningData(InputPlan<SS, GS, P, D> inputPlan) {
         this.inputPlan = inputPlan;
-        deviationZones = new HashSet<>();
     }
 
     public InputPlan<SS, GS, P, D> getInputPlan() {
         return inputPlan;
     }
 
-    public GlobalPath<P> getPath() {
-        return path;
+    public GlobalPath<P> getGlobalPath() {
+        return globalPath;
     }
 
-    public void setPath(GlobalPath<P> path) {
-        this.path = path;
+    public void setGlobalPath(GlobalPath<P> globalPath) {
+        this.globalPath = globalPath;
     }
 
 }

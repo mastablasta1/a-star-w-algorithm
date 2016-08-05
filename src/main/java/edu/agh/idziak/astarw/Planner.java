@@ -5,5 +5,5 @@ package edu.agh.idziak.astarw;
  */
 public interface Planner<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
 
-    OutputPlan<SS, GS, P, D> calculatePlan(InputPlan<SS, GS, P, D> inputPlan);
+    GlobalOutputPlan<SS, GS, P, D> calculatePlan(InputPlan<SS, GS, P, D> inputPlan);
 }

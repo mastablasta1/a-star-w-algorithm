@@ -11,6 +11,6 @@ public class Grid2DPlanner extends ASWPlanner<Grid2DStateSpace, Grid2DGlobalStat
     private static final DoubleHandler DOUBLE_HANDLER = DoubleHandler.getInstance();
 
     public Grid2DPlanner() {
-        super(DOUBLE_HANDLER, new Grid2DDeviationZonesDetector<>(2));
+        super(DOUBLE_HANDLER, new Grid2DDeviationZonesDetector(2));
     }
 }

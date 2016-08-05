@@ -5,7 +5,6 @@ import edu.agh.idziak.common.BasicValueSortedMap;
 import edu.agh.idziak.common.Pair;
 import edu.agh.idziak.common.Statistics;
 import edu.agh.idziak.common.StatisticsSource;
-import edu.agh.idziak.common.TwoLevelValueSortedMap;
 import edu.agh.idziak.common.ValueSortedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,7 @@ class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P 
         boolean pathFound = findPath(acc);
 
         ImmutablePath<P> path = finalizeCalculation(pathFound, acc);
-        planningData.setPath(path);
+        planningData.setGlobalPath(path);
         return path;
     }
 

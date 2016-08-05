@@ -7,22 +7,22 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements OutputPlan<SS, GS, P, D> {
+class ASWGlobalOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements GlobalOutputPlan<SS, GS, P, D> {
     private SS stateSpace;
     private GS initialState;
     private GS targetState;
     private GlobalPath<P> path;
-    private List<DeviationZone<P>> deviationZones;
+    private List<EntityOutputPlan<P>> entityOutputPlans;
 
-    private ASWOutputPlan() {
+    private ASWGlobalOutputPlan() {
     }
 
-    private ASWOutputPlan(Builder<SS, GS, P, D> builder) {
+    private ASWGlobalOutputPlan(Builder<SS, GS, P, D> builder) {
         stateSpace = builder.stateSpace;
         initialState = builder.initialState;
         targetState = builder.targetState;
         path = builder.path;
-        deviationZones = builder.deviationZones;
+        entityOutputPlans = builder.entityOutputPlans;
     }
 
     static <SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> Builder<SS, GS, P, D> builder() {
@@ -34,8 +34,8 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
     }
 
     @Override
-    public List<DeviationZone<P>> getDeviationZones() {
-        return deviationZones;
+    public List<EntityOutputPlan<P>> getPlansForEntities() {
+        return entityOutputPlans;
     }
 
     @Override
@@ -53,12 +53,17 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
         return stateSpace;
     }
 
+    @Override
+    public int getEntitiesCount() {
+        return initialState.getEntitiesCount();
+    }
+
     static final class Builder<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> {
         private SS stateSpace;
         private GS initialState;
         private GS targetState;
         private GlobalPath<P> path;
-        private List<DeviationZone<P>> deviationZones;
+        private List<EntityOutputPlan<P>> entityOutputPlans;
 
         private Builder() {
         }
@@ -83,13 +88,13 @@ class ASWOutputPlan<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, 
             return this;
         }
 
-        Builder<SS, GS, P, D> deviationZones(List<DeviationZone<P>> val) {
-            deviationZones = val;
+        Builder<SS, GS, P, D> entityOutputPlans(List<EntityOutputPlan<P>> val) {
+            entityOutputPlans = val;
             return this;
         }
 
-        ASWOutputPlan<SS, GS, P, D> build() {
-            return new ASWOutputPlan<>(this);
+        ASWGlobalOutputPlan<SS, GS, P, D> build() {
+            return new ASWGlobalOutputPlan<>(this);
         }
     }
 }
