@@ -1,6 +1,6 @@
 package edu.agh.idziak.common;
 
-import edu.agh.idziak.astarw.AbstractNumberHandler;
+import edu.agh.idziak.asw.AbstractNumberHandler;
 
 /**
  * Created by Tomasz on 09.07.2016.

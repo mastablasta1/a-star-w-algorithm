@@ -1,17 +1,12 @@
 package edu.agh.idziak.common;
 
-import java.util.List;
-import java.util.function.Supplier;
+import org.slf4j.helpers.MessageFormatter;
 
 /**
- * Created by Tomasz on 31.07.2016.
+ * Created by Tomasz on 13.08.2016.
  */
 public class Utils {
-
-    public static <T> List<T> fillList(List<T> list, int n, Supplier<T> supplier) {
-        for (int i = 0; i < n; i++) {
-            list.add(supplier.get());
-        }
-        return list;
+    public static String slf4jFormat(String pattern, Object... objects) {
+        return MessageFormatter.arrayFormat(pattern, objects).getMessage();
     }
 }
