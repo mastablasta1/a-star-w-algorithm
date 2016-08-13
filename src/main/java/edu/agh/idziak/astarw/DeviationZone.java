@@ -1,6 +1,5 @@
 package edu.agh.idziak.astarw;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -9,6 +8,7 @@ import java.util.Set;
 public interface DeviationZone<P extends Comparable<P>> {
     Set<EntityState<P>> getStates();
 
-    Optional<EntityState<P>> getBestMoveFrom(EntityState<P> entityState);
-    EntityState<P> targetState();
+    EntityState<P> getBestMoveFrom(EntityState<P> entityState, Object entity);
+
+    EntityState<P> targetState(Object entity);
 }

@@ -5,23 +5,32 @@ import java.util.Iterator;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class PairIterator<A, B> implements Iterator<Pair<A, B>> {
+public class PairIterator<A, B>  {
 
     private final Iterator<A> one;
     private final Iterator<B> two;
+    private A currentOne;
+    private B currentTwo;
 
     public PairIterator(Iterable<A> one, Iterable<B> two) {
         this.one = one.iterator();
         this.two = two.iterator();
     }
 
-    @Override
     public boolean hasNext() {
         return one.hasNext() && two.hasNext();
     }
 
-    @Override
-    public Pair<A, B> next() {
-        return new Pair<>(one.next(), two.next());
+    public void next() {
+        currentOne = one.next();
+        currentTwo = two.next();
+    }
+
+    public A getCurrentA() {
+        return currentOne;
+    }
+
+    public B getCurrentB() {
+        return currentTwo;
     }
 }

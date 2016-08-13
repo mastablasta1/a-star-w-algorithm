@@ -2,30 +2,35 @@ package edu.agh.idziak.astarw.grid2d;
 
 import edu.agh.idziak.astarw.InputPlan;
 
+import java.util.Set;
+
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DGlobalState, Integer, Double> {
+public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DCollectiveState, Integer, Double> {
 
-    private final Grid2DGlobalState initialState;
-    private final Grid2DGlobalState targetState;
+    private final Grid2DCollectiveState initialState;
+    private final Grid2DCollectiveState targetState;
     private final Grid2DStateSpace globalStateSpace;
+    private Set<?> entities;
 
-    public Grid2DInputPlan(Grid2DStateSpace globalStateSpace,
-                           Grid2DGlobalState initialState,
-                           Grid2DGlobalState targetState) {
+    public Grid2DInputPlan(Set entities,
+                           Grid2DStateSpace globalStateSpace,
+                           Grid2DCollectiveState initialState,
+                           Grid2DCollectiveState targetState) {
+        this.entities = entities;
         this.globalStateSpace = globalStateSpace;
         this.targetState = targetState;
         this.initialState = initialState;
     }
 
     @Override
-    public Grid2DGlobalState getInitialGlobalState() {
+    public Grid2DCollectiveState getInitialGlobalState() {
         return initialState;
     }
 
     @Override
-    public Grid2DGlobalState getTargetGlobalState() {
+    public Grid2DCollectiveState getTargetGlobalState() {
         return targetState;
     }
 
@@ -34,5 +39,9 @@ public class Grid2DInputPlan implements InputPlan<Grid2DStateSpace, Grid2DGlobal
         return globalStateSpace;
     }
 
+    @Override
+    public Set<?> getEntities() {
+        return entities;
+    }
 
 }

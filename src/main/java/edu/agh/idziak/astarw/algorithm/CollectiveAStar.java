@@ -14,19 +14,19 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P extends Comparable<P>, D extends Comparable<D>> implements StatisticsSource {
-    private static final Logger LOG = LoggerFactory.getLogger(GlobalAStar.class);
+class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> implements StatisticsSource {
+    private static final Logger LOG = LoggerFactory.getLogger(CollectiveAStar.class);
     private static final String STATISTICS_STATES_VISITED = "statesVisited";
     private static final String STATISTICS_MAX_SIZE_OF_OPENSET = "maxSizeOfOpenSet";
-    private final Statistics statistics = new Statistics("globalAStar");
+    private final Statistics statistics = new Statistics("collectiveAStar");
 
     private AbstractNumberHandler<D> numHandler;
 
-    GlobalAStar(AbstractNumberHandler<D> abstractNumberHandler) {
+    CollectiveAStar(AbstractNumberHandler<D> abstractNumberHandler) {
         this.numHandler = abstractNumberHandler;
     }
 
-    ImmutablePath<P> calculatePath(PlanningData<SS, GS, P, D> planningData) {
+    ImmutableCollectivePath<P> calculatePath(PlanningData<SS, GS, P, D> planningData) {
         Accumulator acc = new Accumulator(planningData.getInputPlan());
 
         LOG.debug("Starting A*, start={}, end={}, stateSpace:\n{}", acc.start, acc.goal, acc.stateSpace);
@@ -36,13 +36,13 @@ class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P 
 
         boolean pathFound = findPath(acc);
 
-        ImmutablePath<P> path = finalizeCalculation(pathFound, acc);
-        planningData.setGlobalPath(path);
+        ImmutableCollectivePath<P> path = finalizeCalculation(pathFound, acc);
+        planningData.setCollectivePath(path);
         return path;
     }
 
-    private ImmutablePath<P> finalizeCalculation(boolean pathFound, Accumulator acc) {
-        ImmutablePath<P> path = null;
+    private ImmutableCollectivePath<P> finalizeCalculation(boolean pathFound, Accumulator acc) {
+        ImmutableCollectivePath<P> path = null;
         if (pathFound) {
             path = reconstructPath(acc);
             LOG.info("Path of length {} found: {}", path.get().size(), path);
@@ -60,7 +60,7 @@ class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P 
 
             Pair<GS, D> currentPair = acc.openSetWithFScore.pollEntryWithLowestValue();
             GS current = currentPair.getOne();
-            LOG.debug("Entering state {}", currentPair);
+            LOG.debug("Entering state {}, FScore={}", currentPair.getOne(), currentPair.getTwo());
 
             if (current.equals(acc.goal)) {
                 return true;
@@ -100,7 +100,7 @@ class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P 
         }
     }
 
-    private ImmutablePath<P> reconstructPath(Accumulator acc) {
+    private ImmutableCollectivePath<P> reconstructPath(Accumulator acc) {
         List<GS> totalPath = new LinkedList<>();
         GS current = acc.goal;
         totalPath.add(current);
@@ -108,7 +108,7 @@ class GlobalAStar<SS extends StateSpace<GS, P, D>, GS extends GlobalState<P>, P 
         while ((current = acc.cameFrom.get(current)) != null) {
             totalPath.add(0, current);
         }
-        return ImmutablePath.from(totalPath);
+        return ImmutableCollectivePath.from(totalPath);
     }
 
 

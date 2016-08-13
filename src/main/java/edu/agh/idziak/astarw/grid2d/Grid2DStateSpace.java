@@ -2,22 +2,21 @@ package edu.agh.idziak.astarw.grid2d;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import edu.agh.idziak.astarw.EntityState;
-import edu.agh.idziak.astarw.Position;
 import edu.agh.idziak.astarw.StateSpace;
 import edu.agh.idziak.common.CombinationsGenerator;
-import edu.agh.idziak.common.SingleTypePairIterator;
-import edu.agh.idziak.common.SingleTypePair;
+import edu.agh.idziak.common.PairIterator;
+import edu.agh.idziak.common.UntypedTwoMapsIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, Double> {
+public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integer, Double> {
     private static final Logger LOG = LoggerFactory.getLogger(Grid2DStateSpace.class);
 
     private final int[][] space;
@@ -68,7 +67,7 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, 
     }
 
     @Override
-    public Double getHeuristicDistance(Position<Integer> start, Position<Integer> end) {
+    public Double getHeuristicDistance(EntityState<Integer> start, EntityState<Integer> end) {
         int startRow = start.get().get(0);
         int startCol = start.get().get(1);
         int endRow = end.get().get(0);
@@ -80,39 +79,52 @@ public class Grid2DStateSpace implements StateSpace<Grid2DGlobalState, Integer, 
     }
 
     @Override
-    public Double getHeuristicDistance(Grid2DGlobalState start, Grid2DGlobalState end) {
-        List<EntityState<Integer>> startEntityStates = start.getEntityStates();
-        List<EntityState<Integer>> endEntityStates = end.getEntityStates();
+    public Double getHeuristicDistance(Grid2DCollectiveState start, Grid2DCollectiveState end) {
+        Map<?, EntityState<Integer>> startStates = start.getEntityStates();
+        Map<?, EntityState<Integer>> endStates = end.getEntityStates();
 
-        SingleTypePairIterator<EntityState<Integer>> it = new SingleTypePairIterator<>(startEntityStates, endEntityStates);
+        UntypedTwoMapsIterator<EntityState<Integer>> it = new UntypedTwoMapsIterator<>(startStates, endStates);
 
         double sum = 0;
 
         while (it.hasNext()) {
-            SingleTypePair<EntityState<Integer>> pair = it.next();
-            sum += getHeuristicDistance(pair.getOne(), pair.getTwo());
+            it.next();
+            sum += getHeuristicDistance(it.getFirstValue(), it.getSecondValue());
         }
 
         return sum;
     }
 
     @Override
-    public Set<Grid2DGlobalState> getNeighborStatesOf(Grid2DGlobalState globalState) {
+    public Set<Grid2DCollectiveState> getNeighborStatesOf(Grid2DCollectiveState collectiveState) {
         List<List<EntityState<Integer>>> choiceArray = new ArrayList<>();
 
-        List<EntityState<Integer>> entityStates = globalState.getEntityStates();
+        Map<?, EntityState<Integer>> entityStates = collectiveState.getEntityStates();
 
-        for (EntityState<Integer> state : entityStates) {
-            List<EntityState<Integer>> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state));
+        List<Map.Entry<?, EntityState<Integer>>> entries = ImmutableList.copyOf(entityStates.entrySet());
+
+        for (Map.Entry<?, EntityState<Integer>> state : entries) {
+            List<EntityState<Integer>> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state.getValue()));
             choiceArray.add(neighborStates);
         }
 
         List<List<EntityState<Integer>>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
 
-        Set<Grid2DGlobalState> neighborStates = combinations.stream()
-                .map(Grid2DGlobalState::fromEntityStates)
-                .collect(Collectors.toSet());
-        LOG.trace("State {} has {} neighbors: {}", globalState, neighborStates.size(), neighborStates);
+        Set<Grid2DCollectiveState> neighborStates = new HashSet<>();
+
+        for (List<EntityState<Integer>> combination : combinations) {
+            PairIterator<Map.Entry<?, EntityState<Integer>>, EntityState<Integer>> it = new PairIterator<>(entries, combination);
+
+            ImmutableMap.Builder<Object, EntityState<Integer>> builder = ImmutableMap.builder();
+            while (it.hasNext()) {
+                it.next();
+                builder.put(it.getCurrentA().getKey(), it.getCurrentB());
+            }
+            Grid2DCollectiveState neighbor = Grid2DCollectiveState.fromEntityStates(builder.build());
+            neighborStates.add(neighbor);
+        }
+
+        LOG.trace("State {} has {} neighbors: {}", collectiveState, neighborStates.size(), neighborStates);
         return neighborStates;
     }
 
