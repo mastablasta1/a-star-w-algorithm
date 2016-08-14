@@ -8,12 +8,12 @@ import java.util.List;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public class Grid2DPathCostCalculator {
+public class G2DPathCostCalculator {
 
-    public static double calculateCost(CollectivePath<Integer> path, Grid2DStateSpace stateSpace) {
-        List<Grid2DCollectiveState> states = path.get(Grid2DCollectiveState.class);
+    public static double calculateCost(CollectivePath<Integer> path, G2DStateSpace stateSpace) {
+        List<G2DCollectiveState> states = path.get(G2DCollectiveState.class);
 
-        WalkingPairIterator<Grid2DCollectiveState> it = new WalkingPairIterator<>(states);
+        WalkingPairIterator<G2DCollectiveState> it = new WalkingPairIterator<>(states);
 
         double cost = 0.0;
 

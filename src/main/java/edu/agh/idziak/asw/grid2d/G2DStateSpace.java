@@ -16,18 +16,18 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integer, Double> {
-    private static final Logger LOG = LoggerFactory.getLogger(Grid2DStateSpace.class);
+public class G2DStateSpace implements StateSpace<G2DCollectiveState, Integer, Double> {
+    private static final Logger LOG = LoggerFactory.getLogger(G2DStateSpace.class);
 
     private final int[][] space;
 
-    public Grid2DStateSpace(int[][] space) {
+    public G2DStateSpace(int[][] space) {
         this.space = Preconditions.checkNotNull(space);
     }
 
-    private boolean areAllStatesUnique(List<Grid2DEntityState> entityStates) {
-        Set<Grid2DEntityState> set = new HashSet<>();
-        for (Grid2DEntityState entityState : entityStates) {
+    private boolean areAllStatesUnique(List<G2DEntityState> entityStates) {
+        Set<G2DEntityState> set = new HashSet<>();
+        for (G2DEntityState entityState : entityStates) {
             if (set.contains(entityState))
                 return false;
             set.add(entityState);
@@ -36,12 +36,12 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
     }
 
     @Override
-    public Set<Grid2DEntityState> getNeighborStatesOf(EntityState<Integer> entityState) {
+    public Set<G2DEntityState> getNeighborStatesOf(EntityState<Integer> entityState) {
         List<Integer> positions = entityState.get();
         int row = positions.get(0);
         int col = positions.get(1);
 
-        Set<Grid2DEntityState> states = new HashSet<>();
+        Set<G2DEntityState> states = new HashSet<>();
 
         addState(row, col, states);
         if (row > 0) {
@@ -60,10 +60,10 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
         return states;
     }
 
-    private void addState(int destRow, int destCol, Set<Grid2DEntityState> states) {
+    private void addState(int destRow, int destCol, Set<G2DEntityState> states) {
         int weight = space[destRow][destCol];
         if (weight < 10) {
-            states.add(new Grid2DEntityState(destRow, destCol));
+            states.add(new G2DEntityState(destRow, destCol));
         }
     }
 
@@ -80,11 +80,11 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
     }
 
     @Override
-    public Double getHeuristicDistance(Grid2DCollectiveState start, Grid2DCollectiveState end) {
-        Map<?, Grid2DEntityState> startStates = start.getEntityStates();
-        Map<?, Grid2DEntityState> endStates = end.getEntityStates();
+    public Double getHeuristicDistance(G2DCollectiveState start, G2DCollectiveState end) {
+        Map<?, G2DEntityState> startStates = start.getEntityStates();
+        Map<?, G2DEntityState> endStates = end.getEntityStates();
 
-        UntypedTwoMapsIterator<Grid2DEntityState> it = new UntypedTwoMapsIterator<>(startStates, endStates);
+        UntypedTwoMapsIterator<G2DEntityState> it = new UntypedTwoMapsIterator<>(startStates, endStates);
 
         double sum = 0;
 
@@ -97,29 +97,29 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
     }
 
     @Override
-    public Set<Grid2DCollectiveState> getNeighborStatesOf(Grid2DCollectiveState collectiveState) {
-        List<List<Grid2DEntityState>> choiceArray = new ArrayList<>();
+    public Set<G2DCollectiveState> getNeighborStatesOf(G2DCollectiveState collectiveState) {
+        List<List<G2DEntityState>> choiceArray = new ArrayList<>();
 
-        Map<?, Grid2DEntityState> entityStates = collectiveState.getEntityStates();
+        Map<?, G2DEntityState> entityStates = collectiveState.getEntityStates();
 
-        List<Map.Entry<?, Grid2DEntityState>> entries = ImmutableList.copyOf(entityStates.entrySet());
+        List<Map.Entry<?, G2DEntityState>> entries = ImmutableList.copyOf(entityStates.entrySet());
 
         buildChoiceArray(choiceArray, entries);
 
-        List<List<Grid2DEntityState>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
+        List<List<G2DEntityState>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
 
-        Set<Grid2DCollectiveState> neighborStates = new HashSet<>();
+        Set<G2DCollectiveState> neighborStates = new HashSet<>();
 
-        for (List<Grid2DEntityState> combination : combinations) {
-            PairIterator<Map.Entry<?, Grid2DEntityState>, Grid2DEntityState> it = new PairIterator<>(entries, combination);
+        for (List<G2DEntityState> combination : combinations) {
+            PairIterator<Map.Entry<?, G2DEntityState>, G2DEntityState> it = new PairIterator<>(entries, combination);
 
-            ImmutableMap.Builder<Object, Grid2DEntityState> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<Object, G2DEntityState> builder = ImmutableMap.builder();
             while (it.hasNext()) {
                 it.next();
                 builder.put(it.getCurrentA().getKey(), it.getCurrentB());
             }
-            ImmutableMap<Object, Grid2DEntityState> build = builder.build();
-            Grid2DCollectiveState neighbor = Grid2DCollectiveState.fromEntityStates(build);
+            ImmutableMap<Object, G2DEntityState> build = builder.build();
+            G2DCollectiveState neighbor = G2DCollectiveState.fromEntityStates(build);
             neighborStates.add(neighbor);
         }
 
@@ -127,9 +127,9 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
         return neighborStates;
     }
 
-    private void buildChoiceArray(List<List<Grid2DEntityState>> choiceArray, List<Map.Entry<?, Grid2DEntityState>> entries) {
-        for (Map.Entry<?, Grid2DEntityState> state : entries) {
-            List<Grid2DEntityState> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state.getValue()));
+    private void buildChoiceArray(List<List<G2DEntityState>> choiceArray, List<Map.Entry<?, G2DEntityState>> entries) {
+        for (Map.Entry<?, G2DEntityState> state : entries) {
+            List<G2DEntityState> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state.getValue()));
             choiceArray.add(neighborStates);
         }
     }

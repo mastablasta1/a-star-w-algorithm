@@ -9,15 +9,15 @@ import java.util.Map;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class Grid2DCollectiveState implements CollectiveState<Integer> {
+public class G2DCollectiveState implements CollectiveState<Integer> {
 
-    private Map<?, Grid2DEntityState> entityStates;
+    private Map<?, G2DEntityState> entityStates;
 
-    private Grid2DCollectiveState() {
+    private G2DCollectiveState() {
     }
 
     @Override
-    public Map<?, Grid2DEntityState> getEntityStates() {
+    public Map<?, G2DEntityState> getEntityStates() {
         return entityStates;
     }
 
@@ -26,8 +26,8 @@ public class Grid2DCollectiveState implements CollectiveState<Integer> {
         return entityStates.get(entity);
     }
 
-    public static Grid2DCollectiveState fromEntityStates(Map<?, Grid2DEntityState> entityStates) {
-        Grid2DCollectiveState obj = new Grid2DCollectiveState();
+    public static G2DCollectiveState fromEntityStates(Map<?, G2DEntityState> entityStates) {
+        G2DCollectiveState obj = new G2DCollectiveState();
         obj.entityStates = ImmutableMap.copyOf(entityStates);
         return obj;
     }
@@ -36,7 +36,7 @@ public class Grid2DCollectiveState implements CollectiveState<Integer> {
     public boolean equals(Object o) {
         return this == o
                 || !(o == null || getClass() != o.getClass())
-                && entityStates.equals(((Grid2DCollectiveState) o).entityStates);
+                && entityStates.equals(((G2DCollectiveState) o).entityStates);
     }
 
     @Override

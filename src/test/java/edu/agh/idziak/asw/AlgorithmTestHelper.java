@@ -1,6 +1,6 @@
 package edu.agh.idziak.asw;
 
-import edu.agh.idziak.asw.grid2d.Grid2DEntityState;
+import edu.agh.idziak.asw.grid2d.G2DEntityState;
 import edu.agh.idziak.asw.grid2d.SimpleEntityFactory;
 import edu.agh.idziak.common.Triple;
 
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Created by Tomasz on 13.08.2016.
  */
 public class AlgorithmTestHelper {
-    public static Set mapToEntitiesSet(List<Triple<SimpleEntityFactory.SimpleEntity, Grid2DEntityState, Grid2DEntityState>> input) {
+    public static Set mapToEntitiesSet(List<Triple<SimpleEntityFactory.SimpleEntity, G2DEntityState, G2DEntityState>> input) {
         return input.stream().map(Triple::getOne).collect(Collectors.toSet());
     }
 

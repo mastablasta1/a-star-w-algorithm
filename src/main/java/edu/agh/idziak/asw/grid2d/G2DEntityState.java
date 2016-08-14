@@ -8,16 +8,16 @@ import java.util.List;
 /**
  * Created by Tomasz on 09.07.2016.
  */
-public class Grid2DEntityState implements EntityState<Integer> {
+public class G2DEntityState implements EntityState<Integer> {
 
     private List<Integer> state;
 
-    public Grid2DEntityState(int row, int col) {
+    public G2DEntityState(int row, int col) {
         this.state = ImmutableList.of(row, col);
     }
 
-    public static Grid2DEntityState of(int row, int col) {
-        return new Grid2DEntityState(row, col);
+    public static G2DEntityState of(int row, int col) {
+        return new G2DEntityState(row, col);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Grid2DEntityState implements EntityState<Integer> {
     public boolean equals(Object o) {
         return this == o
                 || !(o == null || getClass() != o.getClass())
-                && state.equals(((Grid2DEntityState) o).state);
+                && state.equals(((G2DEntityState) o).state);
     }
 
     @Override
