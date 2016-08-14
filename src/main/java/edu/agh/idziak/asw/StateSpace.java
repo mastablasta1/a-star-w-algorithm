@@ -12,4 +12,7 @@ public interface StateSpace<CS extends CollectiveState<P>, P extends Comparable<
     D getHeuristicDistance(CS start, CS end);
 
     Set<CS> getNeighborStatesOf(CS globalState);
+
+    Set<? extends EntityState<P>> getNeighborStatesOf(EntityState<P> globalState);
+
 }

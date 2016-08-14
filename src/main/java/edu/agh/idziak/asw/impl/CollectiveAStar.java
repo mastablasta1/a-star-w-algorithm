@@ -1,4 +1,4 @@
-package edu.agh.idziak.asw.logic;
+package edu.agh.idziak.asw.impl;
 
 import edu.agh.idziak.asw.*;
 import edu.agh.idziak.common.ValueSortedMap;

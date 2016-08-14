@@ -1,6 +1,6 @@
 package edu.agh.idziak.asw.grid2d;
 
-import edu.agh.idziak.asw.logic.ASWPlanner;
+import edu.agh.idziak.asw.impl.ASWPlanner;
 import edu.agh.idziak.common.DoubleHandler;
 
 /**
@@ -11,6 +11,6 @@ public class Grid2DPlanner extends ASWPlanner<Grid2DStateSpace, Grid2DCollective
     private static final DoubleHandler DOUBLE_HANDLER = DoubleHandler.getInstance();
 
     public Grid2DPlanner() {
-        super(DOUBLE_HANDLER);
+        super(DOUBLE_HANDLER, new Grid2DDeviationZonesFinder());
     }
 }

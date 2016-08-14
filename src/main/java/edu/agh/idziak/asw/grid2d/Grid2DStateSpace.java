@@ -35,7 +35,8 @@ public class Grid2DStateSpace implements StateSpace<Grid2DCollectiveState, Integ
         return true;
     }
 
-    public Set<Grid2DEntityState> getNeighborStatesOf(Grid2DEntityState entityState) {
+    @Override
+    public Set<Grid2DEntityState> getNeighborStatesOf(EntityState<Integer> entityState) {
         List<Integer> positions = entityState.get();
         int row = positions.get(0);
         int col = positions.get(1);

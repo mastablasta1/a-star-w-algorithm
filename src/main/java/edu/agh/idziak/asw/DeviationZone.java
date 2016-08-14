@@ -8,7 +8,7 @@ import java.util.Set;
 public interface DeviationZone<P extends Comparable<P>> {
     Set<EntityState<P>> getStates();
 
-    EntityState<P> getBestMoveFrom(EntityState<P> entityState, Object entity);
+    Set<?> getInvolvedEntities();
 
     EntityState<P> targetState(Object entity);
 }

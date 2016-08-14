@@ -39,7 +39,7 @@ public class SimpleGrid2DTest {
         OutputPlan<Grid2DStateSpace, Grid2DCollectiveState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
 
         // then
-        double cost = pathCostCalculator.calculateCost(outputPlan.getCollectivePath(), stateSpace);
+        double cost = Grid2DPathCostCalculator.calculateCost(outputPlan.getCollectivePath(), stateSpace);
         System.out.println("Path cost: " + cost);
 
 

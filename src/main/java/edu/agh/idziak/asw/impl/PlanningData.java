@@ -1,9 +1,8 @@
-package edu.agh.idziak.asw.logic;
+package edu.agh.idziak.asw.impl;
 
-import edu.agh.idziak.asw.CollectivePath;
-import edu.agh.idziak.asw.CollectiveState;
-import edu.agh.idziak.asw.InputPlan;
-import edu.agh.idziak.asw.StateSpace;
+import edu.agh.idziak.asw.*;
+
+import java.util.Set;
 
 /**
  * Created by Tomasz on 29.06.2016.
@@ -11,6 +10,7 @@ import edu.agh.idziak.asw.StateSpace;
 public class PlanningData<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
     private final InputPlan<SS, GS, P, D> inputPlan;
     private CollectivePath<P> collectivePath;
+    private Set<DeviationZone<P>> deviationZones;
 
     PlanningData(InputPlan<SS, GS, P, D> inputPlan) {
         this.inputPlan = inputPlan;
@@ -24,8 +24,15 @@ public class PlanningData<SS extends StateSpace<GS, P, D>, GS extends Collective
         return collectivePath;
     }
 
-    public void setCollectivePath(CollectivePath<P> collectivePath) {
+    public Set<DeviationZone<P>> getDeviationZones() {
+        return deviationZones;
+    }
+
+    void setCollectivePath(CollectivePath<P> collectivePath) {
         this.collectivePath = collectivePath;
     }
 
+    void setDeviationZones(Set<DeviationZone<P>> deviationZones) {
+        this.deviationZones = deviationZones;
+    }
 }

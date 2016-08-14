@@ -8,5 +8,9 @@ public interface AbstractNumberHandler<D extends Comparable<D>> {
 
     boolean greaterOrEqual(D one, D two);
 
+    boolean lessThan(D one, D two);
+
     D getZero();
+
+    D getOne();
 }

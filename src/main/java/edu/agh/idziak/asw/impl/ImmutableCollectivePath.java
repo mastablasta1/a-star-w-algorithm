@@ -1,4 +1,4 @@
-package edu.agh.idziak.asw.logic;
+package edu.agh.idziak.asw.impl;
 
 import com.google.common.collect.ImmutableList;
 import edu.agh.idziak.asw.CollectivePath;
@@ -17,7 +17,7 @@ class ImmutableCollectivePath<P extends Comparable<P>> implements CollectivePath
         this.path = ImmutableList.copyOf(path);
     }
 
-    static <E, P extends Comparable<P>> ImmutableCollectivePath<P> from(List<? extends CollectiveState<P>> path) {
+    static <P extends Comparable<P>> ImmutableCollectivePath<P> from(List<? extends CollectiveState<P>> path) {
         return new ImmutableCollectivePath<>(path);
     }
 

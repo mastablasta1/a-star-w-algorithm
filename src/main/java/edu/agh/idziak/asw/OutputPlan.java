@@ -11,5 +11,5 @@ public interface OutputPlan<SS extends StateSpace<GS, P, D>, GS extends Collecti
 
     CollectivePath<P> getCollectivePath();
 
-    Set<DeviationZone<P>> getDeviationZones();
+    Set<DeviationZonePlan<P>> getDeviationZonePlans();
 }

@@ -7,6 +7,7 @@ import edu.agh.idziak.asw.AbstractNumberHandler;
  */
 public class DoubleHandler implements AbstractNumberHandler<Double> {
     private static final Double ZERO = 0.0;
+    private static final Double ONE = 1.0;
     private static final DoubleHandler instance = new DoubleHandler();
 
     private DoubleHandler() {
@@ -29,5 +30,15 @@ public class DoubleHandler implements AbstractNumberHandler<Double> {
     @Override
     public Double getZero() {
         return ZERO;
+    }
+
+    @Override
+    public Double getOne() {
+        return ONE;
+    }
+
+    @Override
+    public boolean lessThan(Double one, Double two) {
+        return one < two;
     }
 }

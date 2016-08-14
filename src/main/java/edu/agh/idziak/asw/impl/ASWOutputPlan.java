@@ -1,4 +1,4 @@
-package edu.agh.idziak.asw.logic;
+package edu.agh.idziak.asw.impl;
 
 import edu.agh.idziak.asw.*;
 
@@ -11,12 +11,12 @@ class ASWOutputPlan<E, SS extends StateSpace<GS, P, D>, GS extends CollectiveSta
 
     private InputPlan<SS, GS, P, D> inputPlan;
     private CollectivePath<P> collectivePath;
-    private Set<DeviationZone<P>> deviationZones;
+    private Set<DeviationZonePlan<P>> deviationZonePlans;
 
-    public ASWOutputPlan(InputPlan<SS, GS, P, D> inputPlan, CollectivePath<P> collectivePath, Set<DeviationZone<P>> deviationZones) {
+    public ASWOutputPlan(InputPlan<SS, GS, P, D> inputPlan, CollectivePath<P> collectivePath, Set<DeviationZonePlan<P>> deviationZonePlans) {
         this.inputPlan = inputPlan;
         this.collectivePath = collectivePath;
-        this.deviationZones = deviationZones;
+        this.deviationZonePlans = deviationZonePlans;
     }
 
     @Override
@@ -30,7 +30,7 @@ class ASWOutputPlan<E, SS extends StateSpace<GS, P, D>, GS extends CollectiveSta
     }
 
     @Override
-    public Set<DeviationZone<P>> getDeviationZones() {
-        return deviationZones;
+    public Set<DeviationZonePlan<P>> getDeviationZonePlans() {
+        return deviationZonePlans;
     }
 }
