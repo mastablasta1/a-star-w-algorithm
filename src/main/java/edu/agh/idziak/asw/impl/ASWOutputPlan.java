@@ -7,25 +7,25 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ASWOutputPlan<E, SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> implements OutputPlan<SS, GS, P, D> {
+class ASWOutputPlan<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements OutputPlan<SS, CS, ES, P, D> {
 
-    private InputPlan<SS, GS, P, D> inputPlan;
-    private CollectivePath<P> collectivePath;
+    private InputPlan<SS, CS, ES, P, D> inputPlan;
+    private CollectivePath<ES, P> collectivePath;
     private Set<DeviationZonePlan<P>> deviationZonePlans;
 
-    public ASWOutputPlan(InputPlan<SS, GS, P, D> inputPlan, CollectivePath<P> collectivePath, Set<DeviationZonePlan<P>> deviationZonePlans) {
+    public ASWOutputPlan(InputPlan<SS, CS, ES, P, D> inputPlan, CollectivePath<ES, P> collectivePath, Set<DeviationZonePlan<P>> deviationZonePlans) {
         this.inputPlan = inputPlan;
         this.collectivePath = collectivePath;
         this.deviationZonePlans = deviationZonePlans;
     }
 
     @Override
-    public InputPlan<SS, GS, P, D> getInputPlan() {
+    public InputPlan<SS, CS, ES, P, D> getInputPlan() {
         return inputPlan;
     }
 
     @Override
-    public CollectivePath<P> getCollectivePath() {
+    public CollectivePath<ES, P> getCollectivePath() {
         return collectivePath;
     }
 

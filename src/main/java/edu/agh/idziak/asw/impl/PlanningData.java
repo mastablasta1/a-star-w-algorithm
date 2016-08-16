@@ -7,20 +7,20 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class PlanningData<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
-    private final InputPlan<SS, GS, P, D> inputPlan;
-    private CollectivePath<P> collectivePath;
+public class PlanningData<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+    private final InputPlan<SS, CS, ES, P, D> inputPlan;
+    private CollectivePath<ES, P> collectivePath;
     private Set<DeviationZone<P>> deviationZones;
 
-    PlanningData(InputPlan<SS, GS, P, D> inputPlan) {
+    PlanningData(InputPlan<SS, CS, ES, P, D> inputPlan) {
         this.inputPlan = inputPlan;
     }
 
-    public InputPlan<SS, GS, P, D> getInputPlan() {
+    public InputPlan<SS, CS, ES, P, D> getInputPlan() {
         return inputPlan;
     }
 
-    public CollectivePath<P> getCollectivePath() {
+    public CollectivePath<ES, P> getCollectivePath() {
         return collectivePath;
     }
 
@@ -28,7 +28,7 @@ public class PlanningData<SS extends StateSpace<GS, P, D>, GS extends Collective
         return deviationZones;
     }
 
-    void setCollectivePath(CollectivePath<P> collectivePath) {
+    void setCollectivePath(CollectivePath<ES, P> collectivePath) {
         this.collectivePath = collectivePath;
     }
 

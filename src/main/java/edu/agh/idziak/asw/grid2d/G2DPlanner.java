@@ -6,7 +6,7 @@ import edu.agh.idziak.common.DoubleHandler;
 /**
  * Created by Tomasz on 09.07.2016.
  */
-public class G2DPlanner extends ASWPlanner<G2DStateSpace, G2DCollectiveState, Integer, Double> {
+public class G2DPlanner extends ASWPlanner<G2DStateSpace, G2DCollectiveState, G2DEntityState, Double, Integer> {
 
     private static final DoubleHandler DOUBLE_HANDLER = DoubleHandler.getInstance();
     public static final G2DDeviationZonesFinder DEVIATION_ZONES_FINDER = new G2DDeviationZonesFinder();

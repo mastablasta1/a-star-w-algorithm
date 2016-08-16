@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class G2DCollectiveState implements CollectiveState<Integer> {
+public class G2DCollectiveState implements CollectiveState<G2DEntityState, Integer> {
 
     private Map<?, G2DEntityState> entityStates;
 

@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> implements StatisticsSource {
+class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements StatisticsSource {
     private static final Logger LOG = LoggerFactory.getLogger(CollectiveAStar.class);
     private static final String STATISTICS_STATES_VISITED = "statesVisited";
     private static final String STATISTICS_MAX_SIZE_OF_OPENSET = "maxSizeOfOpenSet";
@@ -25,7 +25,7 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
         this.numHandler = abstractNumberHandler;
     }
 
-    ImmutableCollectivePath<P> calculatePath(PlanningData<SS, GS, P, D> planningData) {
+    ImmutableCollectivePath<ES, P> calculatePath(PlanningData<SS, CS, ES, P, D> planningData) {
         Accumulator acc = new Accumulator(planningData.getInputPlan());
 
         LOG.debug("Starting A*, start={}, end={}, stateSpace:\n{}", acc.start, acc.goal, acc.stateSpace);
@@ -35,13 +35,13 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
 
         boolean pathFound = findPath(acc);
 
-        ImmutableCollectivePath<P> path = finalizeCalculation(pathFound, acc);
+        ImmutableCollectivePath<ES, P> path = finalizeCalculation(pathFound, acc);
         planningData.setCollectivePath(path);
         return path;
     }
 
-    private ImmutableCollectivePath<P> finalizeCalculation(boolean pathFound, Accumulator acc) {
-        ImmutableCollectivePath<P> path = null;
+    private ImmutableCollectivePath<ES, P> finalizeCalculation(boolean pathFound, Accumulator acc) {
+        ImmutableCollectivePath<ES, P> path = null;
         if (pathFound) {
             path = reconstructPath(acc);
             LOG.info("Path of length {} found: {}", path.get().size(), path);
@@ -57,8 +57,8 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
         while (!acc.openSetWithFScore.isEmpty()) {
             assert updateStats(acc);
 
-            Pair<GS, D> currentPair = acc.openSetWithFScore.pollEntryWithLowestValue();
-            GS current = currentPair.getOne();
+            Pair<CS, D> currentPair = acc.openSetWithFScore.pollEntryWithLowestValue();
+            CS current = currentPair.getOne();
             LOG.debug("Entering state {}, FScore={}", currentPair.getOne(), currentPair.getTwo());
 
             if (current.equals(acc.goal)) {
@@ -77,10 +77,10 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
         return true;
     }
 
-    private void iterateNeighbors(Accumulator acc, GS current) {
-        Set<GS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
+    private void iterateNeighbors(Accumulator acc, CS current) {
+        Set<CS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
 
-        for (GS neighbor : neighborsOfCurrent) {
+        for (CS neighbor : neighborsOfCurrent) {
             if (acc.closedSet.contains(neighbor))
                 continue;
 
@@ -99,9 +99,9 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
         }
     }
 
-    private ImmutableCollectivePath<P> reconstructPath(Accumulator acc) {
-        List<GS> totalPath = new LinkedList<>();
-        GS current = acc.goal;
+    private ImmutableCollectivePath<ES, P> reconstructPath(Accumulator acc) {
+        List<CS> totalPath = new LinkedList<>();
+        CS current = acc.goal;
         totalPath.add(current);
 
         while ((current = acc.cameFrom.get(current)) != null) {
@@ -118,14 +118,14 @@ class CollectiveAStar<SS extends StateSpace<GS, P, D>, GS extends CollectiveStat
 
     private class Accumulator {
         private SS stateSpace;
-        private GS start;
-        private GS goal;
-        private ValueSortedMap<GS, D> openSetWithFScore;
-        private Set<GS> closedSet;
-        private Map<GS, D> gScore;
-        private Map<GS, GS> cameFrom;
+        private CS start;
+        private CS goal;
+        private ValueSortedMap<CS, D> openSetWithFScore;
+        private Set<CS> closedSet;
+        private Map<CS, D> gScore;
+        private Map<CS, CS> cameFrom;
 
-        Accumulator(InputPlan<SS, GS, P, D> inputPlan) {
+        Accumulator(InputPlan<SS, CS, ES, P, D> inputPlan) {
             stateSpace = inputPlan.getStateSpace();
             start = inputPlan.getInitialGlobalState();
             goal = inputPlan.getTargetGlobalState();

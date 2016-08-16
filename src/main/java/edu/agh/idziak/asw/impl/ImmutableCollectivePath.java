@@ -10,19 +10,19 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ImmutableCollectivePath<P extends Comparable<P>> implements CollectivePath<P> {
-    private List<CollectiveState<P>> path;
+class ImmutableCollectivePath<ES extends EntityState<P>, P extends Comparable<P>> implements CollectivePath<ES, P> {
+    private List<CollectiveState<ES, P>> path;
 
-    private ImmutableCollectivePath(List<? extends CollectiveState<P>> path) {
+    private ImmutableCollectivePath(List<? extends CollectiveState<ES, P>> path) {
         this.path = ImmutableList.copyOf(path);
     }
 
-    static <P extends Comparable<P>> ImmutableCollectivePath<P> from(List<? extends CollectiveState<P>> path) {
+    static <ES extends EntityState<P>,P extends Comparable<P>> ImmutableCollectivePath<ES, P> from(List<? extends CollectiveState<ES, P>> path) {
         return new ImmutableCollectivePath<>(path);
     }
 
     @Override
-    public List<CollectiveState<P>> get() {
+    public List<CollectiveState<ES, P>> get() {
         return path;
     }
 

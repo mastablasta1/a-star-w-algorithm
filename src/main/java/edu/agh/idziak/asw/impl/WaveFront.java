@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public class WaveFront<SS extends StateSpace<CS, P, D>, CS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
 
     private AbstractNumberHandler<D> abstractNumberHandler;
 
@@ -18,7 +18,7 @@ public class WaveFront<SS extends StateSpace<CS, P, D>, CS extends CollectiveSta
 
     }
 
-    public List<DeviationZonePlan<P>> makeDeviationZonePlans(PlanningData<SS, CS, P, D> planningData) {
+    public List<DeviationZonePlan<P>> makeDeviationZonePlans(PlanningData<SS, CS, ES, P, D> planningData) {
         Set<DeviationZone<P>> deviationZones = planningData.getDeviationZones();
 
         return deviationZones.stream()
@@ -26,7 +26,7 @@ public class WaveFront<SS extends StateSpace<CS, P, D>, CS extends CollectiveSta
                 .collect(toList());
     }
 
-    private DeviationZonePlan<P> buildPlanForDevZone(DeviationZone<P> deviationZone, PlanningData<SS, CS, P, D> planningData) {
+    private DeviationZonePlan<P> buildPlanForDevZone(DeviationZone<P> deviationZone, PlanningData<SS, CS, ES, P, D> planningData) {
 
         Set<?> involvedEntities = deviationZone.getInvolvedEntities();
 
@@ -41,7 +41,7 @@ public class WaveFront<SS extends StateSpace<CS, P, D>, CS extends CollectiveSta
         return new ImmutableDeviationZonePlan<>(plansForEntities, deviationZone, planningData.getInputPlan().getStateSpace());
     }
 
-    private Map<EntityState<P>, D> buildDistanceMapForState(EntityState<P> targetState, DeviationZone<P> deviationZone, PlanningData<SS, CS, P, D> planningData) {
+    private Map<EntityState<P>, D> buildDistanceMapForState(EntityState<P> targetState, DeviationZone<P> deviationZone, PlanningData<SS, CS, ES, P, D> planningData) {
         SS stateSpace = planningData.getInputPlan().getStateSpace();
         Set<EntityState<P>> devZoneStates = deviationZone.getStates();
 
@@ -53,8 +53,7 @@ public class WaveFront<SS extends StateSpace<CS, P, D>, CS extends CollectiveSta
 
         while (!queue.isEmpty()) {
             EntityState<P> current = queue.remove();
-            Set<EntityState<P>> neighbors = stateSpace
-                    .getNeighborStatesOf(current);
+            Set<ES> neighbors = stateSpace.getNeighborStatesOf(current);
             neighbors.retainAll(devZoneStates);
 
             for (EntityState<P> neighbor : neighbors) {

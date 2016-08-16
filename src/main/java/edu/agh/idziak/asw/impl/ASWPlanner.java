@@ -8,13 +8,13 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class ASWPlanner<SS extends StateSpace<CS, P, D>, CS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> implements Planner<SS, CS, P, D> {
+public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements Planner<SS, CS, ES, P, D> {
 
-    private final CollectiveAStar<SS, CS, P, D> collectiveAStar;
-    private final WaveFront<SS, CS,P,D> waveFront;
-    private final DeviationZonesFinder<SS, CS, P, D> deviationZonesFinder;
+    private final CollectiveAStar<SS, CS, ES, D, P> collectiveAStar;
+    private final WaveFront<SS, CS, ES, D, P> waveFront;
+    private final DeviationZonesFinder<SS, CS, ES, D, P> deviationZonesFinder;
 
-    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler, DeviationZonesFinder<SS, CS, P, D> deviationZonesFinder) {
+    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler, DeviationZonesFinder<SS, CS, ES, D, P> deviationZonesFinder) {
         this.deviationZonesFinder = Preconditions.checkNotNull(deviationZonesFinder);
         Preconditions.checkNotNull(abstractNumberHandler, "Number handler was null");
         collectiveAStar = new CollectiveAStar<>(abstractNumberHandler);
@@ -22,12 +22,12 @@ public class ASWPlanner<SS extends StateSpace<CS, P, D>, CS extends CollectiveSt
     }
 
     @Override
-    public OutputPlan<SS, CS, P, D> calculatePlan(InputPlan<SS, CS, P, D> inputPlan) {
+    public OutputPlan<SS, CS, ES, P, D> calculatePlan(InputPlan<SS, CS, ES, P, D> inputPlan) {
         validate(inputPlan);
 
-        PlanningData<SS, CS, P, D> planningData = new PlanningData<>(inputPlan);
+        PlanningData<SS, CS, ES, P, D> planningData = new PlanningData<>(inputPlan);
 
-        ImmutableCollectivePath<P> path = collectiveAStar.calculatePath(planningData);
+        ImmutableCollectivePath<ES, P> path = collectiveAStar.calculatePath(planningData);
 
         planningData.setCollectivePath(path);
 

@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public interface DeviationZonesFinder<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+public interface DeviationZonesFinder<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
 
-    Set<DeviationZone<P>> findDeviationZones(PlanningData<SS, GS, P, D> planningData);
+    Set<DeviationZone<P>> findDeviationZones(PlanningData<SS, CS, ES, P, D> planningData);
 }

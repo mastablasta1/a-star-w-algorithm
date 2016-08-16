@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface StateSpace<CS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+public interface StateSpace<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
 
     D getHeuristicDistance(EntityState<P> start, EntityState<P> end);
 
@@ -13,6 +13,6 @@ public interface StateSpace<CS extends CollectiveState<P>, P extends Comparable<
 
     Set<CS> getNeighborStatesOf(CS globalState);
 
-    Set<? extends EntityState<P>> getNeighborStatesOf(EntityState<P> globalState);
+    Set<ES> getNeighborStatesOf(EntityState<P> globalState);
 
 }

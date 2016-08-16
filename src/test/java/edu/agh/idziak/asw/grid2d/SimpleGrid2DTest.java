@@ -36,12 +36,11 @@ public class SimpleGrid2DTest {
         G2DInputPlan inputPlan = new G2DInputPlan(AlgorithmTestHelper.mapToEntitiesSet(input), stateSpace, initialState, targetState);
 
         // when
-        OutputPlan<G2DStateSpace, G2DCollectiveState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
+        OutputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> outputPlan = planner.calculatePlan(inputPlan);
 
         // then
         double cost = G2DPathCostCalculator.calculateCost(outputPlan.getCollectivePath(), stateSpace);
         System.out.println("Path cost: " + cost);
-
 
 
         assertNotNull(outputPlan.getCollectivePath());

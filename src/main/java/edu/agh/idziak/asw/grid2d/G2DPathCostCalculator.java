@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class G2DPathCostCalculator {
 
-    public static double calculateCost(CollectivePath<Integer> path, G2DStateSpace stateSpace) {
+    public static double calculateCost(CollectivePath<G2DEntityState, Integer> path, G2DStateSpace stateSpace) {
         List<G2DCollectiveState> states = path.get(G2DCollectiveState.class);
 
         WalkingPairIterator<G2DCollectiveState> it = new WalkingPairIterator<>(states);

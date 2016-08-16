@@ -5,10 +5,10 @@ import java.util.Set;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface InputPlan<SS extends StateSpace<GS, P, D>, GS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> {
-    GS getInitialGlobalState();
+public interface InputPlan<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+    CS getInitialGlobalState();
 
-    GS getTargetGlobalState();
+    CS getTargetGlobalState();
 
     SS getStateSpace();
 

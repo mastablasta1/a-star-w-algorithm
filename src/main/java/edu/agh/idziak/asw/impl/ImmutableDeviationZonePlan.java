@@ -10,14 +10,14 @@ import java.util.Set;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-class ImmutableDeviationZonePlan<CS extends CollectiveState<P>, P extends Comparable<P>, D extends Comparable<D>> implements DeviationZonePlan<P> {
+class ImmutableDeviationZonePlan<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements DeviationZonePlan<P> {
 
     private Map<Object, Map<EntityState<P>, D>> plansForEntities;
     private DeviationZone<P> deviationZone;
-    private StateSpace<CS, P, D> stateSpace;
+    private StateSpace<CS, ES, D, P> stateSpace;
 
 
-    ImmutableDeviationZonePlan(Map<Object, Map<EntityState<P>, D>> plansForEntities, DeviationZone<P> deviationZone, StateSpace<CS, P, D> stateSpace) {
+    ImmutableDeviationZonePlan(Map<Object, Map<EntityState<P>, D>> plansForEntities, DeviationZone<P> deviationZone, StateSpace<CS, ES, D, P> stateSpace) {
         this.plansForEntities = plansForEntities;
         this.deviationZone = deviationZone;
         this.stateSpace = stateSpace;
@@ -37,8 +37,8 @@ class ImmutableDeviationZonePlan<CS extends CollectiveState<P>, P extends Compar
         if (deviationZone.getStates().contains(entityState)) {
             throw new NoSuchElementException("Deviation zone does not contain given state.");
         }
-        Set<EntityState<P>> neighbors = stateSpace.getNeighborStatesOf(entityState);
-        Optional<EntityState<P>> min = neighbors.stream().min((o1, o2) -> entityPlan.get(o1).compareTo(entityPlan.get(o2)));
+        Set<ES> neighbors = stateSpace.getNeighborStatesOf(entityState);
+        Optional<ES> min = neighbors.stream().min((o1, o2) -> entityPlan.get(o1).compareTo(entityPlan.get(o2)));
         return min.orElse(null);
     }
 

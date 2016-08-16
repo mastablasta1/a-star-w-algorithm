@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class G2DStateSpace implements StateSpace<G2DCollectiveState, Integer, Double> {
+public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntityState, Double, Integer> {
     private static final Logger LOG = LoggerFactory.getLogger(G2DStateSpace.class);
 
     private final int[][] space;
