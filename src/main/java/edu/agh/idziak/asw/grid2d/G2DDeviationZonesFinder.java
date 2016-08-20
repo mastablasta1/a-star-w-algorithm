@@ -2,6 +2,7 @@ package edu.agh.idziak.asw.grid2d;
 
 import edu.agh.idziak.asw.DeviationZone;
 import edu.agh.idziak.asw.DeviationZonesFinder;
+import edu.agh.idziak.asw.InputPlan;
 import edu.agh.idziak.asw.impl.PlanningData;
 
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.Set;
 public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpace, G2DCollectiveState, G2DEntityState, Double, Integer> {
     @Override
     public Set<DeviationZone<Integer>> findDeviationZones(PlanningData<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> planningData) {
-        return null;
+        InputPlan<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> inputPlan = planningData.getInputPlan();
+        
     }
 }

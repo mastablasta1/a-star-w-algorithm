@@ -33,6 +33,8 @@ public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends Collecti
 
         Set<DeviationZone<P>> deviationZones = deviationZonesFinder.findDeviationZones(planningData);
 
+        Preconditions.checkNotNull(deviationZones,"DeviationZonesFinder must return a set (can be empty).");
+
         waveFront.makeDeviationZonePlans(planningData);
 
         return new ASWOutputPlan<>(inputPlan, path, null);
