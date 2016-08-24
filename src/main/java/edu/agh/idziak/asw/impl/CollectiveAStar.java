@@ -25,23 +25,23 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
         this.numHandler = abstractNumberHandler;
     }
 
-    ImmutableCollectivePath<ES, P> calculatePath(PlanningData<SS, CS, ES, P, D> planningData) {
+    ImmutableCollectivePath<CS, ES, P> calculatePath(PlanningData<SS, CS, ES, P, D> planningData) {
         Accumulator acc = new Accumulator(planningData.getInputPlan());
 
         LOG.debug("Starting A*, start={}, end={}, stateSpace:\n{}", acc.start, acc.goal, acc.stateSpace);
 
         acc.gScore.put(acc.start, numHandler.getZero());
-        acc.openSetWithFScore.put(acc.start, acc.stateSpace.getHeuristicDistance(acc.start, acc.goal));
+        acc.openSetWithFScore.put(acc.start, acc.stateSpace.getHeuristicCost(acc.start, acc.goal));
 
         boolean pathFound = findPath(acc);
 
-        ImmutableCollectivePath<ES, P> path = finalizeCalculation(pathFound, acc);
+        ImmutableCollectivePath<CS, ES, P> path = finalizeCalculation(pathFound, acc);
         planningData.setCollectivePath(path);
         return path;
     }
 
-    private ImmutableCollectivePath<ES, P> finalizeCalculation(boolean pathFound, Accumulator acc) {
-        ImmutableCollectivePath<ES, P> path = null;
+    private ImmutableCollectivePath<CS, ES, P> finalizeCalculation(boolean pathFound, Accumulator acc) {
+        ImmutableCollectivePath<CS, ES, P> path = null;
         if (pathFound) {
             path = reconstructPath(acc);
             LOG.info("Path of length {} found: {}", path.get().size(), path);
@@ -84,7 +84,7 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
             if (acc.closedSet.contains(neighbor))
                 continue;
 
-            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicDistance(current, neighbor));
+            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicCost(current, neighbor));
 
             if (acc.openSetWithFScore.containsKey(neighbor)
                     && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
@@ -93,13 +93,13 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
 
             acc.cameFrom.put(neighbor, current);
             acc.gScore.put(neighbor, tentativeGScore);
-            D heuristicDistNeighborToGoal = acc.stateSpace.getHeuristicDistance(neighbor, acc.goal);
+            D heuristicDistNeighborToGoal = acc.stateSpace.getHeuristicCost(neighbor, acc.goal);
             D fScore = numHandler.add(tentativeGScore, heuristicDistNeighborToGoal);
             acc.openSetWithFScore.put(neighbor, fScore);
         }
     }
 
-    private ImmutableCollectivePath<ES, P> reconstructPath(Accumulator acc) {
+    private ImmutableCollectivePath<CS, ES, P> reconstructPath(Accumulator acc) {
         List<CS> totalPath = new LinkedList<>();
         CS current = acc.goal;
         totalPath.add(current);

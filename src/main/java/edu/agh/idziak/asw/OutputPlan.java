@@ -9,7 +9,7 @@ public interface OutputPlan<SS extends StateSpace<CS, ES, D, P>, CS extends Coll
 
     InputPlan<SS, CS, ES, P, D> getInputPlan();
 
-    CollectivePath<ES, P> getCollectivePath();
+    CollectivePath<CS, ES, P> getCollectivePath();
 
-    Set<DeviationZonePlan<P>> getDeviationZonePlans();
+    Set<DeviationZonePlan<CS, ES, P>> getDeviationZonePlans();
 }

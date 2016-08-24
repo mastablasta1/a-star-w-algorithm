@@ -10,10 +10,10 @@ import java.util.Set;
 class ASWOutputPlan<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements OutputPlan<SS, CS, ES, P, D> {
 
     private InputPlan<SS, CS, ES, P, D> inputPlan;
-    private CollectivePath<ES, P> collectivePath;
-    private Set<DeviationZonePlan<P>> deviationZonePlans;
+    private CollectivePath<CS, ES, P> collectivePath;
+    private Set<DeviationZonePlan<CS, ES, P>> deviationZonePlans;
 
-    public ASWOutputPlan(InputPlan<SS, CS, ES, P, D> inputPlan, CollectivePath<ES, P> collectivePath, Set<DeviationZonePlan<P>> deviationZonePlans) {
+    public ASWOutputPlan(InputPlan<SS, CS, ES, P, D> inputPlan, CollectivePath<CS, ES, P> collectivePath, Set<DeviationZonePlan<CS, ES, P>> deviationZonePlans) {
         this.inputPlan = inputPlan;
         this.collectivePath = collectivePath;
         this.deviationZonePlans = deviationZonePlans;
@@ -25,12 +25,12 @@ class ASWOutputPlan<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveSt
     }
 
     @Override
-    public CollectivePath<ES, P> getCollectivePath() {
+    public CollectivePath<CS, ES, P> getCollectivePath() {
         return collectivePath;
     }
 
     @Override
-    public Set<DeviationZonePlan<P>> getDeviationZonePlans() {
+    public Set<DeviationZonePlan<CS, ES, P>> getDeviationZonePlans() {
         return deviationZonePlans;
     }
 }

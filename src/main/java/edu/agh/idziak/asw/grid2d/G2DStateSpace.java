@@ -68,7 +68,7 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
     }
 
     @Override
-    public Double getHeuristicDistance(EntityState<Integer> start, EntityState<Integer> end) {
+    public Double getHeuristicCost(G2DEntityState start, G2DEntityState end) {
         int startRow = start.get().get(0);
         int startCol = start.get().get(1);
         int endRow = end.get().get(0);
@@ -76,11 +76,13 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
 
 //        return Math.sqrt(Math.pow(startRow - endRow, 2)
 //                + Math.pow(startCol - endCol, 2));
-        return (double) Math.abs(startRow - endRow) + Math.abs(startCol - endCol);
+
+        double cost = (double) Math.abs(startRow - endRow) + Math.abs(startCol - endCol);
+        return Math.max(cost, 1); // cost of staying in place is also 1
     }
 
     @Override
-    public Double getHeuristicDistance(G2DCollectiveState start, G2DCollectiveState end) {
+    public Double getHeuristicCost(G2DCollectiveState start, G2DCollectiveState end) {
         Map<?, G2DEntityState> startStates = start.getEntityStates();
         Map<?, G2DEntityState> endStates = end.getEntityStates();
 
@@ -90,7 +92,7 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
 
         while (it.hasNext()) {
             it.next();
-            sum += getHeuristicDistance(it.getFirstValue(), it.getSecondValue());
+            sum += getHeuristicCost(it.getFirstValue(), it.getSecondValue());
         }
 
         return sum;

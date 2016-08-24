@@ -2,7 +2,6 @@ package edu.agh.idziak.asw.grid2d;
 
 import com.google.common.collect.ImmutableMap;
 import edu.agh.idziak.asw.CollectiveState;
-import edu.agh.idziak.asw.EntityState;
 
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class G2DCollectiveState implements CollectiveState<G2DEntityState, Integ
     }
 
     @Override
-    public EntityState<Integer> getStateFor(Object entity) {
+    public G2DEntityState getStateForEntity(Object entity) {
         return entityStates.get(entity);
     }
 

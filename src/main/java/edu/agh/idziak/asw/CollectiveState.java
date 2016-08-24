@@ -8,5 +8,5 @@ import java.util.Map;
 public interface CollectiveState<ES extends EntityState<P>, P extends Comparable<P>> {
     Map<?, ES> getEntityStates();
 
-    EntityState<P> getStateFor(Object entity);
+    ES getStateForEntity(Object entity);
 }

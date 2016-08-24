@@ -27,17 +27,17 @@ public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends Collecti
 
         PlanningData<SS, CS, ES, P, D> planningData = new PlanningData<>(inputPlan);
 
-        ImmutableCollectivePath<ES, P> path = collectiveAStar.calculatePath(planningData);
-
+        ImmutableCollectivePath<CS, ES, P> path = collectiveAStar.calculatePath(planningData);
         planningData.setCollectivePath(path);
 
-        Set<DeviationZone<P>> deviationZones = deviationZonesFinder.findDeviationZones(planningData);
+        Set<DeviationZone<CS, ES, P>> deviationZones = deviationZonesFinder.findDeviationZones(planningData);
 
-        Preconditions.checkNotNull(deviationZones,"DeviationZonesFinder must return a set (can be empty).");
+        Preconditions.checkNotNull(deviationZones, "DeviationZonesFinder must return a set (can be empty).");
+        planningData.setDeviationZones(deviationZones);
 
-        waveFront.makeDeviationZonePlans(planningData);
+        Set<DeviationZonePlan<CS, ES, P>> deviationZonePlans = waveFront.makeDeviationZonePlans(planningData);
 
-        return new ASWOutputPlan<>(inputPlan, path, null);
+        return new ASWOutputPlan<>(inputPlan, path, deviationZonePlans);
     }
 
     private static void validate(InputPlan inputPlan) {

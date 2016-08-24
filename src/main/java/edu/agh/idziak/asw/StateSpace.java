@@ -7,9 +7,9 @@ import java.util.Set;
  */
 public interface StateSpace<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
 
-    D getHeuristicDistance(EntityState<P> start, EntityState<P> end);
+    D getHeuristicCost(ES start, ES end);
 
-    D getHeuristicDistance(CS start, CS end);
+    D getHeuristicCost(CS start, CS end);
 
     Set<CS> getNeighborStatesOf(CS globalState);
 

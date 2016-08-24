@@ -4,8 +4,6 @@ import edu.agh.idziak.asw.*;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Created by Tomasz on 13.08.2016.
  */
@@ -15,55 +13,44 @@ public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends Collectiv
 
     public WaveFront(AbstractNumberHandler<D> abstractNumberHandler) {
         this.abstractNumberHandler = abstractNumberHandler;
-
     }
 
-    public List<DeviationZonePlan<P>> makeDeviationZonePlans(PlanningData<SS, CS, ES, P, D> planningData) {
-        Set<DeviationZone<P>> deviationZones = planningData.getDeviationZones();
+    public Set<DeviationZonePlan<CS, ES, P>> makeDeviationZonePlans(PlanningData<SS, CS, ES, P, D> planningData) {
+        Set<DeviationZone<CS, ES, P>> deviationZones = planningData.getDeviationZones();
+        SS stateSpace = planningData.getInputPlan().getStateSpace();
 
-        return deviationZones.stream()
-                .map((deviationZone) -> buildPlanForDevZone(deviationZone, planningData))
-                .collect(toList());
-    }
+        Set<DeviationZonePlan<CS, ES, P>> result = new HashSet<>();
 
-    private DeviationZonePlan<P> buildPlanForDevZone(DeviationZone<P> deviationZone, PlanningData<SS, CS, ES, P, D> planningData) {
-
-        Set<?> involvedEntities = deviationZone.getInvolvedEntities();
-
-        Map<Object, Map<EntityState<P>, D>> plansForEntities = new HashMap<>();
-
-        for (Object entity : involvedEntities) {
-            EntityState<P> targetState = deviationZone.targetState(entity);
-            Map<EntityState<P>, D> entityPlan = buildDistanceMapForState(targetState, deviationZone, planningData);
-            plansForEntities.put(entity, entityPlan);
+        for (DeviationZone<CS, ES, P> deviationZone : deviationZones) {
+            result.add(buildPlanForDevZone(deviationZone, stateSpace));
         }
 
-        return new ImmutableDeviationZonePlan<>(plansForEntities, deviationZone, planningData.getInputPlan().getStateSpace());
+        return result;
     }
 
-    private Map<EntityState<P>, D> buildDistanceMapForState(EntityState<P> targetState, DeviationZone<P> deviationZone, PlanningData<SS, CS, ES, P, D> planningData) {
-        SS stateSpace = planningData.getInputPlan().getStateSpace();
-        Set<EntityState<P>> devZoneStates = deviationZone.getStates();
+    private DeviationZonePlan<CS, ES, P> buildPlanForDevZone(DeviationZone<CS, ES, P> deviationZone, SS stateSpace) {
+        CS targetState = deviationZone.getTargetState();
 
-        Map<EntityState<P>, D> distance = new HashMap<>();
-        Queue<EntityState<P>> queue = new LinkedList<>();
+        Queue<CS> queue = new LinkedList<>();
+        Map<CS, D> distance = new HashMap<>();
 
-        distance.put(targetState, abstractNumberHandler.getZero());
         queue.add(targetState);
 
         while (!queue.isEmpty()) {
-            EntityState<P> current = queue.remove();
-            Set<ES> neighbors = stateSpace.getNeighborStatesOf(current);
-            neighbors.retainAll(devZoneStates);
+            CS current = queue.remove();
 
-            for (EntityState<P> neighbor : neighbors) {
+            Set<CS> neighbors = stateSpace.getNeighborStatesOf(current);
+
+            for (CS neighbor : neighbors) {
                 if (!distance.containsKey(neighbor)) {
-                    D distToNeighbor = abstractNumberHandler.add(distance.get(current), abstractNumberHandler.getOne());
-                    distance.put(neighbor, distToNeighbor);
+                    D distNeighborToCurrent = stateSpace.getHeuristicCost(neighbor, current);
+                    D distForCurrent = distance.get(current);
+                    distance.put(neighbor, abstractNumberHandler.add(distForCurrent, distNeighborToCurrent));
+                    queue.add(neighbor);
                 }
             }
         }
-
-        return distance;
+        return new ImmutableDeviationZonePlan<>(deviationZone, stateSpace, distance, abstractNumberHandler);
     }
+
 }

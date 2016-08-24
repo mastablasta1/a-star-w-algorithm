@@ -18,7 +18,7 @@ public class SimpleGrid2DTest {
 
 
     private final G2DPlanner planner = new G2DPlanner();
-    private final G2DPathCostCalculator pathCostCalculator = new G2DPathCostCalculator();
+
 
     @Test
     public void test1() throws Exception {
@@ -48,18 +48,18 @@ public class SimpleGrid2DTest {
 
     private static int[][] createStateSpace() {
         return new int[][]{
-                {1, 1, 1},
-                {1, 1, 1},
-                {1, 1, 1}
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1},
+                {1, 1, 1, 1, 1}
         };
     }
 
     private static List<Triple<SimpleEntity, G2DEntityState, G2DEntityState>> createPositionsAndTargets() {
         return ImmutableList.of(
-                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(0, 2), G2DEntityState.of(2, 0)),
-                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(2, 0), G2DEntityState.of(0, 2)),
-                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(2, 2), G2DEntityState.of(0, 0)),
-                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(0, 0), G2DEntityState.of(2, 2))
+                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(0, 0), G2DEntityState.of(4, 4)),
+                Triple.of(SimpleEntityFactory.create(), G2DEntityState.of(4, 4), G2DEntityState.of(0, 0))
         );
     }
 

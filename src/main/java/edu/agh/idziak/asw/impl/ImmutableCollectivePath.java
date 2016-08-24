@@ -10,31 +10,26 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class ImmutableCollectivePath<ES extends EntityState<P>, P extends Comparable<P>> implements CollectivePath<ES, P> {
-    private List<CollectiveState<ES, P>> path;
+class ImmutableCollectivePath<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>> implements CollectivePath<CS, ES, P> {
+    private List<CS> path;
 
-    private ImmutableCollectivePath(List<? extends CollectiveState<ES, P>> path) {
+    private ImmutableCollectivePath(List<CS> path) {
         this.path = ImmutableList.copyOf(path);
     }
 
-    static <ES extends EntityState<P>,P extends Comparable<P>> ImmutableCollectivePath<ES, P> from(List<? extends CollectiveState<ES, P>> path) {
+    static <CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>> ImmutableCollectivePath<CS, ES, P> from(List<CS> path) {
         return new ImmutableCollectivePath<>(path);
     }
 
     @Override
-    public List<CollectiveState<ES, P>> get() {
+    public List<CS> get() {
         return path;
-    }
-
-    @Override
-    public List<EntityState<P>> getPathFor(Object entity) {
-        return null; // FIXME
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("{\n");
-        path.forEach(uEntityState -> sb.append(uEntityState).append("->\n"));
+        path.forEach(uEntityState -> sb.append(uEntityState).append("\n"));
         sb.setLength(sb.length() - 3);
         return sb.append("}").toString();
     }

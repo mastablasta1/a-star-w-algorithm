@@ -3,8 +3,8 @@ package edu.agh.idziak.asw;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public interface DeviationZonePlan<P extends Comparable<P>> {
-    DeviationZone<P> getDeviationZone();
+public interface DeviationZonePlan<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>> {
+    DeviationZone<CS, ES, P> getDeviationZone();
 
-    EntityState<P> getBestMoveFrom(EntityState<P> entityState, Object entity);
+    CS getNextMove(CS collectiveState);
 }
