@@ -25,6 +25,14 @@ public class G2DEntityState implements EntityState<Integer> {
         return state;
     }
 
+    public int getRow() {
+        return state.get(0);
+    }
+
+    public int getCol() {
+        return state.get(1);
+    }
+
     @Override
     public boolean equals(Object o) {
         return this == o

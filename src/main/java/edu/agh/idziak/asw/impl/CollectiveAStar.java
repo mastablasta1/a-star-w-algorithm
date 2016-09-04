@@ -13,7 +13,8 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements StatisticsSource {
+class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends
+        EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements StatisticsSource {
     private static final Logger LOG = LoggerFactory.getLogger(CollectiveAStar.class);
     private static final String STATISTICS_STATES_VISITED = "statesVisited";
     private static final String STATISTICS_MAX_SIZE_OF_OPENSET = "maxSizeOfOpenSet";
@@ -84,7 +85,8 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
             if (acc.closedSet.contains(neighbor))
                 continue;
 
-            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicCost(current, neighbor));
+            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.stateSpace.getHeuristicCost(current,
+                    neighbor));
 
             if (acc.openSetWithFScore.containsKey(neighbor)
                     && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
@@ -127,8 +129,8 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
 
         Accumulator(InputPlan<SS, CS, ES, P, D> inputPlan) {
             stateSpace = inputPlan.getStateSpace();
-            start = inputPlan.getInitialGlobalState();
-            goal = inputPlan.getTargetGlobalState();
+            start = inputPlan.getInitialCollectiveState();
+            goal = inputPlan.getTargetCollectiveState();
 
             openSetWithFScore = new ValueSortedMap<>();
             closedSet = new HashSet<>();

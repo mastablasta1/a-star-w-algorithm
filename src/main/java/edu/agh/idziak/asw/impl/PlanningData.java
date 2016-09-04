@@ -7,7 +7,8 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class PlanningData<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, P extends Comparable<P>, D extends Comparable<D>> {
+public class PlanningData<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends
+        EntityState<P>, P extends Comparable<P>, D extends Comparable<D>> {
     private final InputPlan<SS, CS, ES, P, D> inputPlan;
     private CollectivePath<CS, ES, P> collectivePath;
     private Set<DeviationZone<CS, ES, P>> deviationZones;

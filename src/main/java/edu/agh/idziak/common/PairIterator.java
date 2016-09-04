@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class PairIterator<A, B>  {
+public class PairIterator<A, B> {
 
     private final Iterator<A> one;
     private final Iterator<B> two;

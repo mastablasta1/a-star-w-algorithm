@@ -17,7 +17,8 @@ import java.util.Set;
 /**
  * Created by Tomasz on 14.08.2016.
  */
-public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpace, G2DCollectiveState, G2DEntityState, Double, Integer> {
+public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpace, G2DCollectiveState,
+        G2DEntityState, Double, Integer> {
 
     private int warningProximity;
 
@@ -26,7 +27,8 @@ public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpa
     }
 
     @Override
-    public Set<DeviationZone<G2DCollectiveState, G2DEntityState, Integer>> findDeviationZones(PlanningData<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> planningData) {
+    public Set<DeviationZone<G2DCollectiveState, G2DEntityState, Integer>> findDeviationZones
+            (PlanningData<G2DStateSpace, G2DCollectiveState, G2DEntityState, Integer, Double> planningData) {
         Set<DeviationZone<G2DCollectiveState, G2DEntityState, Integer>> resultSet = new HashSet<>();
         G2DStateSpace stateSpace = planningData.getInputPlan().getStateSpace();
         CollectivePath<G2DCollectiveState, G2DEntityState, Integer> collectivePath = planningData.getCollectivePath();
@@ -48,16 +50,20 @@ public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpa
                 Double dist = stateSpace.getHeuristicCost(firstState, secondState);
 
                 if (dist <= warningProximity) {
-                    Set<G2DEntityState> deviationZoneStates = buildDeviationZoneStatesSet(stateSpace, firstState, secondState);
+                    Set<G2DEntityState> deviationZoneStates = buildDeviationZoneStatesSet(stateSpace, firstState,
+                            secondState);
 
-                    G2DEntityState firstTarget = findTargetStateForEntity(i, firstEntity, collectiveStates, deviationZoneStates);
-                    G2DEntityState secondTarget = findTargetStateForEntity(i, secondEntity, collectiveStates, deviationZoneStates);
+                    G2DEntityState firstTarget = findTargetStateForEntity(i, firstEntity, collectiveStates,
+                            deviationZoneStates);
+                    G2DEntityState secondTarget = findTargetStateForEntity(i, secondEntity, collectiveStates,
+                            deviationZoneStates);
 
                     ImmutableMap<?, G2DEntityState> targetState = ImmutableMap.of(
                             firstEntity, firstTarget,
                             secondEntity, secondTarget);
 
-                    G2DDeviationZone devZone = new G2DDeviationZone(deviationZoneStates, G2DCollectiveState.fromEntityStates(targetState));
+                    G2DDeviationZone devZone = new G2DDeviationZone(deviationZoneStates, G2DCollectiveState
+                            .fromEntityStates(targetState));
                     resultSet.add(devZone);
                 }
 
@@ -66,14 +72,16 @@ public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DStateSpa
         return resultSet;
     }
 
-    private static Set<G2DEntityState> buildDeviationZoneStatesSet(G2DStateSpace stateSpace, G2DEntityState firstState, G2DEntityState secondState) {
+    private static Set<G2DEntityState> buildDeviationZoneStatesSet(G2DStateSpace stateSpace, G2DEntityState
+            firstState, G2DEntityState secondState) {
         return ImmutableSet.<G2DEntityState>builder()
                 .addAll(stateSpace.getNeighborStatesOf(firstState))
                 .addAll(stateSpace.getNeighborStatesOf(secondState))
                 .build();
     }
 
-    private static G2DEntityState findTargetStateForEntity(int i, Object entity, List<G2DCollectiveState> collectiveStates, Set<G2DEntityState> deviationZoneStates) {
+    private static G2DEntityState findTargetStateForEntity(int i, Object entity, List<G2DCollectiveState>
+            collectiveStates, Set<G2DEntityState> deviationZoneStates) {
         G2DEntityState furthestStateOnPathWithinDevZone = collectiveStates.get(i).getStateForEntity(entity);
 
         G2DEntityState currentState;

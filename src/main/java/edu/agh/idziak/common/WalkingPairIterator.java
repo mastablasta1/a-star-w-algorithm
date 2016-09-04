@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public class WalkingPairIterator<T>  {
+public class WalkingPairIterator<T> {
 
     private final Iterator<T> iterator;
     private T first;

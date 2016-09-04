@@ -8,13 +8,15 @@ import java.util.Set;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements Planner<SS, CS, ES, P, D> {
+public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends
+        EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements Planner<SS, CS, ES, P, D> {
 
     private final CollectiveAStar<SS, CS, ES, D, P> collectiveAStar;
     private final WaveFront<SS, CS, ES, D, P> waveFront;
     private final DeviationZonesFinder<SS, CS, ES, D, P> deviationZonesFinder;
 
-    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler, DeviationZonesFinder<SS, CS, ES, D, P> deviationZonesFinder) {
+    public ASWPlanner(AbstractNumberHandler<D> abstractNumberHandler, DeviationZonesFinder<SS, CS, ES, D, P>
+            deviationZonesFinder) {
         this.deviationZonesFinder = Preconditions.checkNotNull(deviationZonesFinder);
         Preconditions.checkNotNull(abstractNumberHandler, "Number handler was null");
         collectiveAStar = new CollectiveAStar<>(abstractNumberHandler);
@@ -35,12 +37,14 @@ public class ASWPlanner<SS extends StateSpace<CS, ES, D, P>, CS extends Collecti
         Preconditions.checkNotNull(deviationZones, "DeviationZonesFinder must return a set (can be empty).");
         planningData.setDeviationZones(deviationZones);
 
-        Set<DeviationZonePlan<CS, ES, P>> deviationZonePlans = waveFront.makeDeviationZonePlans(planningData);
+        Set<DeviationZonePlan<CS, ES, P>> deviationZonePlans = waveFront.makeDeviationZonePlans(
+                deviationZones, inputPlan.getStateSpace());
 
         return new ASWOutputPlan<>(inputPlan, path, deviationZonePlans);
     }
 
     private static void validate(InputPlan inputPlan) {
-        Preconditions.checkArgument(inputPlan.getInitialGlobalState().getEntityStates().size() == inputPlan.getTargetGlobalState().getEntityStates().size(), "Initial and target state sizes mismatch");
+        Preconditions.checkArgument(inputPlan.getInitialCollectiveState().getEntityStates().size() == inputPlan
+                .getTargetCollectiveState().getEntityStates().size(), "Initial and target state sizes mismatch");
     }
 }

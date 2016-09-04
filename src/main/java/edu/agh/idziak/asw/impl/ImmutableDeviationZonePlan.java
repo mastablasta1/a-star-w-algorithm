@@ -9,14 +9,16 @@ import java.util.Set;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-class ImmutableDeviationZonePlan<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> implements DeviationZonePlan<CS, ES, P> {
+class ImmutableDeviationZonePlan<CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends
+        Comparable<D>, P extends Comparable<P>> implements DeviationZonePlan<CS, ES, P> {
 
     private DeviationZone<CS, ES, P> deviationZone;
     private StateSpace<CS, ES, D, P> stateSpace;
     private Map<CS, D> distances;
     private AbstractNumberHandler<D> abstractNumberHandler;
 
-    ImmutableDeviationZonePlan(DeviationZone<CS, ES, P> deviationZone, StateSpace<CS, ES, D, P> stateSpace, Map<CS, D> distances, AbstractNumberHandler<D> abstractNumberHandler) {
+    ImmutableDeviationZonePlan(DeviationZone<CS, ES, P> deviationZone, StateSpace<CS, ES, D, P> stateSpace, Map<CS,
+            D> distances, AbstractNumberHandler<D> abstractNumberHandler) {
         this.deviationZone = deviationZone;
         this.stateSpace = stateSpace;
         this.distances = distances;

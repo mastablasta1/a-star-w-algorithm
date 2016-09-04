@@ -108,7 +108,8 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
 
         buildChoiceArray(choiceArray, entries);
 
-        List<List<G2DEntityState>> combinations = CombinationsGenerator.generateCombinations(choiceArray, this::areAllStatesUnique);
+        List<List<G2DEntityState>> combinations = CombinationsGenerator.generateCombinations(choiceArray,
+                this::areAllStatesUnique);
 
         Set<G2DCollectiveState> neighborStates = new HashSet<>();
 
@@ -136,7 +137,7 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
         }
     }
 
-    int[][] getTable() {
+    public int[][] getData() {
         return space;
     }
 
@@ -147,5 +148,13 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState, G2DEntitySt
             sb.append(Arrays.toString(row)).append("\n");
         }
         return sb.toString();
+    }
+
+    public int getRows() {
+        return space.length;
+    }
+
+    public int getCols() {
+        return space[0].length;
     }
 }

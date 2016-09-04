@@ -1,5 +1,6 @@
 package edu.agh.idziak.asw.grid2d;
 
+import com.google.common.base.MoreObjects;
 import edu.agh.idziak.asw.InputPlan;
 
 import java.util.Set;
@@ -25,12 +26,12 @@ public class G2DInputPlan implements InputPlan<G2DStateSpace, G2DCollectiveState
     }
 
     @Override
-    public G2DCollectiveState getInitialGlobalState() {
+    public G2DCollectiveState getInitialCollectiveState() {
         return initialState;
     }
 
     @Override
-    public G2DCollectiveState getTargetGlobalState() {
+    public G2DCollectiveState getTargetCollectiveState() {
         return targetState;
     }
 
@@ -44,4 +45,13 @@ public class G2DInputPlan implements InputPlan<G2DStateSpace, G2DCollectiveState
         return entities;
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("entities", entities)
+                .add("initialState", initialState)
+                .add("targetState", targetState)
+                .add("globalStateSpace", globalStateSpace)
+                .toString();
+    }
 }

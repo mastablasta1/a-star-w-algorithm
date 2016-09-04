@@ -7,7 +7,8 @@ import java.util.*;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
+public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends CollectiveState<ES, P>, ES extends
+        EntityState<P>, D extends Comparable<D>, P extends Comparable<P>> {
 
     private AbstractNumberHandler<D> abstractNumberHandler;
 
@@ -15,9 +16,8 @@ public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends Collectiv
         this.abstractNumberHandler = abstractNumberHandler;
     }
 
-    public Set<DeviationZonePlan<CS, ES, P>> makeDeviationZonePlans(PlanningData<SS, CS, ES, P, D> planningData) {
-        Set<DeviationZone<CS, ES, P>> deviationZones = planningData.getDeviationZones();
-        SS stateSpace = planningData.getInputPlan().getStateSpace();
+    public Set<DeviationZonePlan<CS, ES, P>> makeDeviationZonePlans(Set<DeviationZone<CS, ES, P>> deviationZones, SS
+            stateSpace) {
 
         Set<DeviationZonePlan<CS, ES, P>> result = new HashSet<>();
 
