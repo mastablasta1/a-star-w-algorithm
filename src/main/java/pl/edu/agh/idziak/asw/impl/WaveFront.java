@@ -35,6 +35,7 @@ public class WaveFront<SS extends StateSpace<CS, ES, D, P>, CS extends Collectiv
         Map<CS, D> distance = new HashMap<>();
 
         queue.add(targetState);
+        distance.put(targetState, abstractNumberHandler.getZero());
 
         while (!queue.isEmpty()) {
             CS current = queue.remove();

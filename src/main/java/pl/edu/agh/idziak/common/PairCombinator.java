@@ -19,10 +19,12 @@ public class PairCombinator<T> {
     public PairCombinator(List<T> list) {
         this.list = list;
         size = list.size();
+        i = -1;
+        j = size;
     }
 
     public boolean hasNext() {
-        return i >= size - 1;
+        return i < size - 2;
     }
 
     public void next() {
