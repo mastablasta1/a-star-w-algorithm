@@ -18,7 +18,7 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
     private static final Logger LOG = LoggerFactory.getLogger(CollectiveAStar.class);
     private static final String STATISTICS_STATES_VISITED = "statesVisited";
     private static final String STATISTICS_MAX_SIZE_OF_OPENSET = "maxSizeOfOpenSet";
-    private final Statistics statistics = new Statistics("collectiveAStar");
+    private Statistics statistics;
 
     private AbstractNumberHandler<D> numHandler;
 
@@ -27,6 +27,7 @@ class CollectiveAStar<SS extends StateSpace<CS, ES, D, P>, CS extends Collective
     }
 
     ImmutableCollectivePath<CS, ES, P> calculatePath(PlanningData<SS, CS, ES, P, D> planningData) {
+        statistics = new Statistics("collectiveAStar");
         Accumulator acc = new Accumulator(planningData.getInputPlan());
 
         LOG.debug("Starting A*, start={}, end={}, stateSpace:\n{}", acc.start, acc.goal, acc.stateSpace);

@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.common;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Tomasz on 22.07.2016.
@@ -42,5 +43,17 @@ public class Statistics {
             sb.append(statId).append("=").append(value).append(",\n");
         });
         return sb.append("}").toString();
+    }
+
+    public Map<String, Integer> getAsMap() {
+        return new HashMap<>(counters);
+    }
+
+    public void putStat(String statId, int value) {
+        counters.put(statId, value);
+    }
+
+    public void mergeWith(Statistics statistics) {
+        counters.putAll(statistics.counters);
     }
 }
