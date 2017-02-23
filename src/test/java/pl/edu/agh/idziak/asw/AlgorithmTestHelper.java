@@ -1,7 +1,7 @@
 package pl.edu.agh.idziak.asw;
 
-import pl.edu.agh.idziak.asw.grid2d.G2DEntityState;
-import pl.edu.agh.idziak.common.Triple;
+import pl.edu.agh.idziak.asw.common.Triple;
+import pl.edu.agh.idziak.asw.impl.grid2d.G2DEntityState;
 
 import java.util.List;
 import java.util.Map;
