@@ -9,12 +9,16 @@ import java.util.Set;
  * Created by Tomasz on 21.02.2017.
  */
 public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> implements ASWOutputPlan<SS, CS> {
+
     private final CollectivePath<CS> collectivePath;
     private final Set<SubspacePlan<SS, CS>> subspacePlans;
 
-    private ImmutableASWOutputPlan(CollectivePath<CS> collectivePath, Set<SubspacePlan<SS, CS>> subspacePlans) {
+    public ImmutableASWOutputPlan(CollectivePath<CS> collectivePath, Set<SubspacePlan<SS, CS>> subspacePlans) {
         this.collectivePath = collectivePath;
-        this.subspacePlans = ImmutableSet.copyOf(subspacePlans);
+        if (subspacePlans != null)
+            this.subspacePlans = ImmutableSet.copyOf(subspacePlans);
+        else
+            this.subspacePlans = ImmutableSet.of();
     }
 
     @Override public CollectivePath<CS> getCollectivePath() {
@@ -27,7 +31,7 @@ public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends Collec
 
     public static <SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>>
     ImmutableASWOutputPlan<SS, CS> from(CollectivePath<CS> collectivePath,
-                                        Set<SubspacePlan<SS, CS>> subspacePlans) {
+            Set<SubspacePlan<SS, CS>> subspacePlans) {
         return new ImmutableASWOutputPlan<>(collectivePath, subspacePlans);
     }
 }

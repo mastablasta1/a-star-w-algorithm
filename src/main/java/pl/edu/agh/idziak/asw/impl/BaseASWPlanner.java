@@ -1,6 +1,9 @@
 package pl.edu.agh.idziak.asw.impl;
 
-import pl.edu.agh.idziak.asw.astar.CollectiveAStar;
+import com.google.common.base.Stopwatch;
+import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
+import pl.edu.agh.idziak.asw.astar.CollectiveAStarResults;
+import pl.edu.agh.idziak.asw.common.Benchmark;
 import pl.edu.agh.idziak.asw.model.*;
 import pl.edu.agh.idziak.asw.wavefront.Subspace;
 import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
@@ -9,6 +12,7 @@ import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -19,35 +23,50 @@ public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
-    private final CollectiveAStar<SS, CS, D> collectiveAStar;
+    private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;
     private final Wavefront<SS, CS, D> wavefront;
     private final DeviationZonesFinder<IP, CS> deviationZonesFinder;
 
     public BaseASWPlanner(AbstractNumberHandler<D> numberHandler, DeviationZonesFinder<IP, CS> deviationZonesFinder) {
-        collectiveAStar = new CollectiveAStar<>(numberHandler);
+        collectiveAStar = new CollectiveAStarImpl<>(numberHandler);
         wavefront = new WavefrontImpl<>(numberHandler);
         this.deviationZonesFinder = deviationZonesFinder;
     }
 
     @Override public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+        return calculatePlanWithBenchmark(inputPlan).getOutputPlan();
+    }
 
-        CollectivePath<CS> collectivePath = collectiveAStar.calculatePath(inputPlan);
+    public ExtendedOutputPlan<SS,CS> calculatePlanWithBenchmark(IP inputPlan) {
+        Benchmark.Builder benchmarkBuilder = Benchmark.newBuilder().algorithmType(AlgorithmType.ASW);
 
-        Set<Subspace<CS>> subspaces = deviationZonesFinder.findDeviationZones(inputPlan, collectivePath);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        CollectiveAStarResults<CS> results = collectiveAStar.calculatePath(inputPlan, true);
+        benchmarkBuilder.openSetSizeLog(results.getStatistics().getSizeOfOpenSetLog());
+        benchmarkBuilder.aStarCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+
+        stopwatch.reset().start();
+        Set<Subspace<CS>> subspaces = deviationZonesFinder.findDeviationZones(inputPlan, results.getCollectivePath());
+        benchmarkBuilder.deviationZonesSearchTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         if (subspaces == null) {
             subspaces = Collections.emptySet();
         }
 
+        stopwatch.reset().start();
         Set<SubspacePlan<SS, CS>> devZonePlans =
                 subspaces.stream()
                          .map(devZone -> wavefront.buildPlanForSubspace(
-                                      devZone,
-                                      inputPlan.getStateSpace(),
-                                      inputPlan.getCostFunction()))
+                                 devZone,
+                                 inputPlan.getStateSpace(),
+                                 inputPlan.getCostFunction()))
                          .collect(toSet());
+        benchmarkBuilder.wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        stopwatch.stop();
 
-        return ImmutableASWOutputPlan.from(collectivePath, devZonePlans);
+        return ExtendedOutputPlan.<SS,CS>newBuilder()
+                                 .outputPlan(ImmutableASWOutputPlan.from(results.getCollectivePath(), devZonePlans))
+                                 .benchmark(benchmarkBuilder.build())
+                                 .build();
     }
-
 }

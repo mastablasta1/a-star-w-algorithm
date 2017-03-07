@@ -6,8 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.common.CombinationsGenerator;
-import pl.edu.agh.idziak.asw.common.PairIterator;
-import pl.edu.agh.idziak.asw.model.*;
+import pl.edu.agh.idziak.asw.common.Utils;
+import pl.edu.agh.idziak.asw.model.StateSpace;
 
 import java.util.*;
 
@@ -15,6 +15,7 @@ import java.util.*;
  * Created by Tomasz on 29.06.2016.
  */
 public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
+
     private static final Logger LOG = LoggerFactory.getLogger(G2DStateSpace.class);
 
     private final int[][] space;
@@ -23,7 +24,68 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
         this.space = Preconditions.checkNotNull(space);
     }
 
-    private static boolean areAllStatesUnique(List<G2DEntityState> entityStates) {
+    @Override
+    public Set<G2DCollectiveState> getNeighborStatesOf(G2DCollectiveState collectiveState) {
+        Map<?, G2DEntityState> entityStates = collectiveState.getEntityStates();
+        HashMap<G2DEntityState, Object> stateToEntityMap = buildReversedMap(entityStates);
+
+        Set<? extends Map.Entry<?, G2DEntityState>> sourceEntityStatesSet = entityStates.entrySet();
+
+        List<List<G2DEntityState>> choiceArray = buildChoiceArray(sourceEntityStatesSet);
+
+        List<List<G2DEntityState>> combinations = CombinationsGenerator.generateCombinations(
+                choiceArray, G2DStateSpace::areAllEntityStatesUnique);
+
+        Set<G2DCollectiveState> neighborStates = new HashSet<>();
+
+        for (List<G2DEntityState> combination : combinations) {
+            ImmutableMap.Builder<Object, G2DEntityState> neighborStateBuilder = ImmutableMap.builder();
+            HashMap<Object, Object> sourceToTargetEntityExchange = new HashMap<>(combination.size());
+
+            boolean entitiesDidNotCollide =
+                    Utils.interruptableForEach(sourceEntityStatesSet, combination, (entry, targetEntityState) -> {
+                        Object sourceEntity = stateToEntityMap.get(targetEntityState);
+                        if (sourceEntity != null) {
+                            Object targetEntity = sourceToTargetEntityExchange.get(entry.getKey());
+                            if (Objects.equals(targetEntity, sourceEntity)) {
+                                return false;
+                            }
+                            sourceToTargetEntityExchange.put(sourceEntity, entry.getKey());
+                        }
+                        neighborStateBuilder.put(entry.getKey(), targetEntityState);
+                        return true;
+                    });
+
+            if (entitiesDidNotCollide) {
+                G2DCollectiveState newNeighborState = G2DCollectiveState.from(neighborStateBuilder.build());
+                neighborStates.add(newNeighborState);
+            }
+        }
+        neighborStates.remove(collectiveState);
+
+        LOG.trace("State {} has {} neighbors: {}", collectiveState, neighborStates.size(), neighborStates);
+        return neighborStates;
+    }
+
+    private static HashMap<G2DEntityState, Object> buildReversedMap(Map<?, G2DEntityState> entityStates) {
+        HashMap<G2DEntityState, Object> reversedMap = new HashMap<>(entityStates.size());
+        for (Map.Entry<?, G2DEntityState> entry : entityStates.entrySet()) {
+            reversedMap.put(entry.getValue(), entry.getKey());
+        }
+        return reversedMap;
+    }
+
+
+    private List<List<G2DEntityState>> buildChoiceArray(Set<? extends Map.Entry<?, G2DEntityState>> entries) {
+        List<List<G2DEntityState>> choiceArray = new LinkedList<>();
+        for (Map.Entry<?, G2DEntityState> state : entries) {
+            List<G2DEntityState> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state.getValue()));
+            choiceArray.add(neighborStates);
+        }
+        return choiceArray;
+    }
+
+    private static boolean areAllEntityStatesUnique(List<G2DEntityState> entityStates) {
         Set<G2DEntityState> set = new HashSet<>();
         for (G2DEntityState entityState : entityStates) {
             if (set.contains(entityState))
@@ -33,8 +95,7 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
         return true;
     }
 
-
-    private Set<G2DEntityState> getNeighborStatesOf(EntityState<Integer> entityState) {
+    private Set<G2DEntityState> getNeighborStatesOf(G2DEntityState entityState) {
         List<Integer> positions = entityState.get();
         int row = positions.get(0);
         int col = positions.get(1);
@@ -60,51 +121,12 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
 
     private void addState(int destRow, int destCol, Set<G2DEntityState> states) {
         int weight = space[destRow][destCol];
-        if (weight < 10) {
+        if (weight <= 0) {
             states.add(new G2DEntityState(destRow, destCol));
         }
     }
 
-    @Override
-    public Set<G2DCollectiveState> getNeighborStatesOf(G2DCollectiveState collectiveState) {
-        List<List<G2DEntityState>> choiceArray = new ArrayList<>();
-
-        Map<?, G2DEntityState> entityStates = collectiveState.getEntityStates();
-
-        List<Map.Entry<?, G2DEntityState>> entries = ImmutableList.copyOf(entityStates.entrySet());
-
-        buildChoiceArray(choiceArray, entries);
-
-        List<List<G2DEntityState>> combinations = CombinationsGenerator.generateCombinations(choiceArray,
-                G2DStateSpace::areAllStatesUnique);
-
-        Set<G2DCollectiveState> neighborStates = new HashSet<>();
-
-        for (List<G2DEntityState> combination : combinations) {
-            PairIterator<Map.Entry<?, G2DEntityState>, G2DEntityState> it = new PairIterator<>(entries, combination);
-
-            ImmutableMap.Builder<Object, G2DEntityState> builder = ImmutableMap.builder();
-            while (it.hasNext()) {
-                it.next();
-                builder.put(it.getCurrentA().getKey(), it.getCurrentB());
-            }
-            ImmutableMap<?, G2DEntityState> states = builder.build();
-            G2DCollectiveState neighbor = new G2DCollectiveState(states);
-            neighborStates.add(neighbor);
-        }
-
-        LOG.trace("State {} has {} neighbors: {}", collectiveState, neighborStates.size(), neighborStates);
-        return neighborStates;
-    }
-
-    private void buildChoiceArray(List<List<G2DEntityState>> choiceArray, List<Map.Entry<?, G2DEntityState>> entries) {
-        for (Map.Entry<?, G2DEntityState> state : entries) {
-            List<G2DEntityState> neighborStates = ImmutableList.copyOf(getNeighborStatesOf(state.getValue()));
-            choiceArray.add(neighborStates);
-        }
-    }
-
-    public int[][] getData() {
+    public int[][] getGridArray() {
         return space;
     }
 

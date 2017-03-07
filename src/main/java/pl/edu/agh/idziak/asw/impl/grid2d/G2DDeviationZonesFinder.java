@@ -1,10 +1,14 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
+import com.google.common.collect.*;
 import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.model.DeviationZonesFinder;
 import pl.edu.agh.idziak.asw.wavefront.Subspace;
 
-import java.util.Set;
+import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Created by Tomasz on 14.08.2016.
@@ -19,79 +23,102 @@ public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DInputPla
 
     @Override
     public Set<Subspace<G2DCollectiveState>> findDeviationZones(G2DInputPlan inputPlan, CollectivePath<G2DCollectiveState> collectivePath) {
-        return null;
+        ImmutableSet.Builder<Subspace<G2DCollectiveState>> outputBuilder = ImmutableSet.builder();
+
+        List<G2DCollectiveState> collectiveStates = collectivePath.get();
+
+        PeekingIterator<G2DCollectiveState> pathIterator = Iterators.peekingIterator(collectiveStates.iterator());
+
+        while (pathIterator.hasNext()) {
+            G2DCollectiveState collectiveState = pathIterator.next();
+            List<Map.Entry<?, G2DEntityState>> entriesList =
+                    ImmutableList.copyOf(collectiveState.getEntityStates().entrySet());
+
+            Set<Set<G2DEntityState>> finalProximateSets = buildSetsOfProximateEntities(entriesList);
+            if (finalProximateSets.isEmpty())
+                continue;
+
+            Map<G2DEntityState, ?> stateToEntityMap = buildReversedEntityStatesMap(collectiveState);
+
+            for (Set<G2DEntityState> proximateSet : finalProximateSets) {
+                G2DCollectiveState collectiveState1 =
+                        G2DCollectiveState.from(buildCollectiveStateMap(stateToEntityMap, proximateSet));
+
+                Set<G2DCollectiveState> deviationZoneStatesSet =
+                        inputPlan.getStateSpace().getNeighborStatesOf(collectiveState1);
+
+                G2DSubspace newDeviationZone = new G2DSubspace(deviationZoneStatesSet, pathIterator.peek());
+                outputBuilder.add(newDeviationZone);
+            }
+
+        }
+        return outputBuilder.build();
     }
 
+    private static Set<Set<G2DEntityState>> buildSetsOfProximateEntities(List<Map.Entry<?, G2DEntityState>> entriesList) {
+        Set<Set<G2DEntityState>> finalProximateSets = new HashSet<>();
+        Multimap<G2DEntityState, G2DEntityState> proximateStatesCache = buildProximateStatesCache(entriesList);
 
-    // @Override
-    // public Set<Subspace<G2DCollectiveState>> findDeviationZones(G2DInputPlan inputPlan, CollectivePath<G2DCollectiveState> collectivePath) {
-    //     Set<Subspace<G2DCollectiveState>> resultSet = new HashSet<>();
-    //     G2DStateSpace stateSpace = inputPlan.getStateSpace();
-    //     List<G2DCollectiveState> collectiveStates = collectivePath.get();
-    //
-    //     for (int i = 0, size = collectiveStates.size(); i < size; i++) {
-    //         G2DCollectiveState currentState = collectiveStates.get(i);
-    //
-    //         Map<?, G2DEntityState> entityStates = currentState.getEntityStates();
-    //         PairCombinator<?> pairCombinator = new PairCombinator<>(ImmutableList
-    //                 .copyOf(entityStates.keySet()));
-    //         while (pairCombinator.hasNext()) {
-    //             pairCombinator.next();
-    //
-    //             Object firstEntity = pairCombinator.getCurrentFirst();
-    //             Object secondEntity = pairCombinator.getCurrentSecond();
-    //             G2DEntityState firstState = entityStates.get(firstEntity);
-    //             G2DEntityState secondState = entityStates.get(secondEntity);
-    //
-    //             Double dist = G2DCostFunction.getHeuristicCost(firstState, secondState);
-    //
-    //             if (dist <= warningProximity) {
-    //                 Set<G2DEntityState> deviationZoneStates =
-    //                         buildDeviationZoneStatesSet(stateSpace, firstState, secondState);
-    //
-    //                 G2DEntityState firstTarget =
-    //                         findTargetStateForEntity(i, firstEntity, collectiveStates, deviationZoneStates);
-    //                 G2DEntityState secondTarget =
-    //                         findTargetStateForEntity(i, secondEntity, collectiveStates, deviationZoneStates);
-    //
-    //                 ImmutableMap<?, G2DEntityState> targetState =
-    //                         ImmutableMap.of(firstEntity, firstTarget, secondEntity, secondTarget);
-    //
-    //                 G2DSubspace devZone = new G2DSubspace(
-    //                         deviationZoneStates, new G2DCollectiveState(targetState));
-    //                 resultSet.add(devZone);
-    //             }
-    //
-    //         }
-    //     }
-    //     return resultSet;
-    //
-    // }
-    //
-    // private static Set<G2DEntityState> buildDeviationZoneStatesSet(G2DStateSpace
-    //         stateSpace,
-    //         G2DEntityState
-    //                 firstState, G2DEntityState secondState) {
-    //     return ImmutableSet.<G2DEntityState>builder()
-    //             .addAll(stateSpace.getNeighborStatesOf(firstState))
-    //             .addAll(stateSpace.getNeighborStatesOf(secondState))
-    //             .build();
-    // }
-    //
-    // private static G2DEntityState findTargetStateForEntity(int i, Object entity,
-    //         List<G2DCollectiveState> collectiveStates, Set<G2DEntityState> deviationZoneStates) {
-    //
-    //     G2DEntityState furthestStateOnPathWithinDevZone =
-    //             collectiveStates.get(i).getStateForEntity(entity);
-    //
-    //     G2DEntityState currentState;
-    //     for (int j = i, size = collectiveStates.size(); j < size; j++) {
-    //         currentState = collectiveStates.get(j).getStateForEntity(entity);
-    //         if (!deviationZoneStates.contains(currentState)) {
-    //             break;
-    //         }
-    //         furthestStateOnPathWithinDevZone = currentState;
-    //     }
-    //     return furthestStateOnPathWithinDevZone;
-    // }
+        // for (Collection<G2DEntityState> proximateStates : proximateStatesCache.asMap().values()) {
+        //     if (proximateStates.size() < 2) {
+        //         continue;
+        //     }
+        //
+        //     for (Set<G2DEntityState> set : finalProximateSets) {
+        //         if (set.containsAll(proximateStates) || proximateStates.containsAll(set)) {
+        //             set.addAll(proximateStates);
+        //         } else {
+        //             finalProximateSets.add(new HashSet<>(proximateStates));
+        //         }
+        //     }
+        //     boolean setAlreadyVisited = finalProximateSets.stream()
+        //                                                   .filter(set -> set.containsAll(proximateStates)
+        //                                                           || proximateStates.containsAll(set))
+        //                                                   .map(set -> set.addAll(proximateStates))
+        //                                                   .findAny()
+        //                                                   .isPresent();
+        //     if (!setAlreadyVisited) {
+        //         finalProximateSets.add(new HashSet<>(proximateStates));
+        //     }
+        // }
+
+        return proximateStatesCache.asMap()
+                                   .values()
+                                   .stream()
+                                   .filter(set -> set.size() >= 2)
+                                   .map(HashSet::new)
+                                   .distinct().collect(toSet());
+    }
+
+    private static Map<?, G2DEntityState> buildCollectiveStateMap(Map<G2DEntityState, ?> stateToEntityMap, Set<G2DEntityState> proximateSet) {
+        Map<Object, G2DEntityState> result = new HashMap<>();
+        for (G2DEntityState state : proximateSet) {
+            result.put(stateToEntityMap.get(state), state);
+        }
+        return result;
+    }
+
+    private static Map<G2DEntityState, ?> buildReversedEntityStatesMap(G2DCollectiveState collectiveState) {
+        return collectiveState.getEntityStates().entrySet().stream().collect(
+                toMap(Map.Entry::getValue, Map.Entry::getKey));
+    }
+
+    private static Multimap<G2DEntityState, G2DEntityState> buildProximateStatesCache(List<Map.Entry<?, G2DEntityState>> entriesList) {
+        List<List<Map.Entry<?, G2DEntityState>>> combinations =
+                Lists.cartesianProduct(ImmutableList.of(entriesList, entriesList));
+
+        Multimap<G2DEntityState, G2DEntityState> proximateStatesCache = HashMultimap.create();
+
+        for (List<Map.Entry<?, G2DEntityState>> combination : combinations) {
+            G2DEntityState state1 = combination.get(0).getValue();
+            G2DEntityState state2 = combination.get(1).getValue();
+            int verticalDist = Math.abs(state1.getRow() - state2.getRow());
+            int horizontalDist = Math.abs(state1.getCol() - state2.getCol());
+            if (verticalDist + horizontalDist <= 2) {
+                proximateStatesCache.put(state1, state2);
+                proximateStatesCache.put(state2, state1);
+            }
+        }
+        return proximateStatesCache;
+    }
 }

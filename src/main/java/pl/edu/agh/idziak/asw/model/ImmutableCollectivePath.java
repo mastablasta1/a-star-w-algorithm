@@ -28,7 +28,7 @@ public class ImmutableCollectivePath<CS extends CollectiveState<?, ?>> implement
         StringBuilder sb = new StringBuilder("{\n");
         path.forEach(uEntityState -> sb.append(uEntityState)
                                        .append("\n"));
-        sb.setLength(sb.length() - 3);
+        sb.setLength(sb.length() - 2);
         return sb.append("}")
                  .toString();
     }

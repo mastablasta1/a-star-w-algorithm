@@ -1,14 +1,14 @@
 package pl.edu.agh.idziak.asw.impl;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableSet;
+import pl.edu.agh.idziak.asw.common.Benchmark;
 import pl.edu.agh.idziak.asw.model.*;
-import pl.edu.agh.idziak.asw.wavefront.Subspace;
 import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.Wavefront;
-import pl.edu.agh.idziak.asw.wavefront.impl.ImmutableSubspace;
 import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
-import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Tomasz on 21.02.2017.
@@ -24,13 +24,24 @@ public class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
     }
 
     @Override public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
-
-        Subspace<CS> subspace = ImmutableSubspace.from(Collections.emptySet(), inputPlan.getTargetCollectiveState());
-
-        SubspacePlan<SS, CS> subspacePlan = wavefront
-                .buildPlanForSubspace(subspace, inputPlan.getStateSpace(), inputPlan.getCostFunction());
-
-        return ImmutableASWOutputPlan.from(null, ImmutableSet.of(subspacePlan));
+        return calculatePlanWithBenchmark(inputPlan).getOutputPlan();
     }
 
+    public ExtendedOutputPlan<SS, CS> calculatePlanWithBenchmark(IP inputPlan) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        SubspacePlan<SS, CS> subspacePlan = wavefront.buildPlanForSpace(
+                inputPlan.getTargetCollectiveState(),
+                inputPlan.getStateSpace(),
+                inputPlan.getCostFunction());
+        stopwatch.stop();
+        Benchmark benchmark = Benchmark.newBuilder()
+                                       .wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS))
+                                       .algorithmType(AlgorithmType.WAVEFRONT)
+                                       .build();
+
+        return ExtendedOutputPlan.<SS, CS>newBuilder()
+                .outputPlan(ImmutableASWOutputPlan.from(null, ImmutableSet.of(subspacePlan)))
+                .benchmark(benchmark)
+                .build();
+    }
 }
