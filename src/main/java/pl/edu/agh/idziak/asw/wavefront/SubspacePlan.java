@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.wavefront;
 
 
+import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 import pl.edu.agh.idziak.asw.model.StateSpace;
 
@@ -9,6 +10,9 @@ import pl.edu.agh.idziak.asw.model.StateSpace;
  */
 public interface SubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> {
 
-    CS getNextMove(CS collectiveState, SS stateSpace);
+    CS getNextMove(CS collectiveState);
+
+    CollectivePath<CS> constructPath(CS start, CS goal);
+
     Subspace<CS> getSubspace();
 }

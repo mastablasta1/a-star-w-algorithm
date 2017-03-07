@@ -38,16 +38,17 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
 
             Set<CS> neighbors = stateSpace.getNeighborStatesOf(current);
 
+            D distCurrentToTarget = distanceFromTarget.get(current);
+
             for (CS neighbor : neighbors) {
                 if (!distanceFromTarget.containsKey(neighbor)) {
                     D distNeighborToCurrent = costFunction.getHeuristicCost(neighbor, current);
-                    D distForCurrent = distanceFromTarget.get(current);
-                    distanceFromTarget.put(neighbor, abstractNumberHandler.add(distForCurrent, distNeighborToCurrent));
+                    distanceFromTarget.put(neighbor, abstractNumberHandler.add(distCurrentToTarget, distNeighborToCurrent));
                     queue.add(neighbor);
                 }
             }
         }
-        return GradientSubspacePlan.from(subspace, distanceFromTarget);
+        return GradientSubspacePlan.from(subspace, distanceFromTarget,stateSpace);
     }
 
     @Override
