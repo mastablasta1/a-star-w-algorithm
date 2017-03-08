@@ -38,8 +38,9 @@ public class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
                                        .wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS))
                                        .algorithmType(AlgorithmType.WAVEFRONT)
                                        .build();
-        CollectivePath<CS> collectivePath = subspacePlan
-                .constructPath(inputPlan.getInitialCollectiveState(), inputPlan.getTargetCollectiveState());
+        CollectivePath<CS> collectivePath = subspacePlan.constructPath(
+                inputPlan.getInitialCollectiveState(),
+                inputPlan.getTargetCollectiveState());
 
         return ExtendedOutputPlan.<SS, CS>newBuilder()
                 .outputPlan(ImmutableASWOutputPlan.from(collectivePath, ImmutableSet.of(subspacePlan)))

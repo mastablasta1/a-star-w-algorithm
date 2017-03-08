@@ -55,6 +55,7 @@ public class CombinationsGenerator {
                         .collect(toCollection(ArrayList::new));
     }
 
+
     public static <T> Iterator<List<T>> combinatorialIterator(List<List<T>> lists) {
         return new Iterator<List<T>>() {
             private final List<Iterator<T>> iterators = lists.stream()
@@ -97,4 +98,39 @@ public class CombinationsGenerator {
         };
     }
 
+    public static <T> Iterable<T> iterableCombinator(List<List<T>> lists) {
+        return new Iterable<T>() {
+            private final List<Iterator<T>> iterators = lists.stream()
+                                                             .map(List::iterator)
+                                                             .collect(toCollection(() ->
+                                                                     new ArrayList<>(lists.size())));
+            private int size = iterators.size();
+            private List<T> currentCombination = iterators.stream()
+                                                          .map(Iterator::next)
+                                                          .collect(toCollection(() ->
+                                                                  new ArrayList<>(size)));
+            private int position = -1;
+
+            @Override public Iterator<T> iterator() {
+                if (position == -1) {
+                    position = 0;
+                    return currentCombination.iterator();
+                }
+
+                while (position < size && !iterators.get(position).hasNext()) {
+                    Iterator<T> newIt = lists.get(position).iterator();
+                    iterators.set(position, newIt);
+                    currentCombination.set(position, newIt.next());
+                    position++;
+                }
+                if (position >= size) {
+                    return null;
+                }
+                T next = iterators.get(position).next();
+                currentCombination.set(position, next);
+                position = 0;
+                return currentCombination.iterator();
+            }
+        };
+    }
 }

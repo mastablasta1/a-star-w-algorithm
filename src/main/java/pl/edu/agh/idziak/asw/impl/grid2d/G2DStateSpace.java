@@ -6,10 +6,14 @@ import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.common.CombinationsGenerator;
+import pl.edu.agh.idziak.asw.common.Dictionary;
 import pl.edu.agh.idziak.asw.common.Utils;
 import pl.edu.agh.idziak.asw.model.StateSpace;
 
 import java.util.*;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by Tomasz on 29.06.2016.
@@ -19,9 +23,27 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
     private static final Logger LOG = LoggerFactory.getLogger(G2DStateSpace.class);
 
     private final int[][] space;
+    private final Dictionary<Integer, G2DLightCollectiveState> stateSpace;
 
-    public G2DStateSpace(int[][] space) {
+    public G2DStateSpace(int[][] space, int numberOfEntities) {
         this.space = Preconditions.checkNotNull(space);
+        stateSpace = new Dictionary<>();
+        initStateSpace(numberOfEntities);
+    }
+
+    private void initStateSpace(int numberOfEntities) {
+        List<Integer> positionsX = IntStream.range(0, space.length).boxed().collect(toList());
+        List<Integer> positionsY = IntStream.range(0, space[0].length).boxed().collect(toList());
+        List<List<Integer>> combinationsSeed = new ArrayList<>();
+        for (int i = 0; i < numberOfEntities; i++) {
+            combinationsSeed.add(positionsX);
+            combinationsSeed.add(positionsY);
+        }
+        Iterable<Integer> combinationsIterable = CombinationsGenerator.iterableCombinator(combinationsSeed);
+        Iterator<Integer> it;
+        while ((it = combinationsIterable.iterator()) != null) {
+            stateSpace.put(it,new G2DLightCollectiveState());
+        }
     }
 
     @Override
@@ -65,6 +87,10 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
 
         LOG.trace("State {} has {} neighbors: {}", collectiveState, neighborStates.size(), neighborStates);
         return neighborStates;
+    }
+
+    public static Iterator<G2DCollectiveState> visitAllStates(int numOfEntities, Visitor visitor) {
+        return null;
     }
 
     private static HashMap<G2DEntityState, Object> buildReversedMap(Map<?, G2DEntityState> entityStates) {
@@ -146,5 +172,10 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
 
     public int countCols() {
         return space[0].length;
+    }
+
+    private static abstract class Visitor {
+
+        public abstract void visit(G2DCollectiveState collectiveState);
     }
 }

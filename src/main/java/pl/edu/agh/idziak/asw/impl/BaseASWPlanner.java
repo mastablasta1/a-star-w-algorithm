@@ -37,7 +37,7 @@ public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         return calculatePlanWithBenchmark(inputPlan).getOutputPlan();
     }
 
-    public ExtendedOutputPlan<SS,CS> calculatePlanWithBenchmark(IP inputPlan) {
+    public ExtendedOutputPlan<SS, CS> calculatePlanWithBenchmark(IP inputPlan) {
         Benchmark.Builder benchmarkBuilder = Benchmark.newBuilder().algorithmType(AlgorithmType.ASW);
 
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -54,19 +54,18 @@ public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         }
 
         stopwatch.reset().start();
-        Set<SubspacePlan<SS, CS>> devZonePlans =
-                subspaces.stream()
-                         .map(devZone -> wavefront.buildPlanForSubspace(
-                                 devZone,
-                                 inputPlan.getStateSpace(),
-                                 inputPlan.getCostFunction()))
-                         .collect(toSet());
+        Set<SubspacePlan<SS, CS>> devZonePlans = subspaces.stream()
+                                                          .map(devZone -> wavefront.buildPlanForSubspace(
+                                                                  devZone,
+                                                                  inputPlan.getStateSpace(),
+                                                                  inputPlan.getCostFunction()))
+                                                          .collect(toSet());
         benchmarkBuilder.wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
         stopwatch.stop();
 
-        return ExtendedOutputPlan.<SS,CS>newBuilder()
-                                 .outputPlan(ImmutableASWOutputPlan.from(results.getCollectivePath(), devZonePlans))
-                                 .benchmark(benchmarkBuilder.build())
-                                 .build();
+        return ExtendedOutputPlan.<SS, CS>newBuilder()
+                .outputPlan(ImmutableASWOutputPlan.from(results.getCollectivePath(), devZonePlans))
+                .benchmark(benchmarkBuilder.build())
+                .build();
     }
 }

@@ -38,6 +38,22 @@ public class CombinationsGeneratorTest {
     }
 
     @Test
+    public void testIterableCombinator() throws Exception {
+        List<List<String>> choiceArray = ImmutableList.of(
+                ImmutableList.of("a", "b"),
+                ImmutableList.of("x", "y"),
+                ImmutableList.of("p", "q"));
+
+        Iterable<String> result = CombinationsGenerator.iterableCombinator(choiceArray);
+
+        Iterator<String> iterator;
+        while ((iterator = result.iterator()) != null) {
+            iterator.forEachRemaining((s) -> System.out.print(s + ","));
+            System.out.println();
+        }
+    }
+
+    @Test
     public void generateCombinationsIteratorSimple() throws Exception {
 
         List<List<String>> choiceArray = ImmutableList.of(
