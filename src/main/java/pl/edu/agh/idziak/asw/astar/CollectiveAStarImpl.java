@@ -1,7 +1,6 @@
 package pl.edu.agh.idziak.asw.astar;
 
-import pl.edu.agh.idziak.asw.common.Pair;
-import pl.edu.agh.idziak.asw.common.ValueSortedMap;
+import pl.edu.agh.idziak.asw.common.ValueSortedPriorityQueue;
 import pl.edu.agh.idziak.asw.model.*;
 
 import java.util.*;
@@ -21,7 +20,7 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
         Accumulator acc = new Accumulator(inputPlan, gatherStats);
 
         acc.gScore.put(acc.start, numHandler.getZero());
-        acc.openSetWithFScore.put(acc.start, acc.costFunction.getHeuristicCost(acc.start, acc.goal));
+        acc.openSetWithFScore.add(acc.start, acc.costFunction.getHeuristicCost(acc.start, acc.goal));
 
         boolean pathFound = findPath(acc);
 
@@ -41,13 +40,12 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
                 acc.stats.logSizeOfOpenSet(acc.openSetWithFScore.size());
             }
 
-            Pair<CS, D> currentPair = acc.openSetWithFScore.pollEntryWithLowestValue();
-            CS current = currentPair.getOne();
+            acc.openSetWithFScore.pollFirst();
+            CS current = acc.openSetWithFScore.getFirstKey();
 
             if (current.equals(acc.goal)) {
                 return true;
             }
-
 
             acc.closedSet.add(current);
 
@@ -63,8 +61,8 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
             if (acc.closedSet.contains(neighbor))
                 continue;
 
-            D tentativeGScore = numHandler.add(acc.gScore.get(current), acc.costFunction.getHeuristicCost(current,
-                    neighbor));
+            D tentativeGScore = numHandler
+                    .add(acc.gScore.get(current), acc.costFunction.getHeuristicCost(current, neighbor));
 
             if (acc.openSetWithFScore.containsKey(neighbor)
                     && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
@@ -75,7 +73,7 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
             acc.gScore.put(neighbor, tentativeGScore);
             D heuristicDistNeighborToGoal = acc.costFunction.getHeuristicCost(neighbor, acc.goal);
             D fScore = numHandler.add(tentativeGScore, heuristicDistNeighborToGoal);
-            acc.openSetWithFScore.put(neighbor, fScore);
+            acc.openSetWithFScore.add(neighbor, fScore);
         }
     }
 
@@ -91,10 +89,11 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
     }
 
     private class Accumulator {
+
         private SS stateSpace;
         private CS start;
         private CS goal;
-        private ValueSortedMap<CS, D> openSetWithFScore;
+        private ValueSortedPriorityQueue<CS, D> openSetWithFScore;
         private Set<CS> closedSet;
         private Map<CS, D> gScore;
         private Map<CS, CS> cameFrom;
@@ -108,7 +107,7 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
             goal = inputPlan.getTargetCollectiveState();
             costFunction = inputPlan.getCostFunction();
 
-            openSetWithFScore = new ValueSortedMap<>();
+            openSetWithFScore = new ValueSortedPriorityQueue<>();
             closedSet = new HashSet<>();
             gScore = new HashMap<>();
             cameFrom = new HashMap<>();

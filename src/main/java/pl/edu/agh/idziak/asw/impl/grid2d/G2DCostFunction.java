@@ -5,6 +5,8 @@ import pl.edu.agh.idziak.asw.model.CostFunction;
 
 import java.util.Map;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by Tomasz on 21.02.2017.
  */
@@ -33,10 +35,11 @@ public class G2DCostFunction implements CostFunction<G2DCollectiveState, Double>
         int endRow = end.get().get(0);
         int endCol = end.get().get(1);
 
-        // return Math.sqrt(Math.pow(startRow - endRow, 2)
-        //         + Math.pow(startCol - endCol, 2));
+        int manhattanDistance = abs(startRow - endRow) + abs(startCol - endCol);
 
-        double cost = (double) Math.abs(startRow - endRow) + Math.abs(startCol - endCol);
-        return Math.max(cost, 1); // cost of staying in place is also 1
+        if (manhattanDistance <= 1)
+            return (double) manhattanDistance;
+        else
+            return manhattanDistance * 1.001d;
     }
 }
