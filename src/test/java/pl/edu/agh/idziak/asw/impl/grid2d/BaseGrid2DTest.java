@@ -16,7 +16,7 @@ public abstract class BaseGrid2DTest {
 
     protected void executeGrid2DTest(List<Triple<?, G2DEntityState, G2DEntityState>> entities, int[][] stateSpaceArray) {
         // state space
-        G2DStateSpace stateSpace = new G2DStateSpace(stateSpaceArray,entities.size());
+        G2DStateSpace stateSpace = new G2DStateSpace(stateSpaceArray);
 
         // initial states
         G2DCollectiveState initialState = G2DCollectiveState.from(AlgorithmTestHelper.mapToInitialState(entities));

@@ -25,12 +25,12 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
     private final int[][] space;
     private final Dictionary<Integer, G2DLightCollectiveState> stateSpace;
 
-    public G2DStateSpace(int[][] space, int numberOfEntities) {
+    public G2DStateSpace(int[][] space) {
         this.space = Preconditions.checkNotNull(space);
         stateSpace = new Dictionary<>();
-        initStateSpace(numberOfEntities);
     }
 
+    @Deprecated
     private void initStateSpace(int numberOfEntities) {
         List<Integer> positionsX = IntStream.range(0, space.length).boxed().collect(toList());
         List<Integer> positionsY = IntStream.range(0, space[0].length).boxed().collect(toList());
