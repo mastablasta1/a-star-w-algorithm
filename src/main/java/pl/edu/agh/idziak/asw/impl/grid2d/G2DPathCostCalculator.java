@@ -12,7 +12,7 @@ public class G2DPathCostCalculator {
 
     public static double calculateCost(CollectivePath<G2DCollectiveState> path, G2DCostFunction costFunction) {
         List<G2DCollectiveState> states = path.get();
-
+        G2DCollectiveState goal = states.get(states.size() - 1);
         WalkingPairIterator<G2DCollectiveState> it = new WalkingPairIterator<>(states);
 
         double cost = 0.0;
