@@ -29,11 +29,19 @@ public class ImmutableMapCollectiveState<ES extends EntityState<P>, P extends Co
         return entityStates.get(entity);
     }
 
+    public boolean isValid() {
+        long count = entityStates.values()
+                                 .stream()
+                                 .distinct()
+                                 .count();
+        return count == entityStates.size();
+    }
+
     @Override
     public boolean equals(Object o) {
         return this == o
                 || !(o == null || getClass() != o.getClass())
-                && hashCode==o.hashCode()
+                && hashCode == o.hashCode()
                 && entityStates.equals(((ImmutableMapCollectiveState) o).entityStates);
     }
 

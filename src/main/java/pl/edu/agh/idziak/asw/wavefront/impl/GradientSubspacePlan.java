@@ -1,32 +1,29 @@
 package pl.edu.agh.idziak.asw.wavefront.impl;
 
 import com.google.common.collect.ImmutableMap;
-import pl.edu.agh.idziak.asw.model.CollectivePath;
-import pl.edu.agh.idziak.asw.model.CollectiveState;
-import pl.edu.agh.idziak.asw.model.ImmutableCollectivePath;
-import pl.edu.agh.idziak.asw.model.StateSpace;
+import com.google.common.collect.ImmutableSet;
+import pl.edu.agh.idziak.asw.model.*;
 import pl.edu.agh.idziak.asw.wavefront.Subspace;
 import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Tomasz on 20.02.2017.
  */
-public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>> implements
-        SubspacePlan<SS, CS> {
+public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
+        implements SubspacePlan<CS> {
 
-    private Subspace<CS> subspace;
-    private Map<CS, D> gradientMap;
-    private SS stateSpace;
+    private final Set<?> entities;
+    private final Subspace<CS> subspace;
+    private final Map<CS, D> gradientMap;
+    private final SS stateSpace;
 
     private GradientSubspacePlan(Subspace<CS> subspace, Map<CS, D> distancesMap, SS stateSpace) {
         this.subspace = subspace;
         this.gradientMap = ImmutableMap.copyOf(distancesMap);
         this.stateSpace = stateSpace;
+        this.entities = ImmutableSet.of(getSubspace().getTargetState().getEntityStates().keySet());
     }
 
     @Override
@@ -44,7 +41,7 @@ public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends Collecti
         while (!current.equals(goal)) {
             current = getNextMove(current);
             path.add(current);
-            if(current==null){
+            if (current == null) {
                 return null;
             }
         }
@@ -53,6 +50,10 @@ public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends Collecti
 
     public Subspace<CS> getSubspace() {
         return subspace;
+    }
+
+    @Override public Set<?> getEntities() {
+        return entities;
     }
 
     public static <SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>

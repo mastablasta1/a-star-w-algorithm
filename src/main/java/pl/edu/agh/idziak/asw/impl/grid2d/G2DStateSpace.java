@@ -89,10 +89,6 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
         return neighborStates;
     }
 
-    public static Iterator<G2DCollectiveState> visitAllStates(int numOfEntities, Visitor visitor) {
-        return null;
-    }
-
     private static HashMap<G2DEntityState, Object> buildReversedMap(Map<?, G2DEntityState> entityStates) {
         HashMap<G2DEntityState, Object> reversedMap = new HashMap<>(entityStates.size());
         for (Map.Entry<?, G2DEntityState> entry : entityStates.entrySet()) {
@@ -121,7 +117,7 @@ public class G2DStateSpace implements StateSpace<G2DCollectiveState> {
         return true;
     }
 
-    private Set<G2DEntityState> getNeighborStatesOf(G2DEntityState entityState) {
+    public Set<G2DEntityState> getNeighborStatesOf(G2DEntityState entityState) {
         List<Integer> positions = entityState.get();
         int row = positions.get(0);
         int col = positions.get(1);

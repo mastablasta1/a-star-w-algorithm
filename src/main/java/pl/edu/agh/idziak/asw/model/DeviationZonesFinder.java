@@ -8,5 +8,5 @@ import java.util.Set;
  * Created by Tomasz on 21.02.2017.
  */
 public interface DeviationZonesFinder<IP extends InputPlan<?,CS,?>, CS extends CollectiveState<?, ?>> {
-    Set<Subspace<CS>> findDeviationZones(IP inputPlan, CollectivePath<CS> collectivePath);
+    Set<? extends Subspace<CS>> findDeviationZones(IP inputPlan, CollectivePath<CS> collectivePath);
 }

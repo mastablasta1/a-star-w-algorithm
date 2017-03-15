@@ -12,14 +12,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by Tomasz on 20.02.2017.
  */
 public class ImmutableSubspace<CS extends CollectiveState<?, ?>> implements Subspace<CS> {
+
     private Set<CS> states;
     private CS targetState;
 
     private ImmutableSubspace() {
     }
 
-    @Override public Set<CS> getStates() {
-        return states;
+    @Override public boolean contains(CS collectiveState) {
+        throw new UnsupportedOperationException();
     }
 
     @Override public CS getTargetState() {

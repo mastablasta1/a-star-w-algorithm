@@ -29,7 +29,7 @@ public class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
 
     public ExtendedOutputPlan<SS, CS> calculatePlanWithBenchmark(IP inputPlan) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        SubspacePlan<SS, CS> subspacePlan = wavefront.buildPlanForSpace(
+        SubspacePlan<CS> subspacePlan = wavefront.buildPlanForEntireSpace(
                 inputPlan.getTargetCollectiveState(),
                 inputPlan.getStateSpace(),
                 inputPlan.getCostFunction());

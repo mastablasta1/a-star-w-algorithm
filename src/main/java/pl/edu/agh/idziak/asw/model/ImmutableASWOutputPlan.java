@@ -11,9 +11,9 @@ import java.util.Set;
 public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> implements ASWOutputPlan<SS, CS> {
 
     private final CollectivePath<CS> collectivePath;
-    private final Set<SubspacePlan<SS, CS>> subspacePlans;
+    private final Set<SubspacePlan<CS>> subspacePlans;
 
-    public ImmutableASWOutputPlan(CollectivePath<CS> collectivePath, Set<SubspacePlan<SS, CS>> subspacePlans) {
+    public ImmutableASWOutputPlan(CollectivePath<CS> collectivePath, Set<SubspacePlan<CS>> subspacePlans) {
         this.collectivePath = collectivePath;
         if (subspacePlans != null)
             this.subspacePlans = ImmutableSet.copyOf(subspacePlans);
@@ -25,13 +25,13 @@ public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends Collec
         return collectivePath;
     }
 
-    public Set<SubspacePlan<SS, CS>> getSubspacePlans() {
+    public Set<SubspacePlan<CS>> getSubspacePlans() {
         return subspacePlans;
     }
 
     public static <SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>>
     ImmutableASWOutputPlan<SS, CS> from(CollectivePath<CS> collectivePath,
-            Set<SubspacePlan<SS, CS>> subspacePlans) {
+            Set<SubspacePlan<CS>> subspacePlans) {
         return new ImmutableASWOutputPlan<>(collectivePath, subspacePlans);
     }
 }

@@ -47,7 +47,7 @@ public class G2DDeviationZonesFinder implements DeviationZonesFinder<G2DInputPla
                 Set<G2DCollectiveState> deviationZoneStatesSet =
                         inputPlan.getStateSpace().getNeighborStatesOf(collectiveState1);
 
-                G2DSubspace newDeviationZone = new G2DSubspace(deviationZoneStatesSet, pathIterator.peek());
+                G2DSubspace newDeviationZone = new G2DCollectiveSubspace(deviationZoneStatesSet, pathIterator.peek());
                 outputBuilder.add(newDeviationZone);
             }
 

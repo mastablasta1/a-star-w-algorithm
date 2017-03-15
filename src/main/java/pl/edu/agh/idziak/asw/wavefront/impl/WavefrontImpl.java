@@ -1,7 +1,6 @@
 package pl.edu.agh.idziak.asw.wavefront.impl;
 
 
-import com.google.common.collect.ImmutableSet;
 import pl.edu.agh.idziak.asw.model.AbstractNumberHandler;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 import pl.edu.agh.idziak.asw.model.CostFunction;
@@ -24,7 +23,7 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
     }
 
     @Override
-    public SubspacePlan<SS, CS> buildPlanForSubspace(Subspace<CS> subspace, SS stateSpace, CostFunction<CS, D> costFunction) {
+    public SubspacePlan<CS> buildPlanForSubspace(Subspace<CS> subspace, SS stateSpace, CostFunction<CS, D> costFunction) {
         CS targetState = subspace.getTargetState();
 
         Queue<CS> queue = new LinkedList<>();
@@ -41,19 +40,34 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
             D distCurrentToTarget = distanceFromTarget.get(current);
 
             for (CS neighbor : neighbors) {
-                if (!distanceFromTarget.containsKey(neighbor)) {
+                if (subspace.contains(neighbor) && !distanceFromTarget.containsKey(neighbor)) {
                     D distNeighborToCurrent = costFunction.getHeuristicCost(neighbor, current);
-                    distanceFromTarget.put(neighbor, abstractNumberHandler.add(distCurrentToTarget, distNeighborToCurrent));
+                    distanceFromTarget.put(neighbor,
+                            abstractNumberHandler.add(distCurrentToTarget, distNeighborToCurrent));
                     queue.add(neighbor);
                 }
             }
         }
-        return GradientSubspacePlan.from(subspace, distanceFromTarget,stateSpace);
+        return GradientSubspacePlan.from(subspace, distanceFromTarget, stateSpace);
     }
 
     @Override
-    public SubspacePlan<SS, CS> buildPlanForSpace(CS targetState, SS stateSpace, CostFunction<CS, D> costFunction) {
-        return buildPlanForSubspace(ImmutableSubspace.from(ImmutableSet.of(), targetState), stateSpace, costFunction);
+    public SubspacePlan<CS> buildPlanForEntireSpace(CS targetState, SS stateSpace, CostFunction<CS, D> costFunction) {
+        return buildPlanForSubspace(new SubspaceEqualToStateSpace<>(targetState), stateSpace, costFunction);
     }
 
+    private static class SubspaceEqualToStateSpace<CS extends CollectiveState<?, ?>> implements Subspace<CS> {
+
+        private CS targetState;
+
+        private SubspaceEqualToStateSpace(CS targetState) {this.targetState = targetState;}
+
+        @Override public boolean contains(CS collectiveState) {
+            return true;
+        }
+
+        @Override public CS getTargetState() {
+            return targetState;
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.common;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
@@ -26,5 +27,9 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static <T> T lastElementOf(List<T> list) {
+        return list.get(list.size() - 1);
     }
 }

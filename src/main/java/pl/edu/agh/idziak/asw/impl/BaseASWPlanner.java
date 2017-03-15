@@ -46,7 +46,7 @@ public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         benchmarkBuilder.aStarCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         stopwatch.reset().start();
-        Set<Subspace<CS>> subspaces = deviationZonesFinder.findDeviationZones(inputPlan, results.getCollectivePath());
+        Set<? extends Subspace<CS>> subspaces = deviationZonesFinder.findDeviationZones(inputPlan, results.getCollectivePath());
         benchmarkBuilder.deviationZonesSearchTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         if (subspaces == null) {
@@ -54,12 +54,12 @@ public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         }
 
         stopwatch.reset().start();
-        Set<SubspacePlan<SS, CS>> devZonePlans = subspaces.stream()
-                                                          .map(devZone -> wavefront.buildPlanForSubspace(
+        Set<SubspacePlan<CS>> devZonePlans = subspaces.stream()
+                                                      .map(devZone -> wavefront.buildPlanForSubspace(
                                                                   devZone,
                                                                   inputPlan.getStateSpace(),
                                                                   inputPlan.getCostFunction()))
-                                                          .collect(toSet());
+                                                      .collect(toSet());
         benchmarkBuilder.wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
         stopwatch.stop();
 

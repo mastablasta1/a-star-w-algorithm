@@ -12,5 +12,5 @@ public interface ASWOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveS
 
     CollectivePath<CS> getCollectivePath();
 
-    Set<SubspacePlan<SS, CS>> getSubspacePlans();
+    Set<SubspacePlan<CS>> getSubspacePlans();
 }
