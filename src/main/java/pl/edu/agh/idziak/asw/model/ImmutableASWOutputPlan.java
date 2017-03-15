@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.model;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
 
@@ -33,5 +34,12 @@ public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends Collec
     ImmutableASWOutputPlan<SS, CS> from(CollectivePath<CS> collectivePath,
             Set<SubspacePlan<CS>> subspacePlans) {
         return new ImmutableASWOutputPlan<>(collectivePath, subspacePlans);
+    }
+
+    @Override public String toString() {
+        return MoreObjects.toStringHelper(this)
+                          .add("collectivePath", collectivePath)
+                          .add("subspacePlansCount", subspacePlans.size())
+                          .toString();
     }
 }

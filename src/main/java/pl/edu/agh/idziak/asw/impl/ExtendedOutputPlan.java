@@ -1,5 +1,6 @@
 package pl.edu.agh.idziak.asw.impl;
 
+import com.google.common.base.MoreObjects;
 import pl.edu.agh.idziak.asw.common.Benchmark;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 import pl.edu.agh.idziak.asw.model.ImmutableASWOutputPlan;
@@ -50,5 +51,12 @@ public class ExtendedOutputPlan<SS extends StateSpace<CS>, CS extends Collective
         public ExtendedOutputPlan<SS, CS> build() {
             return new ExtendedOutputPlan<>(this);
         }
+    }
+
+    @Override public String toString() {
+        return MoreObjects.toStringHelper(this)
+                          .add("outputPlan", outputPlan)
+                          .add("benchmark", benchmark)
+                          .toString();
     }
 }
