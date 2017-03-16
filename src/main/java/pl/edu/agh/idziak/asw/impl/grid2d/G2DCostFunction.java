@@ -37,9 +37,11 @@ public class G2DCostFunction implements CostFunction<G2DCollectiveState, Double>
 
         int manhattanDistance = abs(startRow - endRow) + abs(startCol - endCol);
 
-        if (manhattanDistance <= 1)
-            return (double) manhattanDistance;
+        if (manhattanDistance == 0)
+            return 0.5d;
+        else if (manhattanDistance == 1)
+            return 1d;
         else
-            return manhattanDistance * 1.001d;
+            return manhattanDistance * 1.0001d;
     }
 }
