@@ -20,7 +20,7 @@ import static java.util.stream.Collectors.toSet;
  * Created by Tomasz on 21.02.2017.
  */
 public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
-        SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
+        SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;

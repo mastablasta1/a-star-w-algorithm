@@ -6,7 +6,7 @@ import pl.edu.agh.idziak.asw.impl.BaseAStarPlanner;
 /**
  * Created by Tomasz on 09.07.2016.
  */
-public class G2DAStarPlanner extends BaseAStarPlanner<G2DInputPlan, G2DStateSpace, G2DCollectiveState, Double> {
+public class G2DAStarPlanner extends BaseAStarPlanner<G2DOptInputPlan, G2DOptStateSpace, G2DOptCollectiveState, Double> {
 
     private static final DoubleHandler DOUBLE_HANDLER = DoubleHandler.getInstance();
 

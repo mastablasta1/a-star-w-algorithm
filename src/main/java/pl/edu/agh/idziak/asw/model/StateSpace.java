@@ -1,12 +1,12 @@
 package pl.edu.agh.idziak.asw.model;
 
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface StateSpace<CS extends CollectiveState<?, ?>> {
+public interface StateSpace<CS extends CollectiveState<?>> {
 
-    Set<CS> getNeighborStatesOf(CS globalState);
+    Collection<CS> getNeighborStatesOf(CS globalState);
 }

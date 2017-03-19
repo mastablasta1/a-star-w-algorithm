@@ -1,6 +1,5 @@
 package pl.edu.agh.idziak.asw.common;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.*;
@@ -15,7 +14,6 @@ import static java.util.stream.Collectors.toCollection;
 public class CombinationsGenerator {
 
     public static <T> List<List<T>> generateCombinations(List<List<T>> choiceArray, Predicate<List<T>> predicate) {
-        Preconditions.checkNotNull(choiceArray);
 
         List<Iterator<T>> iterators = choiceArray.stream()
                                                  .map(Collection::iterator)

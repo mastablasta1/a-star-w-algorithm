@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public interface SubspacePlan<CS extends CollectiveState<?, ?>> {
+public interface SubspacePlan<CS extends CollectiveState<?>> {
 
     CS getNextMove(CS collectiveState);
 

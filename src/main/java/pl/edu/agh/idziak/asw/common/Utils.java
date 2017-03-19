@@ -32,4 +32,56 @@ public class Utils {
     public static <T> T lastElementOf(List<T> list) {
         return list.get(list.size() - 1);
     }
+
+    public static int[][] arrayCopy(int[][] existingArray) {
+        int[][] newArray = new int[existingArray.length][];
+        for (int i = 0; i < existingArray.length; i++) {
+            int rowLength = existingArray[i].length;
+            newArray[i] = new int[rowLength];
+            System.arraycopy(existingArray[i], 0, newArray[i], 0, rowLength);
+        }
+        return newArray;
+    }
+
+    public static short[][] arrayCopy(short[][] existingArray) {
+        short[][] newArray = new short[existingArray.length][];
+        for (short i = 0; i < existingArray.length; i++) {
+            int rowLength = existingArray[i].length;
+            newArray[i] = new short[rowLength];
+            System.arraycopy(existingArray[i], 0, newArray[i], 0, rowLength);
+        }
+        return newArray;
+    }
+
+    public static byte[][] arrayCopy(byte[][] existingArray) {
+        byte[][] newArray = new byte[existingArray.length][];
+        for (byte i = 0; i < existingArray.length; i++) {
+            int rowLength = existingArray[i].length;
+            newArray[i] = new byte[rowLength];
+            System.arraycopy(existingArray[i], 0, newArray[i], 0, rowLength);
+        }
+        return newArray;
+    }
+
+    public static byte[][] toByteArray(int[][] existingArray) {
+        byte[][] newArray = new byte[existingArray.length][];
+        for (byte i = 0; i < existingArray.length; i++) {
+            int rowLength = existingArray[i].length;
+            newArray[i] = new byte[rowLength];
+            for (int j = 0; j < rowLength; j++) {
+                newArray[i][j] = (byte) existingArray[i][j];
+            }
+        }
+        return newArray;
+    }
+
+    public static void zeroArray(boolean[][] array) {
+        for (int i = 0; i < array.length; i++) {
+            int length = array[i].length;
+            for (int j = 0; j < length; j++) {
+                array[i][j] = false;
+            }
+        }
+    }
+
 }

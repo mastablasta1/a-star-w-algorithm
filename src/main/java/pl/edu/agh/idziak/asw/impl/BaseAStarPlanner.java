@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Tomasz on 21.02.2017.
  */
 public class BaseAStarPlanner<IP extends InputPlan<SS, CS, D>,
-        SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
+        SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;

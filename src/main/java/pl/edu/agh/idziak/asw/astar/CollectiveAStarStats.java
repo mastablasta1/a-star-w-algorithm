@@ -2,9 +2,6 @@ package pl.edu.agh.idziak.asw.astar;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-
-import static java.util.Comparator.naturalOrder;
 
 /**
  * Created by Tomasz on 03.03.2017.
@@ -12,6 +9,7 @@ import static java.util.Comparator.naturalOrder;
 public class CollectiveAStarStats {
 
     private List<Integer> sizeOfOpenSetLog = new LinkedList<>();
+    private int maxSizeOfOpenSet = 0;
 
     public List<Integer> getSizeOfOpenSetLog() {
         return sizeOfOpenSetLog;
@@ -22,10 +20,11 @@ public class CollectiveAStarStats {
     }
 
     public Integer maxSizeOfOpenSet() {
-        return sizeOfOpenSetLog.stream().max(naturalOrder()).orElseThrow(NoSuchElementException::new);
+        return maxSizeOfOpenSet;
     }
 
     void logSizeOfOpenSet(int size) {
         sizeOfOpenSetLog.add(size);
+        maxSizeOfOpenSet = size > maxSizeOfOpenSet ? size : maxSizeOfOpenSet;
     }
 }

@@ -1,12 +1,8 @@
 package pl.edu.agh.idziak.asw.model;
 
-import java.util.Map;
-
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public interface CollectiveState<ES extends EntityState<P>, P extends Comparable<P>> {
-    Map<?, ES> getEntityStates();
+public interface CollectiveState<P extends Comparable<P>> {
 
-    ES getStateForEntity(Object entity);
 }

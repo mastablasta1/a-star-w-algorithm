@@ -20,7 +20,7 @@ public class G2DPathCostCalculator {
         while (it.hasNext()) {
             it.next();
 
-            cost += costFunction.getHeuristicCost(it.getFirst(), it.getSecond());
+            cost += costFunction.getHeuristicCostEstimate(it.getFirst(), it.getSecond());
         }
         return cost;
     }

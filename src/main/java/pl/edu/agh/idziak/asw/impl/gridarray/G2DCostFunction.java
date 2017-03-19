@@ -1,47 +1,38 @@
 package pl.edu.agh.idziak.asw.impl.gridarray;
 
-import pl.edu.agh.idziak.asw.common.UntypedTwoMapsIterator;
 import pl.edu.agh.idziak.asw.model.CostFunction;
-
-import java.util.Map;
-
-import static java.lang.Math.abs;
 
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public class G2DCostFunction implements CostFunction<G2DCollectiveState, Double> {
+public class G2DCostFunction implements CostFunction<G2DOptCollectiveState, Double> {
 
-    @Override
-    public Double getHeuristicCost(G2DCollectiveState start, G2DCollectiveState end) {
-        Map<?, G2DEntityState> startStates = start.getEntityStates();
-        Map<?, G2DEntityState> endStates = end.getEntityStates();
-
-        UntypedTwoMapsIterator<G2DEntityState> it = new UntypedTwoMapsIterator<>(startStates, endStates);
-
+    public Double getHeuristicCostEstimate(G2DOptCollectiveState start, G2DOptCollectiveState goal) {
+        byte[] state1 = start.getState();
+        byte[] state2 = goal.getState();
         double sum = 0;
-
-        while (it.hasNext()) {
-            it.next();
-            sum += getHeuristicCost(it.getFirstValue(), it.getSecondValue());
+        for (int i = 0; i < state1.length; i += 2) {
+            sum += getHeuristicCostEstimate(state1[i], state1[i + 1], state2[i], state2[i + 1]);
         }
-
         return sum;
     }
 
-    public static Double getHeuristicCost(G2DEntityState start, G2DEntityState end) {
-        int startRow = start.get().get(0);
-        int startCol = start.get().get(1);
-        int endRow = end.get().get(0);
-        int endCol = end.get().get(1);
+    private static Double getHeuristicCostEstimate(byte startRow, byte startCol, byte endRow, byte endCol) {
+        return Math.sqrt(Math.pow(startRow - endRow, 2) + Math.pow(startCol - endCol, 2));
+    }
 
-        int manhattanDistance = abs(startRow - endRow) + abs(startCol - endCol);
+    @Override
+    public Double getDistanceBetween(G2DOptCollectiveState state, G2DOptCollectiveState neighbor) {
+        byte[] state1 = state.getState();
+        byte[] state2 = neighbor.getState();
+        double sum = 0;
+        for (int i = 0; i < state1.length; i += 2) {
+            sum += getDistanceBetween(state1[i], state1[i + 1], state2[i], state2[i + 1]);
+        }
+        return sum;
+    }
 
-        if (manhattanDistance == 0)
-            return 0.5d;
-        else if (manhattanDistance == 1)
-            return 1d;
-        else
-            return manhattanDistance * 1.0001d;
+    private double getDistanceBetween(byte startRow, byte startCol, byte endRow, byte endCol) {
+        return getHeuristicCostEstimate(startRow, startCol, endRow, endCol);
     }
 }

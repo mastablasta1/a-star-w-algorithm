@@ -6,7 +6,7 @@ import pl.edu.agh.idziak.asw.model.CollectiveState;
 /**
  * Created by Tomasz on 03.03.2017.
  */
-public class CollectiveAStarResults<CS extends CollectiveState<?, ?>> {
+public class CollectiveAStarResults<CS extends CollectiveState<?>> {
     private CollectiveAStarStats statistics;
     private CollectivePath<CS> collectivePath;
 

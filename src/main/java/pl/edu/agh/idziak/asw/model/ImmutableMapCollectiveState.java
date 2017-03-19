@@ -9,7 +9,7 @@ import java.util.Map;
  * Objects of type ES must be immutable.
  */
 public class ImmutableMapCollectiveState<ES extends EntityState<P>, P extends Comparable<P>> implements
-        CollectiveState<ES, P> {
+        CollectiveState<P> {
 
     private final Map<?, ES> entityStates;
     private final int hashCode;
@@ -19,12 +19,10 @@ public class ImmutableMapCollectiveState<ES extends EntityState<P>, P extends Co
         this.hashCode = entityStates.hashCode();
     }
 
-    @Override
     public Map<?, ES> getEntityStates() {
         return entityStates;
     }
 
-    @Override
     public ES getStateForEntity(Object entity) {
         return entityStates.get(entity);
     }

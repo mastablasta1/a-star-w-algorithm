@@ -13,7 +13,7 @@ import static java.lang.Math.abs;
 public class G2DCostFunction implements CostFunction<G2DCollectiveState, Double> {
 
     @Override
-    public Double getHeuristicCost(G2DCollectiveState start, G2DCollectiveState end) {
+    public Double getHeuristicCostEstimate(G2DCollectiveState start, G2DCollectiveState end) {
         Map<?, G2DEntityState> startStates = start.getEntityStates();
         Map<?, G2DEntityState> endStates = end.getEntityStates();
 
@@ -27,6 +27,11 @@ public class G2DCostFunction implements CostFunction<G2DCollectiveState, Double>
         }
 
         return sum;
+    }
+
+    @Override
+    public Double getDistanceBetween(G2DCollectiveState state, G2DCollectiveState neighbor) {
+        return null;
     }
 
     public static Double getHeuristicCost(G2DEntityState start, G2DEntityState end) {

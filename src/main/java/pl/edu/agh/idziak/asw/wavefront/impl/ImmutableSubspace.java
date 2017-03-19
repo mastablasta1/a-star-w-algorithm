@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Tomasz on 20.02.2017.
  */
-public class ImmutableSubspace<CS extends CollectiveState<?, ?>> implements Subspace<CS> {
+public class ImmutableSubspace<CS extends CollectiveState<?>> implements Subspace<CS> {
 
     private Set<CS> states;
     private CS targetState;
@@ -27,7 +27,7 @@ public class ImmutableSubspace<CS extends CollectiveState<?, ?>> implements Subs
         return targetState;
     }
 
-    public static <CS extends CollectiveState<?, ?>> ImmutableSubspace<CS> from(Set<CS> states, CS
+    public static <CS extends CollectiveState<?>> ImmutableSubspace<CS> from(Set<CS> states, CS
             targetState) {
         ImmutableSubspace<CS> devZone = new ImmutableSubspace<>();
         devZone.states = checkNotNull(states);

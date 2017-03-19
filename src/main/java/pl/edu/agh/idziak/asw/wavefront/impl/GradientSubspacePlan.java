@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by Tomasz on 20.02.2017.
  */
-public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
+public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements SubspacePlan<CS> {
 
     private final Set<?> entities;
@@ -23,7 +23,7 @@ public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends Collecti
         this.subspace = subspace;
         this.gradientMap = ImmutableMap.copyOf(distancesMap);
         this.stateSpace = stateSpace;
-        this.entities = ImmutableSet.of(getSubspace().getTargetState().getEntityStates().keySet());
+        this.entities = ImmutableSet.of();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class GradientSubspacePlan<SS extends StateSpace<CS>, CS extends Collecti
         return entities;
     }
 
-    public static <SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>>
+    public static <SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
     GradientSubspacePlan<SS, CS, D> from(Subspace<CS> subspace, Map<CS, D> distancesMap, SS stateSpace) {
         return new GradientSubspacePlan<>(subspace, distancesMap, stateSpace);
     }

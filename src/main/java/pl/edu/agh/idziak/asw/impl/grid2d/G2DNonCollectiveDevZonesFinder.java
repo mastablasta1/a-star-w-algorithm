@@ -75,7 +75,7 @@ public class G2DNonCollectiveDevZonesFinder implements DeviationZonesFinder<G2DI
         //         Collectors.toMap(o -> o, lastContainedCollectiveState::getStateForEntity)); // TODO collective dev zones strategy
         //
         // acc.outputDeviationZones.add(
-        //         new G2DNonCollectiveSubspace(expandedStateSet, G2DCollectiveState
+        //         new G2DNonCollectiveSubspace(expandedStateSet, G2DOptCollectiveState
         //                 .from(targetCollectiveStateForDevZone)));
 
         devZoneToClose.entities.forEach(entity -> {

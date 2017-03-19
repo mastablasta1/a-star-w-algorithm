@@ -8,9 +8,11 @@ import java.util.*;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>, D extends Comparable<D>> implements CollectiveAStar<SS, CS, D> {
+public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>> implements CollectiveAStar<SS, CS, D> {
 
     private AbstractNumberHandler<D> numHandler;
+    private static int logCount = 0;
+    private static int LOG_EVERY_N_ITERATIONS = 10;
 
     public CollectiveAStarImpl(AbstractNumberHandler<D> abstractNumberHandler) {
         this.numHandler = abstractNumberHandler;
@@ -20,7 +22,7 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
         Accumulator acc = new Accumulator(inputPlan, gatherStats);
 
         acc.gScore.put(acc.start, numHandler.getZero());
-        acc.openSetWithFScore.add(acc.start, acc.costFunction.getHeuristicCost(acc.start, acc.goal));
+        acc.openSetWithFScore.add(acc.start, acc.costFunction.getHeuristicCostEstimate(acc.start, acc.goal));
 
         boolean pathFound = findPath(acc);
 
@@ -29,7 +31,8 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
         return new CollectiveAStarResults<>(collectivePath, acc.stats);
     }
 
-    @Override public CollectivePath<CS> calculatePath(InputPlan<SS, CS, D> inputPlan) {
+    @Override
+    public CollectivePath<CS> calculatePath(InputPlan<SS, CS, D> inputPlan) {
         return calculatePath(inputPlan, false).getCollectivePath();
     }
 
@@ -38,6 +41,11 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
 
             if (acc.gatherStats) {
                 acc.stats.logSizeOfOpenSet(acc.openSetWithFScore.size());
+                if (logCount > LOG_EVERY_N_ITERATIONS) {
+                    logCount = 0;
+                    System.out.println("Iterations: "+acc.stats.getSizeOfOpenSetLog().size()+", maxSize: "+acc.stats.maxSizeOfOpenSet());
+                }
+                logCount++;
             }
 
             acc.openSetWithFScore.pollFirst();
@@ -55,14 +63,14 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
     }
 
     private void iterateNeighbors(Accumulator acc, CS current) {
-        Set<CS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
+        Collection<CS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
 
         for (CS neighbor : neighborsOfCurrent) {
             if (acc.closedSet.contains(neighbor))
                 continue;
 
             D tentativeGScore = numHandler
-                    .add(acc.gScore.get(current), acc.costFunction.getHeuristicCost(current, neighbor));
+                    .add(acc.gScore.get(current), acc.costFunction.getDistanceBetween(current, neighbor));
 
             if (acc.openSetWithFScore.containsKey(neighbor)
                     && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
@@ -71,7 +79,7 @@ public class CollectiveAStarImpl<SS extends StateSpace<CS>, CS extends Collectiv
 
             acc.cameFrom.put(neighbor, current);
             acc.gScore.put(neighbor, tentativeGScore);
-            D heuristicDistNeighborToGoal = acc.costFunction.getHeuristicCost(neighbor, acc.goal);
+            D heuristicDistNeighborToGoal = acc.costFunction.getHeuristicCostEstimate(neighbor, acc.goal);
             D fScore = numHandler.add(tentativeGScore, heuristicDistNeighborToGoal);
             acc.openSetWithFScore.add(neighbor, fScore);
         }

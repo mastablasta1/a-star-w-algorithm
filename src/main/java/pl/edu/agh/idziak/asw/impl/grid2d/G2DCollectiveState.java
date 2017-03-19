@@ -48,7 +48,7 @@ public class G2DCollectiveState extends ImmutableMapCollectiveState<G2DEntitySta
 //    @Override public boolean equals(Object o) {
 //        return this == o
 //                || !(o == null || getClass() != o.getClass())
-//                && ((G2DCollectiveState) o).identity == identity;
+//                && ((G2DOptCollectiveState) o).identity == identity;
 //    }
 
 }

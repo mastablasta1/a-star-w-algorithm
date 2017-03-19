@@ -9,7 +9,7 @@ import pl.edu.agh.idziak.asw.model.StateSpace;
 /**
  * Created by Tomasz on 06.03.2017.
  */
-public class ExtendedOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> {
+public class ExtendedOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?>> {
 
     private ImmutableASWOutputPlan<SS, CS> outputPlan;
     private Benchmark benchmark;
@@ -19,7 +19,7 @@ public class ExtendedOutputPlan<SS extends StateSpace<CS>, CS extends Collective
         benchmark = builder.benchmark;
     }
 
-    public static <SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> Builder<SS, CS> newBuilder() {
+    public static <SS extends StateSpace<CS>, CS extends CollectiveState<?>> Builder<SS, CS> newBuilder() {
         return new Builder<>();
     }
 
@@ -31,7 +31,7 @@ public class ExtendedOutputPlan<SS extends StateSpace<CS>, CS extends Collective
         return benchmark;
     }
 
-    public static final class Builder<SS extends StateSpace<CS>, CS extends CollectiveState<?, ?>> {
+    public static final class Builder<SS extends StateSpace<CS>, CS extends CollectiveState<?>> {
 
         private ImmutableASWOutputPlan<SS, CS> outputPlan;
         private Benchmark benchmark;
