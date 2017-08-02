@@ -12,7 +12,7 @@ import java.util.List;
 public class Benchmark {
 
     private Long aStarCalculationTimeMs;
-    private Long deviationZonesSearchTimeMs;
+    private Long deviationSubspacesSearchTimeMs;
     private Long wavefrontCalculationTimeMs;
     private List<Integer> openSetSizeLog;
     private Integer maxSizeOfOpenSet;
@@ -20,7 +20,7 @@ public class Benchmark {
 
     private Benchmark(Builder builder) {
         aStarCalculationTimeMs = builder.aStarCalculationTimeMs;
-        deviationZonesSearchTimeMs = builder.deviationZonesSearchTimeMs;
+        deviationSubspacesSearchTimeMs = builder.deviationSubspacesSearchTimeMs;
         wavefrontCalculationTimeMs = builder.wavefrontCalculationTimeMs;
         openSetSizeLog = builder.openSetSizeLog;
         if (openSetSizeLog != null)
@@ -32,8 +32,8 @@ public class Benchmark {
         return aStarCalculationTimeMs;
     }
 
-    public Long getDeviationZonesSearchTimeMs() {
-        return deviationZonesSearchTimeMs;
+    public Long getDeviationSubspacesSearchTimeMs() {
+        return deviationSubspacesSearchTimeMs;
     }
 
     public Long getWavefrontCalculationTimeMs() {
@@ -65,7 +65,7 @@ public class Benchmark {
     public static final class Builder {
 
         private Long aStarCalculationTimeMs;
-        private Long deviationZonesSearchTimeMs;
+        private Long deviationSubspacesSearchTimeMs;
         private Long wavefrontCalculationTimeMs;
         private List<Integer> openSetSizeLog;
         private AlgorithmType algorithmType;
@@ -82,7 +82,7 @@ public class Benchmark {
         }
 
         public Builder deviationZonesSearchTimeMs(Long val) {
-            deviationZonesSearchTimeMs = val;
+            deviationSubspacesSearchTimeMs = val;
             return this;
         }
 
@@ -107,7 +107,7 @@ public class Benchmark {
         return MoreObjects.toStringHelper(this)
                           .add("algorithmType", algorithmType)
                           .add("aStarCalculationTimeMs", aStarCalculationTimeMs)
-                          .add("deviationZonesSearchTimeMs", deviationZonesSearchTimeMs)
+                          .add("deviationSubspacesSearchTimeMs", deviationSubspacesSearchTimeMs)
                           .add("wavefrontCalculationTimeMs", wavefrontCalculationTimeMs)
                           .add("iterationCount", openSetSizeLog.size())
                           .add("maxSizeOfOpenSet", maxSizeOfOpenSet)

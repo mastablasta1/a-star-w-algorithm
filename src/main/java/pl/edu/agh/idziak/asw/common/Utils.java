@@ -43,6 +43,12 @@ public class Utils {
         return newArray;
     }
 
+    public static byte[] arrayCopy(byte[] array) {
+        byte[] newArray = new byte[array.length];
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        return newArray;
+    }
+
     public static short[][] arrayCopy(short[][] existingArray) {
         short[][] newArray = new short[existingArray.length][];
         for (short i = 0; i < existingArray.length; i++) {
@@ -75,7 +81,7 @@ public class Utils {
         return newArray;
     }
 
-    public static void zeroArray(boolean[][] array) {
+    public static void clearArray(boolean[][] array) {
         for (int i = 0; i < array.length; i++) {
             int length = array[i].length;
             for (int j = 0; j < length; j++) {
@@ -84,4 +90,15 @@ public class Utils {
         }
     }
 
+    public static int[][] toIntegerArray(byte[][] existingArray) {
+        int[][] newArray = new int[existingArray.length][];
+        for (byte i = 0; i < existingArray.length; i++) {
+            int rowLength = existingArray[i].length;
+            newArray[i] = new int[rowLength];
+            for (int j = 0; j < rowLength; j++) {
+                newArray[i][j] = existingArray[i][j];
+            }
+        }
+        return newArray;
+    }
 }

@@ -5,8 +5,8 @@ import pl.edu.agh.idziak.asw.model.AbstractNumberHandler;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 import pl.edu.agh.idziak.asw.model.CostFunction;
 import pl.edu.agh.idziak.asw.model.StateSpace;
-import pl.edu.agh.idziak.asw.wavefront.Subspace;
-import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.Wavefront;
 
 import java.util.*;
@@ -23,8 +23,8 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
     }
 
     @Override
-    public SubspacePlan<CS> buildPlanForSubspace(Subspace<CS> subspace, SS stateSpace, CostFunction<CS, D> costFunction) {
-        CS targetState = subspace.getTargetState();
+    public DeviationSubspacePlan<CS> buildPlanForDeviationSubspace(DeviationSubspace<CS> deviationSubspace, CostFunction<CS, D> costFunction) {
+        CS targetState = deviationSubspace.getTargetState();
 
         Queue<CS> queue = new LinkedList<>();
         Map<CS, D> distanceFromTarget = new HashMap<>();
@@ -35,12 +35,12 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
         while (!queue.isEmpty()) {
             CS current = queue.remove();
 
-            Collection<CS> neighbors = stateSpace.getNeighborStatesOf(current);
+            Collection<CS> neighbors = deviationSubspace.getNeighborStatesOf(current);
 
             D distCurrentToTarget = distanceFromTarget.get(current);
 
             for (CS neighbor : neighbors) {
-                if (subspace.contains(neighbor) && !distanceFromTarget.containsKey(neighbor)) {
+                if (!distanceFromTarget.containsKey(neighbor)) {
                     D distNeighborToCurrent = costFunction.getHeuristicCostEstimate(neighbor, current);
                     distanceFromTarget.put(neighbor,
                             abstractNumberHandler.add(distCurrentToTarget, distNeighborToCurrent));
@@ -48,26 +48,7 @@ public class WavefrontImpl<SS extends StateSpace<CS>, CS extends CollectiveState
                 }
             }
         }
-        return GradientSubspacePlan.from(subspace, distanceFromTarget, stateSpace);
+        return new GradientDeviationSubspacePlan<>(deviationSubspace, distanceFromTarget);
     }
 
-    @Override
-    public SubspacePlan<CS> buildPlanForEntireSpace(CS targetState, SS stateSpace, CostFunction<CS, D> costFunction) {
-        return buildPlanForSubspace(new SubspaceEqualToStateSpace<>(targetState), stateSpace, costFunction);
-    }
-
-    private static class SubspaceEqualToStateSpace<CS extends CollectiveState<?>> implements Subspace<CS> {
-
-        private CS targetState;
-
-        private SubspaceEqualToStateSpace(CS targetState) {this.targetState = targetState;}
-
-        @Override public boolean contains(CS collectiveState) {
-            return true;
-        }
-
-        @Override public CS getTargetState() {
-            return targetState;
-        }
-    }
 }

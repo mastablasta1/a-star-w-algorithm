@@ -1,7 +1,7 @@
 package pl.edu.agh.idziak.asw.model;
 
 
-import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 
 import java.util.Set;
 
@@ -12,5 +12,5 @@ public interface ASWOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveS
 
     CollectivePath<CS> getCollectivePath();
 
-    Set<SubspacePlan<CS>> getSubspacePlans();
+    Set<DeviationSubspacePlan<CS>> getDeviationSubspacePlans();
 }

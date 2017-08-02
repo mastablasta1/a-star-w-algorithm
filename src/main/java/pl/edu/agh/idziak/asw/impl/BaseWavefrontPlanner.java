@@ -1,19 +1,18 @@
 package pl.edu.agh.idziak.asw.impl;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableSet;
-import pl.edu.agh.idziak.asw.common.Benchmark;
 import pl.edu.agh.idziak.asw.model.*;
-import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.Wavefront;
 import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
 
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
+public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
@@ -23,28 +22,38 @@ public class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         wavefront = new WavefrontImpl<>(numberHandler);
     }
 
-    @Override public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
-        return calculatePlanWithBenchmark(inputPlan).getOutputPlan();
-    }
-
-    public ExtendedOutputPlan<SS, CS> calculatePlanWithBenchmark(IP inputPlan) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        SubspacePlan<CS> subspacePlan = wavefront.buildPlanForEntireSpace(
-                inputPlan.getTargetCollectiveState(),
-                inputPlan.getStateSpace(),
+    @Override
+    public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+        DeviationSubspacePlan<CS> deviationSubspacePlan = wavefront.buildPlanForDeviationSubspace(
+                new StateSpaceAsDeviationSubspace(
+                        inputPlan.getStateSpace(),
+                        inputPlan.getTargetCollectiveState()),
                 inputPlan.getCostFunction());
-        stopwatch.stop();
-        Benchmark benchmark = Benchmark.newBuilder()
-                                       .wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS))
-                                       .algorithmType(AlgorithmType.WAVEFRONT)
-                                       .build();
-        CollectivePath<CS> collectivePath = subspacePlan.constructPath(
+        CollectivePath<CS> collectivePath = deviationSubspacePlan.constructPath(
                 inputPlan.getInitialCollectiveState(),
                 inputPlan.getTargetCollectiveState());
 
-        return ExtendedOutputPlan.<SS, CS>newBuilder()
-                .outputPlan(ImmutableASWOutputPlan.from(collectivePath, ImmutableSet.of(subspacePlan)))
-                .benchmark(benchmark)
-                .build();
+        return ImmutableASWOutputPlan.from(collectivePath, ImmutableSet.of(deviationSubspacePlan));
     }
+
+    private class StateSpaceAsDeviationSubspace implements DeviationSubspace<CS> {
+        private SS stateSpace;
+        private CS targetState;
+
+        public StateSpaceAsDeviationSubspace(SS stateSpace, CS targetState) {
+            this.stateSpace = stateSpace;
+            this.targetState = targetState;
+        }
+
+        @Override
+        public Collection<CS> getNeighborStatesOf(CS globalState) {
+            return stateSpace.getNeighborStatesOf(globalState);
+        }
+
+        @Override
+        public CS getTargetState() {
+            return targetState;
+        }
+    }
+
 }

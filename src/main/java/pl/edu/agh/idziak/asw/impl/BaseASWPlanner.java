@@ -1,71 +1,55 @@
 package pl.edu.agh.idziak.asw.impl;
 
-import com.google.common.base.Stopwatch;
 import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
-import pl.edu.agh.idziak.asw.astar.CollectiveAStarResults;
-import pl.edu.agh.idziak.asw.common.Benchmark;
+import pl.edu.agh.idziak.asw.astar.CurrentStateMonitor;
 import pl.edu.agh.idziak.asw.model.*;
-import pl.edu.agh.idziak.asw.wavefront.Subspace;
-import pl.edu.agh.idziak.asw.wavefront.SubspacePlan;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.Wavefront;
 import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.toSet;
 
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
+public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;
     private final Wavefront<SS, CS, D> wavefront;
-    private final DeviationZonesFinder<IP, CS> deviationZonesFinder;
+    private final DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator;
 
-    public BaseASWPlanner(AbstractNumberHandler<D> numberHandler, DeviationZonesFinder<IP, CS> deviationZonesFinder) {
-        collectiveAStar = new CollectiveAStarImpl<>(numberHandler);
-        wavefront = new WavefrontImpl<>(numberHandler);
-        this.deviationZonesFinder = deviationZonesFinder;
+    public BaseASWPlanner(AbstractNumberHandler<D> numberHandler, DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator) {
+        this.collectiveAStar = new CollectiveAStarImpl<>(numberHandler);
+        this.wavefront = new WavefrontImpl<>(numberHandler);
+        this.deviationSubspaceLocator = deviationSubspaceLocator;
     }
 
-    @Override public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
-        return calculatePlanWithBenchmark(inputPlan).getOutputPlan();
-    }
+    @Override
+    public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+        CollectivePath<CS> collectivePath = collectiveAStar.calculatePath(inputPlan);
+        if (collectivePath == null) {
+            return ImmutableASWOutputPlan.from(null, null);
+        }
 
-    public ExtendedOutputPlan<SS, CS> calculatePlanWithBenchmark(IP inputPlan) {
-        Benchmark.Builder benchmarkBuilder = Benchmark.newBuilder().algorithmType(AlgorithmType.ASW);
-
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        CollectiveAStarResults<CS> results = collectiveAStar.calculatePath(inputPlan, true);
-        benchmarkBuilder.openSetSizeLog(results.getStatistics().getSizeOfOpenSetLog());
-        benchmarkBuilder.aStarCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-
-        stopwatch.reset().start();
-        Set<? extends Subspace<CS>> subspaces = deviationZonesFinder.findDeviationZones(inputPlan, results.getCollectivePath());
-        benchmarkBuilder.deviationZonesSearchTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-
+        Set<? extends DeviationSubspace<CS>> subspaces = deviationSubspaceLocator.findDeviationSubspaces(inputPlan, collectivePath);
         if (subspaces == null) {
             subspaces = Collections.emptySet();
         }
 
-        stopwatch.reset().start();
-        Set<SubspacePlan<CS>> devZonePlans = subspaces.stream()
-                                                      .map(devZone -> wavefront.buildPlanForSubspace(
-                                                                  devZone,
-                                                                  inputPlan.getStateSpace(),
-                                                                  inputPlan.getCostFunction()))
-                                                      .collect(toSet());
-        benchmarkBuilder.wavefrontCalculationTimeMs(stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        stopwatch.stop();
+        Set<DeviationSubspacePlan<CS>> deviationSubspacePlans = subspaces.stream()
+                .map(devSubspace -> wavefront.buildPlanForDeviationSubspace(devSubspace, inputPlan.getCostFunction()))
+                .collect(toSet());
 
-        return ExtendedOutputPlan.<SS, CS>newBuilder()
-                .outputPlan(ImmutableASWOutputPlan.from(results.getCollectivePath(), devZonePlans))
-                .benchmark(benchmarkBuilder.build())
-                .build();
+        return ImmutableASWOutputPlan.from(collectivePath, deviationSubspacePlans);
+    }
+
+    public void setAStarCurrentStateMonitor(CurrentStateMonitor<CS> monitor) {
+        collectiveAStar.setCurrentStateMonitor(monitor);
     }
 }
