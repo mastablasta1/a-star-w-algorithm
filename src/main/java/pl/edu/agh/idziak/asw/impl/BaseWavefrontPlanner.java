@@ -13,7 +13,7 @@ import java.util.Collection;
  * Created by Tomasz on 21.02.2017.
  */
 public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
-        SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
+        SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
     private final Wavefront<SS, CS, D> wavefront;
@@ -28,7 +28,7 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
                 new StateSpaceAsDeviationSubspace(
                         inputPlan.getStateSpace(),
                         inputPlan.getTargetCollectiveState()),
-                inputPlan.getCostFunction());
+                inputPlan.getDistanceHeuristic());
         CollectivePath<CS> collectivePath = deviationSubspacePlan.constructPath(
                 inputPlan.getInitialCollectiveState(),
                 inputPlan.getTargetCollectiveState());

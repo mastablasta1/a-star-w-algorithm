@@ -1,39 +1,44 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import pl.edu.agh.idziak.asw.model.InputPlan;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class GridInputPlan implements InputPlan<GridStateSpace, GridCollectiveState, Double> {
+public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCollectiveState, Double> {
 
+    private final NeighborhoodType neighborhoodType;
     private GridCollectiveState initialState;
     private GridCollectiveState targetState;
-    private final GridStateSpace globalStateSpace;
+    private final GridCollectiveStateSpace globalStateSpace;
     private List<?> entities;
-    private GridCostFunction costFunction;
+    private GridDistanceHeuristic distanceHeuristic;
 
     public GridInputPlan(List<?> entities,
-                         GridStateSpace globalStateSpace,
+                         GridCollectiveStateSpace globalStateSpace,
                          GridCollectiveState initialState,
-                         GridCollectiveState targetState) {
+                         GridCollectiveState targetState,
+                         NeighborhoodType neighborhoodType) {
         this.entities = checkNotNull(entities);
         this.globalStateSpace = checkNotNull(globalStateSpace);
         this.targetState = checkNotNull(targetState);
         this.initialState = checkNotNull(initialState);
-        this.costFunction = new GridCostFunction();
-        validateInput();
+        this.neighborhoodType = checkNotNull(neighborhoodType);
+        this.globalStateSpace.setNeighborhood(this.neighborhoodType);
+        this.distanceHeuristic = new GridDistanceHeuristic(this.neighborhoodType);
+
+        checkArgument(entities.size() == initialState.entityStatesCount());
+        checkArgument(entities.size() == targetState.entityStatesCount());
     }
 
-    private void validateInput() {
-        Preconditions.checkArgument(entities.size() == initialState.entityStatesCount());
-        Preconditions.checkArgument(entities.size() == targetState.entityStatesCount());
+    public NeighborhoodType getNeighborhoodType() {
+        return neighborhoodType;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class GridInputPlan implements InputPlan<GridStateSpace, GridCollectiveSt
     }
 
     @Override
-    public GridStateSpace getStateSpace() {
+    public GridCollectiveStateSpace getStateSpace() {
         return globalStateSpace;
     }
 
@@ -66,8 +71,8 @@ public class GridInputPlan implements InputPlan<GridStateSpace, GridCollectiveSt
 
 
     @Override
-    public GridCostFunction getCostFunction() {
-        return costFunction;
+    public GridDistanceHeuristic getDistanceHeuristic() {
+        return distanceHeuristic;
     }
 
     @Override

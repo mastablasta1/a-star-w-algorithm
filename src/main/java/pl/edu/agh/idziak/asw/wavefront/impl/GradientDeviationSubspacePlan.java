@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 import pl.edu.agh.idziak.asw.model.ImmutableCollectivePath;
-import pl.edu.agh.idziak.asw.model.StateSpace;
+import pl.edu.agh.idziak.asw.model.CollectiveStateSpace;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by Tomasz on 20.02.2017.
  */
-public class GradientDeviationSubspacePlan<SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
+public class GradientDeviationSubspacePlan<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
         implements DeviationSubspacePlan<CS> {
 
     private final DeviationSubspace<CS> deviationSubspace;

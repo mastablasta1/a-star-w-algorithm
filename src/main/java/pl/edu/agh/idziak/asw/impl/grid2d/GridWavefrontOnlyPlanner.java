@@ -7,14 +7,14 @@ import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 /**
  * Created by Tomasz on 22.02.2017.
  */
-public class GridWavefrontOnlyPlanner extends BaseWavefrontPlanner<GridInputPlan, GridStateSpace, GridCollectiveState, Double> {
+public class GridWavefrontOnlyPlanner extends BaseWavefrontPlanner<GridInputPlan, GridCollectiveStateSpace, GridCollectiveState, Double> {
 
     public GridWavefrontOnlyPlanner() {
         super(DoubleHandler.getInstance());
     }
 
     @Override
-    public ASWOutputPlan<GridStateSpace, GridCollectiveState> calculatePlan(GridInputPlan inputPlan) {
+    public ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> calculatePlan(GridInputPlan inputPlan) {
         inputPlan.setInitialState(inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getInitialCollectiveState().getArray()));
         inputPlan.setTargetState(inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getTargetCollectiveState().getArray()));
         return super.calculatePlan(inputPlan);

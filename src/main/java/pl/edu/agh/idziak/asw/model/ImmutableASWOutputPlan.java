@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?>> implements ASWOutputPlan<SS, CS> {
+public class ImmutableASWOutputPlan<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>> implements ASWOutputPlan<SS, CS> {
 
     private final CollectivePath<CS> collectivePath;
     private final Set<DeviationSubspacePlan<CS>> deviationSubspacePlans;
@@ -30,7 +30,7 @@ public class ImmutableASWOutputPlan<SS extends StateSpace<CS>, CS extends Collec
         return deviationSubspacePlans;
     }
 
-    public static <SS extends StateSpace<CS>, CS extends CollectiveState<?>>
+    public static <SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>>
     ImmutableASWOutputPlan<SS, CS> from(CollectivePath<CS> collectivePath,
             Set<DeviationSubspacePlan<CS>> deviationSubspacePlans) {
         return new ImmutableASWOutputPlan<>(collectivePath, deviationSubspacePlans);

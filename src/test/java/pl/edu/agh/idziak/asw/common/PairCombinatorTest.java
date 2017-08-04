@@ -17,9 +17,9 @@ public class PairCombinatorTest {
         PairCombinator<Integer> testSubject = new PairCombinator<>(ImmutableList.of(1, 2, 3));
 
         List<SingleTypePair<Integer>> expectedPairs = ImmutableList.of(
-                Pair.ofSingleType(1, 2),
-                Pair.ofSingleType(1, 3),
-                Pair.ofSingleType(2, 3)
+                Pair.ofSameType(1, 2),
+                Pair.ofSameType(1, 3),
+                Pair.ofSameType(2, 3)
         );
 
         iteratePairCombinator(testSubject, expectedPairs);
@@ -30,7 +30,7 @@ public class PairCombinatorTest {
         PairCombinator<Integer> testSubject = new PairCombinator<>(ImmutableList.of(1, 2));
 
         List<SingleTypePair<Integer>> expectedPairs = ImmutableList.of(
-                Pair.ofSingleType(1, 2)
+                Pair.ofSameType(1, 2)
         );
 
         iteratePairCombinator(testSubject, expectedPairs);

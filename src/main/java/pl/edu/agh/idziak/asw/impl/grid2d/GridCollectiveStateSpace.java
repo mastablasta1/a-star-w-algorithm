@@ -1,10 +1,12 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.common.ArrayBasedCache;
 import pl.edu.agh.idziak.asw.common.Utils;
-import pl.edu.agh.idziak.asw.impl.grid2d.internal.GridEntityStateUniquenessCache;
-import pl.edu.agh.idziak.asw.impl.grid2d.internal.GridStateChangeCache;
-import pl.edu.agh.idziak.asw.model.StateSpace;
+import pl.edu.agh.idziak.asw.impl.grid2d.internal.EntityStateUniquenessCache;
+import pl.edu.agh.idziak.asw.impl.grid2d.internal.StateChangeCache;
+import pl.edu.agh.idziak.asw.model.CollectiveStateSpace;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,12 +17,12 @@ import static pl.edu.agh.idziak.asw.common.Utils.arrayCopy;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class GridStateSpace implements StateSpace<GridCollectiveState> {
-
+public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollectiveState> {
+    private static final Logger LOG = LoggerFactory.getLogger(GridCollectiveStateSpace.class);
     private static final int MOORE_NEIGHBORS_COUNT = 9;
     private static final int VON_NEUMANN_NEIGHBORS_COUNT = 5;
 
-    private final Neighborhood neighborhood = Neighborhood.MOORE; // FIXME parametrize
+    private NeighborhoodType neighborhood = NeighborhoodType.VON_NEUMANN;
 
     private final byte[][] space;
     private final int rows;
@@ -28,8 +30,8 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
     private final int neighborsCount;
     private final Map<Integer, Integer> collectiveStateNeighborsCount;
 
-
     private ArrayBasedCache<GridCollectiveState> stateCache;
+    private EntityStateUniquenessCache entityStateUniquenessCache;
 
     public int getRows() {
         return rows;
@@ -39,11 +41,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
         return cols;
     }
 
-    public enum Neighborhood {
-        VON_NEUMANN, MOORE
-    }
-
-    public GridStateSpace(byte[][] space) {
+    public GridCollectiveStateSpace(byte[][] space) {
         this.space = arrayCopy(checkNotNull(space));
         this.rows = space.length;
         this.cols = space[0].length;
@@ -51,9 +49,10 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
                 state -> new GridCollectiveState(Utils.arrayCopy(state)));
         neighborsCount = getNeighborsCount(neighborhood);
         collectiveStateNeighborsCount = new HashMap<>();
+        entityStateUniquenessCache = new EntityStateUniquenessCache(rows, cols);
     }
 
-    public GridStateSpace(int[][] space) {
+    public GridCollectiveStateSpace(int[][] space) {
         this(Utils.toByteArray(space));
     }
 
@@ -63,7 +62,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
     }
 
     private boolean isValidState(byte[] array) {
-        GridEntityStateUniquenessCache cache = newEntityStateUniquenessCache();
+        EntityStateUniquenessCache cache = newEntityStateUniquenessCache();
 
         for (int i = 0; i < array.length; i += 2) {
             if (!cache.checkIfUniqueAndStore(array[i], array[i + 1])) {
@@ -92,9 +91,13 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
                 .collect(Collectors.toList());
     }
 
+    void setNeighborhood(NeighborhoodType neighborhood) {
+        this.neighborhood = neighborhood;
+    }
+
     private boolean isValidStateTransition(byte[] currentStateArray, byte[] neighborStateArray) {
-        GridEntityStateUniquenessCache uniquenessCache = newEntityStateUniquenessCache();
-        GridStateChangeCache stateChangeCache = newStateChangeCache();
+        EntityStateUniquenessCache uniquenessCache = newEntityStateUniquenessCache();
+        StateChangeCache stateChangeCache = newStateChangeCache();
 
         for (int j = 0; j < neighborStateArray.length; j += 2) {
             byte fromRow = currentStateArray[j];
@@ -109,12 +112,13 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
         return true;
     }
 
-    private GridStateChangeCache newStateChangeCache() {
-        return new GridStateChangeCache(rows, cols);
+    private StateChangeCache newStateChangeCache() {
+        return new StateChangeCache(rows, cols);
     }
 
-    private GridEntityStateUniquenessCache newEntityStateUniquenessCache() {
-        return new GridEntityStateUniquenessCache(rows, cols);
+    private EntityStateUniquenessCache newEntityStateUniquenessCache() {
+        entityStateUniquenessCache.reset();
+        return entityStateUniquenessCache;
     }
 
     private int getCollectiveStateNeighborsCount(int colStatesCount) {
@@ -185,7 +189,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
 
         if (row > 0) {
             addState((byte) (row - 1), col, states);
-            if (neighborhood == Neighborhood.MOORE) {
+            if (neighborhood == NeighborhoodType.MOORE) {
                 if (col > 0)
                     addState((byte) (row - 1), (byte) (col - 1), states);
                 if (col < cols - 1)
@@ -195,7 +199,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
 
         if (row < rows - 1) {
             addState((byte) (row + 1), col, states);
-            if (neighborhood == Neighborhood.MOORE) {
+            if (neighborhood == NeighborhoodType.MOORE) {
                 if (col > 0)
                     addState((byte) (row + 1), (byte) (col - 1), states);
                 if (col < cols - 1)
@@ -231,7 +235,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
         return sb.toString();
     }
 
-    private static int getNeighborsCount(Neighborhood neighborhood) {
+    private static int getNeighborsCount(NeighborhoodType neighborhood) {
         switch (neighborhood) {
             case VON_NEUMANN:
                 return VON_NEUMANN_NEIGHBORS_COUNT;
@@ -245,7 +249,7 @@ public class GridStateSpace implements StateSpace<GridCollectiveState> {
         if (!isValidState(array)) {
             return null;
         }
-        return new GridCollectiveState(array);
+        return stateCache.get(array);
     }
 
     GridCollectiveState collectiveStateFrom(List<GridEntityState> states) {

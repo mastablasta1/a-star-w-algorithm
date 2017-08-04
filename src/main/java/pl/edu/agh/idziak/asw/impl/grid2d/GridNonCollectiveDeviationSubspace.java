@@ -13,10 +13,10 @@ public class GridNonCollectiveDeviationSubspace implements GridDeviationSubspace
     private List<?> entities;
     private GridCollectiveState targetState;
     private Set<GridEntityState> containedStates;
-    private GridStateSpace stateSpace;
+    private GridCollectiveStateSpace stateSpace;
 
     public GridNonCollectiveDeviationSubspace(Set<GridEntityState> containedStates,
-                                              GridStateSpace stateSpace,
+                                              GridCollectiveStateSpace stateSpace,
                                               List<GridEntityState> targetState,
                                               List<?> entities) {
         this.containedStates = containedStates;

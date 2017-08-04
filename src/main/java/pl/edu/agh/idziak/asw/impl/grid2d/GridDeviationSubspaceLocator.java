@@ -1,10 +1,10 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.model.DeviationSubspaceLocator;
+import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
  * Created by Tomasz on 13.03.2017.
  */
 public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<GridInputPlan, GridCollectiveState> {
-    private static final int WARNING_PROXIMITY = 2;
+    private static final double WARNING_PROXIMITY = 2d;
     private static final int EXPANSION_FACTOR = 1;
 
     @Override
-    public Set<GridDeviationSubspace> findDeviationSubspaces(GridInputPlan inputPlan, CollectivePath<GridCollectiveState> collectivePath) {
+    public Collection<? extends DeviationSubspace<GridCollectiveState>> findDeviationSubspaces(GridInputPlan inputPlan, CollectivePath<GridCollectiveState> collectivePath) {
         Accumulator acc = new Accumulator(inputPlan, collectivePath);
 
         for (GridCollectiveState currentCollectiveState : collectivePath.get()) {
@@ -44,7 +44,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
 
         acc.openDevSubspaces.forEach(openDeviationSubspace ->
                 finalizeDeviationSubspace(acc, openDeviationSubspace, Iterables.getLast(collectivePath.get())));
-        return ImmutableSet.copyOf(acc.outputDeviationSubspaces);
+        return ImmutableList.copyOf(acc.outputDeviationSubspaces);
     }
 
     private void openNewDevSubspacesForBuckets(Accumulator acc, Set<BucketOfStates> bucketsOfProximateStates) {
@@ -62,7 +62,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
     }
 
     private void finalizeDeviationSubspace(Accumulator acc, OpenDeviationSubspace openDeviationSubspace, GridCollectiveState currentState) {
-        GridStateSpace stateSpace = acc.inputPlan.getStateSpace();
+        GridCollectiveStateSpace stateSpace = acc.inputPlan.getStateSpace();
 
         expandDevSubspace(stateSpace, openDeviationSubspace);
 
@@ -77,7 +77,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         acc.outputDeviationSubspaces.add(newDevSubspace);
     }
 
-    private void expandDevSubspace(GridStateSpace stateSpace, OpenDeviationSubspace devSubspaceToClose) {
+    private void expandDevSubspace(GridCollectiveStateSpace stateSpace, OpenDeviationSubspace devSubspaceToClose) {
         for (int i = 0; i < EXPANSION_FACTOR; i++) {
             Set<GridEntityState> tempSet = new HashSet<>(devSubspaceToClose.containedStates);
             for (GridEntityState entityState : tempSet) {
@@ -119,10 +119,11 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
 
         for (int entityIndex = 0; entityIndex < entityStates.size(); entityIndex++) {
             GridEntityState entityState = entityStates.get(entityIndex);
-            BucketOfStates existingBucketToExpand = findBucketToExpand(bucketsOfProximateStates, entityState);
+            BucketOfStates existingBucketToExpand = findBucketToExpand(bucketsOfProximateStates, entityState, acc);
 
             if (existingBucketToExpand != null) {
                 existingBucketToExpand.entityStates.put(entityIndex, entityState);
+                existingBucketToExpand.entities.add(acc.inputPlan.getEntities().get(entityIndex));
             } else {
                 BucketOfStates newBucket = new BucketOfStates();
                 newBucket.entityStates.put(entityIndex, entityState);
@@ -133,12 +134,12 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         return bucketsOfProximateStates;
     }
 
-    private BucketOfStates findBucketToExpand(Set<BucketOfStates> bucketsOfProximateStates, GridEntityState entityState) {
+    private BucketOfStates findBucketToExpand(Set<BucketOfStates> bucketsOfProximateStates, GridEntityState entityState, Accumulator acc) {
         BucketOfStates existingBucketToExpand = null;
         outsideLoop:
         for (BucketOfStates bucket : bucketsOfProximateStates) {
             for (Map.Entry<Integer, GridEntityState> bucketedState : bucket.entityStates.entrySet()) {
-                if (areStatesProximate(entityState, bucketedState.getValue())) {
+                if (areStatesProximate(entityState, bucketedState.getValue(), acc)) {
                     existingBucketToExpand = bucket;
                     break outsideLoop;
                 }
@@ -147,10 +148,9 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         return existingBucketToExpand;
     }
 
-    private boolean areStatesProximate(GridEntityState state1, GridEntityState state2) {
-        int manhattanDistance = Math.abs(state1.getCol() - state2.getCol())
-                + Math.abs(state1.getRow() - state2.getRow());
-        return manhattanDistance <= WARNING_PROXIMITY;
+    private boolean areStatesProximate(GridEntityState state1, GridEntityState state2, Accumulator acc) {
+        Double estDistance = acc.inputPlan.getDistanceHeuristic().estimateHeuristicDistanceForEntity(state1, state2);
+        return estDistance <= WARNING_PROXIMITY;
     }
 
     private class Accumulator {
@@ -181,5 +181,10 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
     private static class BucketOfStates {
         private final Map<Integer, GridEntityState> entityStates = new HashMap<>();
         private final List<Object> entities = new LinkedList<>();
+
+        @Override
+        public String toString() {
+            return entities.toString();
+        }
     }
 }

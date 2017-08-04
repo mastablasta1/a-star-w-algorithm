@@ -6,7 +6,7 @@ import java.util.Collection;
 /**
  * Created by Tomasz on 28.06.2016.
  */
-public interface InputPlan<SS extends StateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>> {
+public interface InputPlan<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>> {
     CS getInitialCollectiveState();
 
     CS getTargetCollectiveState();
@@ -15,5 +15,5 @@ public interface InputPlan<SS extends StateSpace<CS>, CS extends CollectiveState
 
     Collection<?> getEntities();
 
-    CostFunction<CS, D> getCostFunction();
+    DistanceHeuristic<CS, D> getDistanceHeuristic();
 }

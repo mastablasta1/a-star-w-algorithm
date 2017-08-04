@@ -42,4 +42,9 @@ public class GridEntityState {
     public int hashCode() {
         return Objects.hashCode(row, col);
     }
+
+    @Override
+    public String toString() {
+        return "[" + row + "," + col + "]";
+    }
 }
