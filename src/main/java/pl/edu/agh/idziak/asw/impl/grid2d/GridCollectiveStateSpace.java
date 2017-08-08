@@ -32,6 +32,7 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
 
     private ArrayBasedCache<GridCollectiveState> stateCache;
     private EntityStateUniquenessCache entityStateUniquenessCache;
+    private StateChangeCache stateChangeCache;
 
     public int getRows() {
         return rows;
@@ -50,6 +51,7 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
         neighborsCount = getNeighborsCount(neighborhood);
         collectiveStateNeighborsCount = new HashMap<>();
         entityStateUniquenessCache = new EntityStateUniquenessCache(rows, cols);
+        stateChangeCache = new StateChangeCache(rows, cols);
     }
 
     public GridCollectiveStateSpace(int[][] space) {
@@ -62,10 +64,10 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
     }
 
     private boolean isValidState(byte[] array) {
-        EntityStateUniquenessCache cache = newEntityStateUniquenessCache();
+        entityStateUniquenessCache.reset();
 
         for (int i = 0; i < array.length; i += 2) {
-            if (!cache.checkIfUniqueAndStore(array[i], array[i + 1])) {
+            if (!entityStateUniquenessCache.checkIfUniqueAndStore(array[i], array[i + 1])) {
                 return false;
             }
         }
@@ -96,8 +98,8 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
     }
 
     private boolean isValidStateTransition(byte[] currentStateArray, byte[] neighborStateArray) {
-        EntityStateUniquenessCache uniquenessCache = newEntityStateUniquenessCache();
-        StateChangeCache stateChangeCache = newStateChangeCache();
+        entityStateUniquenessCache.reset();
+        stateChangeCache.reset();
 
         for (int j = 0; j < neighborStateArray.length; j += 2) {
             byte fromRow = currentStateArray[j];
@@ -105,20 +107,11 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
             byte toRow = neighborStateArray[j];
             byte toCol = neighborStateArray[j + 1];
 
-            if (!uniquenessCache.checkIfUniqueAndStore(toRow, toCol)
+            if (!entityStateUniquenessCache.checkIfUniqueAndStore(toRow, toCol)
                     || !stateChangeCache.checkIfValidStateChangeAndStore(fromRow, fromCol, toRow, toCol))
                 return false;
         }
         return true;
-    }
-
-    private StateChangeCache newStateChangeCache() {
-        return new StateChangeCache(rows, cols);
-    }
-
-    private EntityStateUniquenessCache newEntityStateUniquenessCache() {
-        entityStateUniquenessCache.reset();
-        return entityStateUniquenessCache;
     }
 
     private int getCollectiveStateNeighborsCount(int colStatesCount) {

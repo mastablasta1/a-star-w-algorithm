@@ -9,6 +9,7 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
 
     private static final double SQRT_OF_2 = Math.sqrt(2.0);
     private NeighborhoodType neighborhoodType;
+    private GridCollectiveState goal;
 
     public GridDistanceHeuristic(NeighborhoodType neighborhoodType) {
         this.neighborhoodType = neighborhoodType;
@@ -45,9 +46,20 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
         byte[] state2 = neighbor.getArray();
         double sum = 0;
         for (int i = 0; i < state1.length; i += 2) {
-            sum += getDistanceBetweenEntityStates(state1[i], state1[i + 1], state2[i], state2[i + 1]);
+            double dist = getDistanceBetweenEntityStates(state1[i], state1[i + 1], state2[i], state2[i + 1]);
+            if (dist == 0d) {
+                byte[] goalArray = goal.getArray();
+                if (goalArray[i] != state1[i] || goalArray[i + 1] != state1[i + 1]) {
+                    dist = 0.001;
+                }
+            }
+            sum += dist;
         }
         return sum;
+    }
+
+    public void setGoal(GridCollectiveState goal) {
+        this.goal = goal;
     }
 
     private double getDistanceBetweenEntityStates(byte startRow, byte startCol, byte endRow, byte endCol) {
@@ -63,6 +75,6 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
         if (startRow - endRow != 0) {
             return 1;
         }
-        return 0.001;
+        return 0d;
     }
 }

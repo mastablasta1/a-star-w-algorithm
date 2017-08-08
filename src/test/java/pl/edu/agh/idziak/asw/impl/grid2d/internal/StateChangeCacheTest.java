@@ -19,6 +19,13 @@ public class StateChangeCacheTest {
 
         assertTrue(checkAndStore(testSubject, 1, 1, 2, 2));
         assertTrue(checkAndStore(testSubject, 1, 1, 3, 3));
+
+        testSubject.reset();
+
+        assertTrue(checkAndStore(testSubject, 0, 0, 0, 1));
+        assertTrue(checkAndStore(testSubject, 0, 0, 0, 1));
+        assertFalse(checkAndStore(testSubject, 0, 1, 0, 0));
+
     }
 
     private boolean checkAndStore(StateChangeCache testSubject, int fromRow, int fromCol, int toRow, int toCol) {

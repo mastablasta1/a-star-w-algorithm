@@ -28,7 +28,7 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
     private final DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator;
 
     public BaseASWPlanner(AbstractNumberHandler<D> numberHandler, DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator) {
-        this.collectiveAStar = new CollectiveAStarImpl<>(numberHandler, SortingPreference.PREFER_HIGHER_G_SCORE);
+        this.collectiveAStar = new CollectiveAStarImpl<>(numberHandler, SortingPreference.NONE);
         this.wavefront = new WavefrontImpl<>(numberHandler);
         this.deviationSubspaceLocator = deviationSubspaceLocator;
     }

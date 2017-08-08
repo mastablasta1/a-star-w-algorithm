@@ -32,6 +32,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
         this.neighborhoodType = checkNotNull(neighborhoodType);
         this.globalStateSpace.setNeighborhood(this.neighborhoodType);
         this.distanceHeuristic = new GridDistanceHeuristic(this.neighborhoodType);
+        distanceHeuristic.setGoal(targetState);
 
         checkArgument(entities.size() == initialState.entityStatesCount());
         checkArgument(entities.size() == targetState.entityStatesCount());
@@ -84,7 +85,6 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
                 .add("globalStateSpace", globalStateSpace)
                 .toString();
     }
-
 
 
     public GridEntityState getStateForEntity(GridCollectiveState colState, Object entity) {

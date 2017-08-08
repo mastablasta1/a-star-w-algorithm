@@ -42,24 +42,25 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
 
     private boolean findPath(Accumulator acc) {
         while (!acc.openSetWithFScore.isEmpty()) {
-            CS current = acc.openSetWithFScore.pollFirstKey();
+            DoubleValuePriorityMap.Entry<CS, D> currentBest = acc.openSetWithFScore.pollFirstKey();
 
-            if (current.equals(acc.goal)) {
+            if (currentBest.getKey().equals(acc.goal)) {
                 return true;
             }
 
-            acc.closedSet.add(current);
+            acc.closedSet.add(currentBest.getKey());
 
-            iterateNeighbors(acc, current);
+            iterateNeighbors(acc, currentBest);
         }
         return false;
     }
 
-    private void iterateNeighbors(Accumulator acc, CS current) {
-        Collection<CS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(current);
+    private void iterateNeighbors(Accumulator acc, DoubleValuePriorityMap.Entry<CS, D> currentBest) {
+        Collection<CS> neighborsOfCurrent = acc.stateSpace.getNeighborStatesOf(currentBest.getKey());
+        CS current = currentBest.getKey();
 
         if (aStarStateMonitor != null) {
-            executeIterationMonitorCallback(acc, current, neighborsOfCurrent);
+            executeIterationMonitorCallback(acc, currentBest, neighborsOfCurrent);
         }
 
         for (CS neighbor : neighborsOfCurrent) {
@@ -82,7 +83,7 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
         }
     }
 
-    private void executeIterationMonitorCallback(Accumulator acc, CS current, Collection<CS> neighborsOfCurrent) {
+    private void executeIterationMonitorCallback(Accumulator acc, DoubleValuePriorityMap.Entry<CS, ?> current, Collection<CS> neighborsOfCurrent) {
         aStarStateMonitor.onIteration(new AStarIterationData<>(acc.inputPlan,
                 current,
                 Collections.unmodifiableCollection(neighborsOfCurrent),
@@ -126,9 +127,10 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
 
             if (sortingPreference == SortingPreference.NONE) {
                 openSetWithFScore = new SingleValuePriorityMap<>();
+            } else if (sortingPreference == SortingPreference.PREFER_HIGHER_G_SCORE) {
+                openSetWithFScore = new DoubleValuePriorityMapImpl<>(true);
             } else {
-                boolean preferHigherGScore = sortingPreference == SortingPreference.PREFER_HIGHER_G_SCORE;
-                openSetWithFScore = new DoubleValuePriorityMapImpl<>(preferHigherGScore);
+                openSetWithFScore = new DoubleValuePriorityMapImpl<>(false);
             }
             closedSet = new HashSet<>();
             gScore = new HashMap<>();

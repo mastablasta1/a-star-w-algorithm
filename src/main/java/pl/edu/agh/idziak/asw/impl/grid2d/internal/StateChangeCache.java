@@ -40,4 +40,9 @@ public class StateChangeCache {
                 + toRow * cols
                 + toCol);
     }
+
+    public void reset(){
+        cache.clear();
+    }
+
 }

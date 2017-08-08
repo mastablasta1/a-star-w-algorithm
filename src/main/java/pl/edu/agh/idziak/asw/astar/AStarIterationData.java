@@ -8,24 +8,29 @@ import java.util.Collection;
 
 public class AStarIterationData<CS extends CollectiveState<?>> {
     private final InputPlan<? extends CollectiveStateSpace<CS>, ? extends CS, ?> inputPlan;
-    private final CS currentState;
+    private final DoubleValuePriorityMap.Entry<CS, ?> currentState;
     private final Collection<CS> neighbors;
     private final int openSetSize;
     private final int closedSetSize;
 
-    public AStarIterationData(InputPlan<? extends CollectiveStateSpace<CS>, ? extends CS, ?> inputPlan, CS currentState, Collection<CS> neighbors, int openSetSize, int closedSetSize) {
+    public AStarIterationData(InputPlan<? extends CollectiveStateSpace<CS>, ? extends CS, ?> inputPlan,
+                              DoubleValuePriorityMap.Entry<CS,?> currentStateInfo,
+                              Collection<CS> neighbors,
+                              int openSetSize,
+                              int closedSetSize) {
         this.inputPlan = inputPlan;
-        this.currentState = currentState;
+        this.currentState = currentStateInfo;
         this.neighbors = neighbors;
         this.openSetSize = openSetSize;
         this.closedSetSize = closedSetSize;
     }
 
+
     public InputPlan<? extends CollectiveStateSpace<CS>, ? extends CS, ?> getInputPlan() {
         return inputPlan;
     }
 
-    public CS getCurrentState() {
+    public DoubleValuePriorityMap.Entry<CS, ?> getCurrentState() {
         return currentState;
     }
 

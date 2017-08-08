@@ -9,10 +9,10 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Tomasz on 09.03.2017.
  */
-public class DoubleValuePriorityMapTest {
+public class DoubleValuePriorityMapImplTest {
 
     @Test
-    public void noReverseOrder() throws Exception {
+    public void preferLowerSecondaryValues() throws Exception {
         DoubleValuePriorityMap<String, Integer> queue = new DoubleValuePriorityMapImpl<>(false);
         String key1 = "one";
         String key2 = "two";
@@ -23,14 +23,14 @@ public class DoubleValuePriorityMapTest {
         queue.add(key3, 0, 3);
         queue.add(key4, 0, 4);
 
-        assertEquals(key3, queue.pollFirstKey());
-        assertEquals(key4, queue.pollFirstKey());
-        assertEquals(key2, queue.pollFirstKey());
-        assertEquals(key1, queue.pollFirstKey());
+        assertEquals(key3, queue.pollFirstKey().getKey());
+        assertEquals(key4, queue.pollFirstKey().getKey());
+        assertEquals(key2, queue.pollFirstKey().getKey());
+        assertEquals(key1, queue.pollFirstKey().getKey());
     }
 
     @Test
-    public void reverseOrder() throws Exception {
+    public void higherSecondaryValues() throws Exception {
         DoubleValuePriorityMap<String, Integer> queue = new DoubleValuePriorityMapImpl<>(true);
         String key1 = "one";
         String key2 = "two";
@@ -41,9 +41,9 @@ public class DoubleValuePriorityMapTest {
         queue.add(key3, 0, 3);
         queue.add(key4, 0, 4);
 
-        assertEquals(key4, queue.pollFirstKey());
-        assertEquals(key3, queue.pollFirstKey());
-        assertEquals(key1, queue.pollFirstKey());
-        assertEquals(key2, queue.pollFirstKey());
+        assertEquals(key4, queue.pollFirstKey().getKey());
+        assertEquals(key3, queue.pollFirstKey().getKey());
+        assertEquals(key1, queue.pollFirstKey().getKey());
+        assertEquals(key2, queue.pollFirstKey().getKey());
     }
 }

@@ -1,9 +1,10 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
 
+import com.google.common.collect.ImmutableList;
+import pl.edu.agh.idziak.asw.common.Utils;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -14,6 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GridCollectiveState implements CollectiveState<Integer> {
 
     private final byte[] state;
+    private List<GridEntityState> entityStatesList;
 
     public GridCollectiveState(byte[] state) {
         this.state = checkNotNull(state);
@@ -30,12 +32,19 @@ public class GridCollectiveState implements CollectiveState<Integer> {
         return state;
     }
 
+    public byte[] getInternalState() {
+        return Utils.arrayCopy(state);
+    }
+
     public List<GridEntityState> getEntityStates() {
-        List<GridEntityState> entityStates = new ArrayList<>(state.length);
-        for (int i = 0; i < state.length; i += 2) {
-            entityStates.add(GridEntityState.of(state[i], state[i + 1]));
+        if (entityStatesList == null) {
+            ImmutableList.Builder<GridEntityState> builder = ImmutableList.builder();
+            for (int i = 0; i < state.length; i += 2) {
+                builder.add(GridEntityState.of(state[i], state[i + 1]));
+            }
+            entityStatesList = builder.build();
         }
-        return entityStates;
+        return entityStatesList;
     }
 
     public int entityStatesCount() {

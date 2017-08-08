@@ -15,7 +15,7 @@ public abstract class BaseAStarPlanner<IP extends InputPlan<SS, CS, D>,
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;
 
     public BaseAStarPlanner(AbstractNumberHandler<D> numberHandler) {
-        collectiveAStar = new CollectiveAStarImpl<>(numberHandler, SortingPreference.PREFER_HIGHER_G_SCORE);
+        collectiveAStar = new CollectiveAStarImpl<>(numberHandler, SortingPreference.NONE);
     }
 
     @Override
