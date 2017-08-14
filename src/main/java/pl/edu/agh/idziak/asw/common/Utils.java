@@ -101,4 +101,12 @@ public class Utils {
         }
         return newArray;
     }
+
+    public static <T> void carthesianProduct(Iterable<T> iterable, BiConsumer<T, T> consumer) {
+        for (T t : iterable) {
+            for (T t1 : iterable) {
+                consumer.accept(t, t1);
+            }
+        }
+    }
 }

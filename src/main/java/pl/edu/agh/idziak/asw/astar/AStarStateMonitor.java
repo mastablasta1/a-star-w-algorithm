@@ -5,8 +5,10 @@ import pl.edu.agh.idziak.asw.model.CollectiveState;
 /**
  * Created by Tomasz on 03/05/2017.
  */
-public interface AStarStateMonitor<CS extends CollectiveState<?>> {
-    void onIteration(AStarIterationData<CS> AStarIterationData);
+public abstract class AStarStateMonitor<CS extends CollectiveState<?>> {
+    public void onIteration(AStarIterationData<CS> AStarIterationData) {
+    }
 
-    void onSuccess(int closedSetSize, int openSetSize);
+    public void onFinish(int closedSetSize, int openSetSize) {
+    }
 }

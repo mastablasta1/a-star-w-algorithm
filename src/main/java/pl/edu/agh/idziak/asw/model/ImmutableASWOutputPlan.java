@@ -22,7 +22,8 @@ public class ImmutableASWOutputPlan<SS extends CollectiveStateSpace<CS>, CS exte
             this.deviationSubspacePlans = ImmutableSet.of();
     }
 
-    @Override public CollectivePath<CS> getCollectivePath() {
+    @Override
+    public CollectivePath<CS> getCollectivePath() {
         return collectivePath;
     }
 
@@ -32,14 +33,15 @@ public class ImmutableASWOutputPlan<SS extends CollectiveStateSpace<CS>, CS exte
 
     public static <SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>>
     ImmutableASWOutputPlan<SS, CS> from(CollectivePath<CS> collectivePath,
-            Set<DeviationSubspacePlan<CS>> deviationSubspacePlans) {
+                                        Set<DeviationSubspacePlan<CS>> deviationSubspacePlans) {
         return new ImmutableASWOutputPlan<>(collectivePath, deviationSubspacePlans);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return MoreObjects.toStringHelper(this)
-                          .add("collectivePath", collectivePath)
-                          .add("subspacePlansCount", deviationSubspacePlans.size())
-                          .toString();
+                .add("collectivePath", collectivePath)
+                .add("subspacePlansCount", deviationSubspacePlans.size())
+                .toString();
     }
 }

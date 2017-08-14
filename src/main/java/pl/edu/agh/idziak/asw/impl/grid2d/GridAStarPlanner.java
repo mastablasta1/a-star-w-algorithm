@@ -1,20 +1,20 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
 import pl.edu.agh.idziak.asw.common.DoubleHandler;
+import pl.edu.agh.idziak.asw.impl.AlgorithmType;
 import pl.edu.agh.idziak.asw.impl.BaseAStarPlanner;
-import pl.edu.agh.idziak.asw.model.ASWOutputPlan;
 
 /**
  * Created by Tomasz on 09.07.2016.
  */
-public class GridAStarOnlyPlanner extends BaseAStarPlanner<GridInputPlan, GridCollectiveStateSpace, GridCollectiveState, Double> {
+public class GridAStarPlanner extends BaseAStarPlanner<GridInputPlan, GridCollectiveStateSpace, GridCollectiveState, Double> {
 
-    public GridAStarOnlyPlanner() {
+    public GridAStarPlanner() {
         super(DoubleHandler.getInstance());
     }
 
     @Override
-    public ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> calculatePlan(GridInputPlan inputPlan) {
+    public GridASWOutputPlan calculatePlan(GridInputPlan inputPlan) {
         GridCollectiveState initialState = inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getInitialCollectiveState().getArray());
         inputPlan.setInitialState(initialState);
         GridCollectiveState targetState = inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getTargetCollectiveState().getArray());
@@ -22,6 +22,6 @@ public class GridAStarOnlyPlanner extends BaseAStarPlanner<GridInputPlan, GridCo
         if (initialState == null || targetState == null) {
             throw new IllegalStateException("Initial or target state is invalid");
         }
-        return super.calculatePlan(inputPlan);
+        return new GridASWOutputPlan(super.calculatePlan(inputPlan), AlgorithmType.ASTAR_ONLY);
     }
 }

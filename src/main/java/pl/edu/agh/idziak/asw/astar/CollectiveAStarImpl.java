@@ -34,7 +34,7 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
         boolean pathFound = findPath(acc);
 
         if (aStarStateMonitor != null) {
-            aStarStateMonitor.onSuccess(acc.closedSet.size(), acc.openSetWithFScore.size());
+            aStarStateMonitor.onFinish(acc.closedSet.size(), acc.openSetWithFScore.size());
         }
 
         return pathFound ? reconstructPath(acc) : null;
@@ -51,6 +51,10 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
             acc.closedSet.add(currentBest.getKey());
 
             iterateNeighbors(acc, currentBest);
+
+            if (Thread.interrupted()) {
+                throw new RuntimeException(new InterruptedException("Path search interrupted"));
+            }
         }
         return false;
     }
@@ -104,6 +108,10 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
 
     public void setaStarStateMonitor(AStarStateMonitor<CS> aStarStateMonitor) {
         this.aStarStateMonitor = aStarStateMonitor;
+    }
+
+    public void setSortingPreference(SortingPreference sortingPreference) {
+        this.sortingPreference = checkNotNull(sortingPreference);
     }
 
     private class Accumulator {

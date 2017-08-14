@@ -2,9 +2,9 @@ package pl.edu.agh.idziak.asw.impl.grid2d;
 
 
 import com.google.common.collect.ImmutableList;
-import pl.edu.agh.idziak.asw.common.Utils;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,10 +32,6 @@ public class GridCollectiveState implements CollectiveState<Integer> {
         return state;
     }
 
-    public byte[] getInternalState() {
-        return Utils.arrayCopy(state);
-    }
-
     public List<GridEntityState> getEntityStates() {
         if (entityStatesList == null) {
             ImmutableList.Builder<GridEntityState> builder = ImmutableList.builder();
@@ -49,6 +45,20 @@ public class GridCollectiveState implements CollectiveState<Integer> {
 
     public int entityStatesCount() {
         return state.length / 2;
+    }
+
+    public boolean isReducedFrom(GridCollectiveState higherOrderState, List<Integer> entityIndexes) {
+        Iterator<GridEntityState> thisIt = getEntityStates().iterator();
+
+        for (Integer index : entityIndexes) {
+            if (!thisIt.hasNext() || index >= higherOrderState.entityStatesCount())
+                return false;
+            GridEntityState state = higherOrderState.getEntityStates().get(index);
+            if (!state.equals(thisIt.next())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

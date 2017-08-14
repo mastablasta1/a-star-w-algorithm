@@ -1,7 +1,7 @@
 package pl.edu.agh.idziak.asw.impl;
 
-import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
 import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
+import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
 import pl.edu.agh.idziak.asw.astar.SortingPreference;
 import pl.edu.agh.idziak.asw.model.*;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
@@ -9,10 +9,7 @@ import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 import pl.edu.agh.idziak.asw.wavefront.Wavefront;
 import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toCollection;
 
@@ -40,6 +37,7 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
             return ImmutableASWOutputPlan.from(null, null);
         }
 
+        long start = System.nanoTime();
         Collection<? extends DeviationSubspace<CS>> subspaces = deviationSubspaceLocator.findDeviationSubspaces(inputPlan, collectivePath);
         if (subspaces == null) {
             subspaces = Collections.emptySet();
@@ -48,11 +46,17 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         Set<DeviationSubspacePlan<CS>> deviationSubspacePlans = subspaces.stream()
                 .map(devSubspace -> wavefront.buildPlanForDeviationSubspace(devSubspace, inputPlan.getDistanceHeuristic()))
                 .collect(toCollection(LinkedHashSet::new));
+        long duration = (System.nanoTime() - start) / 1000 / 1000;
+        System.out.println("Duration of DSI: " + duration);
 
         return ImmutableASWOutputPlan.from(collectivePath, deviationSubspacePlans);
     }
 
     public void setAStarCurrentStateMonitor(AStarStateMonitor<CS> monitor) {
         collectiveAStar.setaStarStateMonitor(monitor);
+    }
+
+    public void setAStarSortingPreference(SortingPreference sortingPreference) {
+        collectiveAStar.setSortingPreference(sortingPreference);
     }
 }

@@ -46,12 +46,16 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
         this.space = arrayCopy(checkNotNull(space));
         this.rows = space.length;
         this.cols = space[0].length;
-        this.stateCache = new ArrayBasedCache<>(Math.max(rows, cols),
-                state -> new GridCollectiveState(Utils.arrayCopy(state)));
+        resetStateCache();
         neighborsCount = getNeighborsCount(neighborhood);
         collectiveStateNeighborsCount = new HashMap<>();
         entityStateUniquenessCache = new EntityStateUniquenessCache(rows, cols);
         stateChangeCache = new StateChangeCache(rows, cols);
+    }
+
+    public void resetStateCache() {
+        this.stateCache = new ArrayBasedCache<>(Math.max(rows, cols),
+                state -> new GridCollectiveState(Utils.arrayCopy(state)));
     }
 
     public GridCollectiveStateSpace(int[][] space) {
@@ -252,5 +256,22 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
             array[2 * i + 1] = (byte) states.get(i).getCol();
         }
         return collectiveStateFrom(array);
+    }
+
+    public int countPossibleGridStates() {
+        return getCols() * getRows();
+    }
+
+    public GridCollectiveState reduceState(GridCollectiveState state, Collection<Integer> indexes) {
+        byte[] reduced = new byte[indexes.size() * 2];
+        int reducedIndex = 0;
+        for (Integer index : indexes) {
+            if (index >= state.entityStatesCount())
+                throw new IllegalArgumentException();
+            byte[] array = state.getArray();
+            reduced[reducedIndex++] = array[index * 2];
+            reduced[reducedIndex++] = array[index * 2 + 1];
+        }
+        return collectiveStateFrom(reduced);
     }
 }

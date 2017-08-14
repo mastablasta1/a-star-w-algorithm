@@ -1,7 +1,7 @@
 package pl.edu.agh.idziak.asw.impl;
 
-import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
 import pl.edu.agh.idziak.asw.astar.AStarStateMonitor;
+import pl.edu.agh.idziak.asw.astar.CollectiveAStarImpl;
 import pl.edu.agh.idziak.asw.astar.SortingPreference;
 import pl.edu.agh.idziak.asw.model.*;
 
@@ -27,5 +27,9 @@ public abstract class BaseAStarPlanner<IP extends InputPlan<SS, CS, D>,
 
     public void setAStarCurrentStateMonitor(AStarStateMonitor<CS> monitor) {
         collectiveAStar.setaStarStateMonitor(monitor);
+    }
+
+    public void setAStarSortingPreference(SortingPreference sortingPreference) {
+        collectiveAStar.setSortingPreference(sortingPreference);
     }
 }

@@ -36,28 +36,33 @@ public class ArrayBasedCache<T> {
         reqPos = stateArray[i];
         next = current.positions[reqPos];
 
-        if (next instanceof Leaf) {
-            return ((Leaf<T>) next).collectiveState;
+        if (next instanceof ValueNode) {
+            return ((ValueNode<T>) next).collectiveState;
         } else if (next == null) {
             T newValue = objectGenerator.apply(stateArray);
-            current.positions[reqPos] = new Leaf<>(size, newValue);
+            current.positions[reqPos] = new ValueNode<>(size, newValue);
+            return newValue;
+        } else {
+            T newValue = objectGenerator.apply(stateArray);
+            ValueNode<T> newNode = new ValueNode<>(size, newValue);
+            newNode.positions = next.positions;
+            current.positions[reqPos] = newNode;
             return newValue;
         }
-        throw new AssertionError();
     }
 
     private static class Node {
-        private Node[] positions;
+        Node[] positions;
 
         private Node(int size) {
             positions = new Node[size];
         }
     }
 
-    private static class Leaf<T> extends Node {
+    private static class ValueNode<T> extends Node {
         private T collectiveState;
 
-        public Leaf(int size, T collectiveState) {
+        public ValueNode(int size, T collectiveState) {
             super(size);
             this.collectiveState = collectiveState;
         }

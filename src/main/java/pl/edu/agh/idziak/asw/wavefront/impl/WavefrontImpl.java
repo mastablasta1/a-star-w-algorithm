@@ -39,6 +39,9 @@ public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends Colle
 
             D distCurrentToTarget = distanceFromTarget.get(current);
 
+            if(Thread.interrupted()){
+                throw new RuntimeException(new InterruptedException("Wavefront iteration interrupted"));
+            }
             for (CS neighbor : neighbors) {
                 if (!distanceFromTarget.containsKey(neighbor)) {
                     D distNeighborToCurrent = distanceHeuristic.getDistanceBetween(neighbor, current);

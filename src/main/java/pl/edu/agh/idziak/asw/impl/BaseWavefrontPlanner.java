@@ -24,11 +24,15 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
 
     @Override
     public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
-        DeviationSubspacePlan<CS> deviationSubspacePlan = wavefront.buildPlanForDeviationSubspace(
-                new StateSpaceAsDeviationSubspace(
-                        inputPlan.getStateSpace(),
-                        inputPlan.getTargetCollectiveState()),
-                inputPlan.getDistanceHeuristic());
+        StateSpaceAsDeviationSubspace<SS, CS> stateSpaceAsDeviationSubspace = new StateSpaceAsDeviationSubspace<>(
+                inputPlan.getStateSpace(),
+                inputPlan.getTargetCollectiveState());
+
+        DeviationSubspacePlan<CS> deviationSubspacePlan =
+                wavefront.buildPlanForDeviationSubspace(
+                        stateSpaceAsDeviationSubspace,
+                        inputPlan.getDistanceHeuristic());
+
         CollectivePath<CS> collectivePath = deviationSubspacePlan.constructPath(
                 inputPlan.getInitialCollectiveState(),
                 inputPlan.getTargetCollectiveState());
@@ -36,7 +40,7 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         return ImmutableASWOutputPlan.from(collectivePath, ImmutableSet.of(deviationSubspacePlan));
     }
 
-    private class StateSpaceAsDeviationSubspace implements DeviationSubspace<CS> {
+    public static class StateSpaceAsDeviationSubspace<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>> implements DeviationSubspace<CS> {
         private SS stateSpace;
         private CS targetState;
 
@@ -48,6 +52,10 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         @Override
         public Collection<CS> getNeighborStatesOf(CS globalState) {
             return stateSpace.getNeighborStatesOf(globalState);
+        }
+
+        public SS getStateSpace() {
+            return stateSpace;
         }
 
         @Override

@@ -53,4 +53,7 @@ public class GradientDeviationSubspacePlan<SS extends CollectiveStateSpace<CS>, 
         return deviationSubspace;
     }
 
+    public int size() {
+        return gradientMap.size();
+    }
 }
