@@ -22,6 +22,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
 
     @Override
     public Collection<? extends DeviationSubspace<GridCollectiveState>> findDeviationSubspaces(GridInputPlan inputPlan, CollectivePath<GridCollectiveState> collectivePath) {
+        long startTime = System.nanoTime();
         Accumulator acc = new Accumulator(inputPlan, collectivePath);
 
         for (GridCollectiveState colState : collectivePath.get()) {
@@ -59,6 +60,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         acc.openDevSubspaces.forEach(subspace ->
                 finalizeDeviationSubspace(acc, subspace, Iterables.getLast(collectivePath.get())));
 
+        System.out.println("Subspace calc time = " + ((System.nanoTime() - startTime) / 1000));
         return acc.closedDevSubspaces;
     }
 
