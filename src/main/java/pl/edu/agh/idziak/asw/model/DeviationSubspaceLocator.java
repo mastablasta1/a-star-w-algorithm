@@ -7,6 +7,6 @@ import java.util.Collection;
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public interface DeviationSubspaceLocator<IP extends InputPlan<?,CS,?>, CS extends CollectiveState<?>> {
+public interface DeviationSubspaceLocator<IP extends InputPlan<?,CS,?>, CS extends CollectiveState> {
     Collection<? extends DeviationSubspace<CS>> findDeviationSubspaces(IP inputPlan, CollectivePath<CS> collectivePath);
 }

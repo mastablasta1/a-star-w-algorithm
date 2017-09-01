@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Tomasz on 21.02.2017.
  */
-public class GridCollectiveState implements CollectiveState<Integer> {
+public class GridCollectiveState implements CollectiveState {
 
     private final byte[] state;
     private List<GridEntityState> entityStatesList;
@@ -71,4 +71,8 @@ public class GridCollectiveState implements CollectiveState<Integer> {
         return sb.append("}").toString();
     }
 
+    @Override
+    public int size() {
+        return state.length;
+    }
 }

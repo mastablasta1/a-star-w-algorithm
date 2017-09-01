@@ -1,5 +1,7 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
+import com.google.common.base.MoreObjects;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -45,5 +47,12 @@ public class GridCollectiveDeviationSubspace implements GridDeviationSubspace {
     @Override
     public GridCollectiveState getTargetState() {
         return targetState;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("target", targetState)
+                .toString();
     }
 }

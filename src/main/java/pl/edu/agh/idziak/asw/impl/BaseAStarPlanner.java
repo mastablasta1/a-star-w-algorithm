@@ -9,7 +9,7 @@ import pl.edu.agh.idziak.asw.model.*;
  * Created by Tomasz on 21.02.2017.
  */
 public abstract class BaseAStarPlanner<IP extends InputPlan<SS, CS, D>,
-        SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
+        SS extends CollectiveStateSpace<CS>, CS extends CollectiveState, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;

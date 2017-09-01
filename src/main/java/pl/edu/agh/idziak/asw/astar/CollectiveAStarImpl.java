@@ -9,7 +9,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>> implements CollectiveAStar<SS, CS, D> {
+public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState, D extends Comparable<D>> implements CollectiveAStar<SS, CS, D> {
 
     private AbstractNumberHandler<D> numHandler;
     private AStarStateMonitor<CS> aStarStateMonitor;
@@ -64,7 +64,7 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
         CS current = currentBest.getKey();
 
         if (aStarStateMonitor != null) {
-            executeIterationMonitorCallback(acc, currentBest, neighborsOfCurrent);
+            invokeIterationCallback(acc, currentBest, neighborsOfCurrent);
         }
 
         for (CS neighbor : neighborsOfCurrent) {
@@ -72,22 +72,22 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
                 continue;
 
             D distToNeighbor = acc.distanceHeuristic.getDistanceBetween(current, neighbor);
-            D gScore = numHandler.add(acc.gScore.get(current), distToNeighbor);
+            D tentativeGScore = numHandler.add(acc.gScore.get(current), distToNeighbor);
 
             if (acc.openSetWithFScore.containsKey(neighbor)
-                    && numHandler.greaterOrEqual(gScore, acc.gScore.get(neighbor))) {
+                    && numHandler.greaterOrEqual(tentativeGScore, acc.gScore.get(neighbor))) {
                 continue;
             }
 
             acc.cameFrom.put(neighbor, current);
-            acc.gScore.put(neighbor, gScore);
+            acc.gScore.put(neighbor, tentativeGScore);
             D hScore = acc.distanceHeuristic.estimateHeuristicDistance(neighbor, acc.goal);
-            D fScore = numHandler.add(gScore, hScore);
-            acc.openSetWithFScore.add(neighbor, fScore, gScore);
+            D fScore = numHandler.add(tentativeGScore, hScore);
+            acc.openSetWithFScore.add(neighbor, fScore, tentativeGScore);
         }
     }
 
-    private void executeIterationMonitorCallback(Accumulator acc, DoubleValuePriorityMap.Entry<CS, ?> current, Collection<CS> neighborsOfCurrent) {
+    private void invokeIterationCallback(Accumulator acc, DoubleValuePriorityMap.Entry<CS, ?> current, Collection<CS> neighborsOfCurrent) {
         aStarStateMonitor.onIteration(new AStarIterationData<>(acc.inputPlan,
                 current,
                 Collections.unmodifiableCollection(neighborsOfCurrent),

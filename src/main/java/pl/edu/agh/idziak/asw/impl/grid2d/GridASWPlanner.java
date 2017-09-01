@@ -10,7 +10,7 @@ import pl.edu.agh.idziak.asw.impl.BaseASWPlanner;
 public class GridASWPlanner extends BaseASWPlanner<GridInputPlan, GridCollectiveStateSpace, GridCollectiveState, Double> {
 
     public GridASWPlanner() {
-        super(DoubleHandler.getInstance(), new GridAltDeviationSubspaceLocator());
+        super(DoubleHandler.getInstance(), new GridDeviationSubspaceLocator());
     }
 
     @Override
@@ -29,4 +29,8 @@ public class GridASWPlanner extends BaseASWPlanner<GridInputPlan, GridCollective
         }
     }
 
+    @Override
+    public GridDeviationSubspaceLocator getDeviationSubspaceLocator() {
+        return (GridDeviationSubspaceLocator) super.getDeviationSubspaceLocator();
+    }
 }

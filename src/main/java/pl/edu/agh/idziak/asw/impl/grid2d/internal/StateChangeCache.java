@@ -2,6 +2,7 @@ package pl.edu.agh.idziak.asw.impl.grid2d.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.edu.agh.idziak.asw.impl.grid2d.NeighborhoodType;
 
 import java.util.BitSet;
 
@@ -19,12 +20,34 @@ public class StateChangeCache {
         LOG.debug("Initialized state change cache with {} bits", bitsNum);
     }
 
-    public boolean checkIfValidStateChangeAndStore(byte fromRow, byte fromCol, byte toRow, byte toCol) {
-        if (hasStateChangeOccurred(toRow, toCol, fromRow, fromCol)) {
+    public boolean checkIfValidStateChangeAndStore(NeighborhoodType neighborhood, byte fromRow, byte fromCol, byte toRow, byte toCol) {
+        if (neighborhood == NeighborhoodType.MOORE
+                && hasStateChangeOccurredMoore(fromRow, fromCol, toRow, toCol)) {
+            return false;
+        } else if (hasStateChangeOccurred(toRow, toCol, fromRow, fromCol)) {
             return false;
         }
         cacheStateChange(fromRow, fromCol, toRow, toCol);
         return true;
+    }
+
+    private boolean hasStateChangeOccurredMoore(byte fromRow, byte fromCol, byte toRow, byte toCol) {
+        if (toRow != fromRow) {
+            if (toCol != fromCol) {
+                // diagonal movement
+                if (hasStateChangeOccurred(fromRow, toCol, toRow, fromCol)
+                        || hasStateChangeOccurred(toRow, fromCol, fromRow, toCol)) {
+                    return true;
+                }
+            } else if (hasStateChangeOccurred(toRow, fromCol, fromRow, toCol)) {
+                // vertical
+                return true;
+            }
+        } else if (toCol != fromCol && hasStateChangeOccurred(fromRow, toCol, toRow, fromCol)) {
+            // horizontal
+            return true;
+        }
+        return false;
     }
 
     private boolean hasStateChangeOccurred(byte fromRow, byte fromCol, byte toRow, byte toCol) {
@@ -41,7 +64,7 @@ public class StateChangeCache {
                 + toCol);
     }
 
-    public void reset(){
+    public void reset() {
         cache.clear();
     }
 

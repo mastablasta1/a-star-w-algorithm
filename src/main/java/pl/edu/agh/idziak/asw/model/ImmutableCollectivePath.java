@@ -7,14 +7,14 @@ import java.util.List;
 /**
  * Created by Tomasz on 29.06.2016.
  */
-public class ImmutableCollectivePath<CS extends CollectiveState<?>> implements CollectivePath<CS> {
+public class ImmutableCollectivePath<CS extends CollectiveState> implements CollectivePath<CS> {
     private List<CS> path;
 
     private ImmutableCollectivePath(List<CS> path) {
         this.path = ImmutableList.copyOf(path);
     }
 
-    public static <CS extends CollectiveState<?>> ImmutableCollectivePath<CS> from(List<CS> path) {
+    public static <CS extends CollectiveState> ImmutableCollectivePath<CS> from(List<CS> path) {
         return new ImmutableCollectivePath<>(path);
     }
 

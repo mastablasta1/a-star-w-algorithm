@@ -7,7 +7,7 @@ import pl.edu.agh.idziak.asw.model.CollectiveState;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public interface DeviationSubspacePlan<CS extends CollectiveState<?>> {
+public interface DeviationSubspacePlan<CS extends CollectiveState> {
 
     CS getNextMove(CS collectiveState);
 

@@ -8,6 +8,7 @@ import pl.edu.agh.idziak.asw.model.DistanceHeuristic;
 public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveState, Double> {
 
     private static final double SQRT_OF_2 = Math.sqrt(2.0);
+    public static final double OCTILE_COEF = SQRT_OF_2 - 2;
     private NeighborhoodType neighborhoodType;
     private GridCollectiveState goal;
 
@@ -30,7 +31,9 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
         if (neighborhoodType == NeighborhoodType.VON_NEUMANN) {
             return Math.abs((double) startCol - endCol) + Math.abs(startRow - endRow);
         } else {
-            return Math.sqrt(Math.pow(startRow - endRow, 2) + Math.pow(startCol - endCol, 2));
+            int dx = Math.abs(startCol - endCol);
+            int dy = Math.abs(startRow - endRow);
+            return dx + dy + OCTILE_COEF * Math.min(dx, dy);
         }
     }
 
@@ -44,14 +47,12 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
     public Double getDistanceBetween(GridCollectiveState state, GridCollectiveState neighbor) {
         byte[] state1 = state.getArray();
         byte[] state2 = neighbor.getArray();
+        byte[] goalArray = goal.getArray();
         double sum = 0;
         for (int i = 0; i < state1.length; i += 2) {
             double dist = getDistanceBetweenEntityStates(state1[i], state1[i + 1], state2[i], state2[i + 1]);
-            if (dist == 0d) {
-                byte[] goalArray = goal.getArray();
-                if (goalArray[i] != state1[i] || goalArray[i + 1] != state1[i + 1]) {
-                    dist = 0.001;
-                }
+            if (goalArray[i] == state1[i] && goalArray[i + 1] == state1[i + 1]) {
+                dist = 0d;
             }
             sum += dist;
         }
@@ -66,15 +67,19 @@ public class GridDistanceHeuristic implements DistanceHeuristic<GridCollectiveSt
         assert Math.abs(startCol - endCol) <= 1;
         assert Math.abs(startRow - endRow) <= 1;
 
-        if (startCol != endCol) {
-            if (startRow != endRow) {
-                return SQRT_OF_2;
-            }
-            return 1;
+        if (startCol != endCol && startRow != endRow) {
+            return SQRT_OF_2;
         }
-        if (startRow - endRow != 0) {
-            return 1;
-        }
-        return 0d;
+        return 1d;
+        // if (startCol != endCol) {
+        //     if (startRow != endRow) {
+        //         return SQRT_OF_2;
+        //     }
+        //     return 1;
+        // }
+        // if (startRow != endRow) {
+        //     return 1;
+        // }
+        // return 0d;
     }
 }

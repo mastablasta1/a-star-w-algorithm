@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Created by Tomasz on 13.08.2016.
  */
-public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>> implements Wavefront<SS, CS, D> {
+public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState, D extends Comparable<D>> implements Wavefront<SS, CS, D> {
 
     private AbstractNumberHandler<D> abstractNumberHandler;
 
@@ -25,6 +25,7 @@ public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends Colle
     @Override
     public DeviationSubspacePlan<CS> buildPlanForDeviationSubspace(DeviationSubspace<CS> deviationSubspace, DistanceHeuristic<CS, D> distanceHeuristic) {
         CS targetState = deviationSubspace.getTargetState();
+        long startTime = System.nanoTime();
 
         Queue<CS> queue = new LinkedList<>();
         Map<CS, D> distanceFromTarget = new HashMap<>();
@@ -39,7 +40,7 @@ public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends Colle
 
             D distCurrentToTarget = distanceFromTarget.get(current);
 
-            if(Thread.interrupted()){
+            if (Thread.interrupted()) {
                 throw new RuntimeException(new InterruptedException("Wavefront iteration interrupted"));
             }
             for (CS neighbor : neighbors) {
@@ -51,7 +52,12 @@ public class WavefrontImpl<SS extends CollectiveStateSpace<CS>, CS extends Colle
                 }
             }
         }
-        return new GradientDeviationSubspacePlan<>(deviationSubspace, distanceFromTarget);
+
+        GradientDeviationSubspacePlan<CollectiveStateSpace<CS>, CS, D> subspace = new GradientDeviationSubspacePlan<>(deviationSubspace, distanceFromTarget);
+        long elapsedTime = (System.nanoTime() - startTime) / 1000;
+        System.out.println("Subspace of order " + targetState.size() + " calculated in " + elapsedTime + " microsec, collectiveStates = " + subspace.size());
+
+        return subspace;
     }
 
 }

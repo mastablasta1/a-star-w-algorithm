@@ -6,7 +6,7 @@ import pl.edu.agh.idziak.asw.model.InputPlan;
 
 import java.util.Collection;
 
-public class AStarIterationData<CS extends CollectiveState<?>> {
+public class AStarIterationData<CS extends CollectiveState> {
     private final InputPlan<? extends CollectiveStateSpace<CS>, ? extends CS, ?> inputPlan;
     private final DoubleValuePriorityMap.Entry<CS, ?> currentState;
     private final Collection<CS> neighbors;

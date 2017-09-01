@@ -27,7 +27,7 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
     private final byte[][] space;
     private final int rows;
     private final int cols;
-    private final int neighborsCount;
+    private int neighborsCount;
     private final Map<Integer, Integer> collectiveStateNeighborsCount;
 
     private ArrayBasedCache<GridCollectiveState> stateCache;
@@ -97,8 +97,9 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
                 .collect(Collectors.toList());
     }
 
-    void setNeighborhood(NeighborhoodType neighborhood) {
+    public void setNeighborhood(NeighborhoodType neighborhood) {
         this.neighborhood = neighborhood;
+        neighborsCount = getNeighborsCount(neighborhood);
     }
 
     private boolean isValidStateTransition(byte[] currentStateArray, byte[] neighborStateArray) {
@@ -112,7 +113,7 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
             byte toCol = neighborStateArray[j + 1];
 
             if (!entityStateUniquenessCache.checkIfUniqueAndStore(toRow, toCol)
-                    || !stateChangeCache.checkIfValidStateChangeAndStore(fromRow, fromCol, toRow, toCol))
+                    || !stateChangeCache.checkIfValidStateChangeAndStore(neighborhood, fromRow, fromCol, toRow, toCol))
                 return false;
         }
         return true;
@@ -242,7 +243,7 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
         throw new AssertionError("Should not happen, unknown neighborhood");
     }
 
-    GridCollectiveState collectiveStateFrom(byte[] array) {
+    public GridCollectiveState collectiveStateFrom(byte[] array) {
         if (!isValidState(array)) {
             return null;
         }

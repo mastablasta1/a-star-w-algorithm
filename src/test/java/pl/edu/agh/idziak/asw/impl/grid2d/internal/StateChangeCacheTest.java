@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.impl.grid2d.internal;
 
 import org.junit.Test;
+import pl.edu.agh.idziak.asw.impl.grid2d.NeighborhoodType;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -26,10 +27,25 @@ public class StateChangeCacheTest {
         assertTrue(checkAndStore(testSubject, 0, 0, 0, 1));
         assertFalse(checkAndStore(testSubject, 0, 1, 0, 0));
 
+        testSubject.reset();
+
+        // diagonal movements
+        assertTrue(checkAndStore(testSubject, 0, 0, 1, 1));
+        assertFalse(checkAndStore(testSubject, 1, 1, 0, 0));
+        assertFalse(checkAndStore(testSubject, 0, 1, 1, 0));
+        assertFalse(checkAndStore(testSubject, 1, 0, 0, 1));
+
+        testSubject.reset();
+
+        assertTrue(checkAndStore(testSubject, 1, 0, 0, 1));
+        assertFalse(checkAndStore(testSubject, 1, 1, 0, 0));
+        assertFalse(checkAndStore(testSubject, 0, 0, 1, 1));
+        assertFalse(checkAndStore(testSubject, 0, 1, 1, 0));
+
     }
 
     private boolean checkAndStore(StateChangeCache testSubject, int fromRow, int fromCol, int toRow, int toCol) {
-        return testSubject.checkIfValidStateChangeAndStore((byte) fromRow, (byte) fromCol, (byte) toRow, (byte) toCol);
+        return testSubject.checkIfValidStateChangeAndStore(NeighborhoodType.MOORE, (byte) fromRow, (byte) fromCol, (byte) toRow, (byte) toCol);
     }
 
 }

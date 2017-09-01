@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by Tomasz on 20.02.2017.
  */
-public class GradientDeviationSubspacePlan<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState<?>, D extends Comparable<D>>
+public class GradientDeviationSubspacePlan<SS extends CollectiveStateSpace<CS>, CS extends CollectiveState, D extends Comparable<D>>
         implements DeviationSubspacePlan<CS> {
 
     private final DeviationSubspace<CS> deviationSubspace;
