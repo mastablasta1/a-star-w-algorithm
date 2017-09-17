@@ -3,6 +3,8 @@ package pl.edu.agh.idziak.asw.impl.grid2d;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.model.DeviationSubspaceLocator;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspace;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<GridInputPlan, GridCollectiveState> {
     private static final double DEFAULT_RISK_PROXIMITY = 2d;
     private static final int DEFAULT_EXPANSION_FACTOR = 2;
+    private static final Logger LOG = LoggerFactory.getLogger(GridDeviationSubspaceLocator.class);
 
     private double riskProximity = DEFAULT_RISK_PROXIMITY;
     private int expansionFactor = DEFAULT_EXPANSION_FACTOR;
@@ -60,12 +63,12 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         acc.openDevSubspaces.forEach(subspace ->
                 finalizeDeviationSubspace(acc, subspace, Iterables.getLast(collectivePath.get())));
 
-        System.out.println("Subspace calc time = " + ((System.nanoTime() - startTime) / 1000));
+        LOG.info("Subspace calc time = " + ((System.nanoTime() - startTime) / 1000));
         return acc.closedDevSubspaces;
     }
 
     private void finalizeDeviationSubspace(Accumulator acc, OpenDeviationSubspace openDeviationSubspace, GridCollectiveState currentState) {
-        GridCollectiveStateSpace stateSpace = acc.inputPlan.getStateSpace();
+        GridCollectiveStateSpace stateSpace = acc.inputPlan.getCollectiveStateSpace();
 
         Set<GridCollectiveState> stateSet = buildDeviationSubspaceStatesSet(stateSpace, openDeviationSubspace);
 
@@ -75,15 +78,6 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         GridCollectiveDeviationSubspace newDevSubspace = new GridCollectiveDeviationSubspace(stateSpace, stateSet, furthestContainedCollectiveState);
 
         acc.closedDevSubspaces.add(newDevSubspace);
-    }
-
-    private GridCollectiveState getReducedCurrentCollectiveState(Accumulator acc, OpenDeviationSubspace openDeviationSubspace, GridCollectiveState currentState, GridCollectiveStateSpace stateSpace) {
-        List<GridEntityState> reducedCurrentEntityStates = openDeviationSubspace.entitiesWithPaths.keySet()
-                .stream()
-                .map(e -> acc.inputPlan.getEntities().indexOf(e))
-                .map(i -> currentState.getEntityStates().get(i))
-                .collect(Collectors.toList());
-        return stateSpace.collectiveStateFrom(reducedCurrentEntityStates);
     }
 
     private Set<GridCollectiveState> buildDeviationSubspaceStatesSet(GridCollectiveStateSpace stateSpace, OpenDeviationSubspace devSubspaceToClose) {
@@ -189,7 +183,7 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
 
         for (int i = index; i < acc.collectivePath.get().size(); i++) {
             GridCollectiveState fullState = acc.collectivePath.get().get(i);
-            GridCollectiveState reducedState = acc.inputPlan.getStateSpace().reduceState(fullState, indexesOfEntities);
+            GridCollectiveState reducedState = acc.inputPlan.getCollectiveStateSpace().reduceState(fullState, indexesOfEntities);
             if (states.contains(reducedState)) {
                 lastContained = reducedState;
             }
@@ -271,11 +265,14 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         }
     }
 
-    public void setRiskProximity(double riskProximity) {
+    public GridDeviationSubspaceLocator setRiskProximity(double riskProximity) {
         this.riskProximity = riskProximity;
+        return this;
     }
 
-    public void setExpansionFactor(int expansionFactor) {
+    public GridDeviationSubspaceLocator setExpansionFactor(int expansionFactor) {
         this.expansionFactor = expansionFactor;
+        return this;
     }
+
 }

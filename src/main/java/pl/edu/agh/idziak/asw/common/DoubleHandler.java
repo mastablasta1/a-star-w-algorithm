@@ -19,13 +19,13 @@ public class DoubleHandler implements AbstractNumberHandler<Double> {
     }
 
     @Override
-    public Double add(Double one, Double two) {
-        return one + two;
+    public Double add(Double a, Double b) {
+        return a + b;
     }
 
     @Override
-    public boolean greaterOrEqual(Double one, Double two) {
-        return one >= two;
+    public boolean greaterOrEqual(Double a, Double b) {
+        return a >= b;
     }
 
     @Override
@@ -33,13 +33,4 @@ public class DoubleHandler implements AbstractNumberHandler<Double> {
         return ZERO;
     }
 
-    @Override
-    public Double getOne() {
-        return ONE;
-    }
-
-    @Override
-    public boolean lessThan(Double one, Double two) {
-        return one < two;
-    }
 }

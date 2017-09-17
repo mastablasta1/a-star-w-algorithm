@@ -11,7 +11,7 @@ public interface DeviationSubspacePlan<CS extends CollectiveState> {
 
     CS getNextMove(CS collectiveState);
 
-    CollectivePath<CS> constructPath(CS start, CS goal);
+    CollectivePath<CS> getPathToGoalFrom(CS start);
 
     DeviationSubspace<CS> getDeviationSubspace();
 }

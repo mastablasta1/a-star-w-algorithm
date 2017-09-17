@@ -58,10 +58,6 @@ public class GridCollectiveStateSpace implements CollectiveStateSpace<GridCollec
                 state -> new GridCollectiveState(Utils.arrayCopy(state)));
     }
 
-    public GridCollectiveStateSpace(int[][] space) {
-        this(Utils.toByteArray(space));
-    }
-
     public boolean isValidState(GridCollectiveState state) {
         byte[] array = state.getArray();
         return isValidState(array);

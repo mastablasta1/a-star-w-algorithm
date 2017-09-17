@@ -15,8 +15,8 @@ public class GridWavefrontOnlyPlanner extends BaseWavefrontPlanner<GridInputPlan
 
     @Override
     public GridASWOutputPlan calculatePlan(GridInputPlan inputPlan) {
-        inputPlan.setInitialState(inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getInitialCollectiveState().getArray()));
-        inputPlan.setTargetState(inputPlan.getStateSpace().collectiveStateFrom(inputPlan.getTargetCollectiveState().getArray()));
+        inputPlan.setInitialState(inputPlan.getCollectiveStateSpace().collectiveStateFrom(inputPlan.getInitialCollectiveState().getArray()));
+        inputPlan.setTargetState(inputPlan.getCollectiveStateSpace().collectiveStateFrom(inputPlan.getTargetCollectiveState().getArray()));
         return new GridASWOutputPlan(super.calculatePlan(inputPlan), AlgorithmType.WAVEFRONT);
     }
 }

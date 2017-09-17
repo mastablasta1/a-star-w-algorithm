@@ -4,8 +4,9 @@ package pl.edu.agh.idziak.asw.impl.grid2d;
 import com.google.common.collect.ImmutableList;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -47,18 +48,11 @@ public class GridCollectiveState implements CollectiveState {
         return state.length / 2;
     }
 
-    public boolean isReducedFrom(GridCollectiveState higherOrderState, List<Integer> entityIndexes) {
-        Iterator<GridEntityState> thisIt = getEntityStates().iterator();
-
-        for (Integer index : entityIndexes) {
-            if (!thisIt.hasNext() || index >= higherOrderState.entityStatesCount())
-                return false;
-            GridEntityState state = higherOrderState.getEntityStates().get(index);
-            if (!state.equals(thisIt.next())) {
-                return false;
-            }
-        }
-        return true;
+    public static GridCollectiveState fromEntityStates(List<GridEntityState> entityStates){
+        List<Integer> flatList = entityStates.stream()
+                .flatMap(s -> Stream.of(s.getRow(), s.getCol()))
+                .collect(Collectors.toList());
+        return new GridCollectiveState(flatList);
     }
 
     @Override

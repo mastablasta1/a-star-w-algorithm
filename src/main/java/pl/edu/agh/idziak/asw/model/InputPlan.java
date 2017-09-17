@@ -11,7 +11,7 @@ public interface InputPlan<SS extends CollectiveStateSpace<CS>, CS extends Colle
 
     CS getTargetCollectiveState();
 
-    SS getStateSpace();
+    SS getCollectiveStateSpace();
 
     Collection<?> getEntities();
 

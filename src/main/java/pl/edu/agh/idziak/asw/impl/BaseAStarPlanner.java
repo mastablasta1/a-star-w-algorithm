@@ -19,7 +19,7 @@ public abstract class BaseAStarPlanner<IP extends InputPlan<SS, CS, D>,
     }
 
     @Override
-    public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+    public ASWOutputPlan<CS> calculatePlan(IP inputPlan) {
         CollectivePath<CS> collectivePath = collectiveAStar.calculatePath(inputPlan);
 
         return ImmutableASWOutputPlan.from(collectivePath, null);

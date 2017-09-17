@@ -12,6 +12,7 @@ import pl.edu.agh.idziak.asw.wavefront.impl.WavefrontImpl;
 
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.stream.Collectors.toCollection;
 
 /**
@@ -22,8 +23,8 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
         implements ASWPlanner<IP, SS, CS> {
 
     private final CollectiveAStarImpl<SS, CS, D> collectiveAStar;
-    private final Wavefront<SS, CS, D> wavefront;
-    private final DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator;
+    private final Wavefront<CS, D> wavefront;
+    private DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator;
 
     public BaseASWPlanner(AbstractNumberHandler<D> numberHandler, DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator) {
         this.collectiveAStar = new CollectiveAStarImpl<>(numberHandler, SortingPreference.NONE);
@@ -32,26 +33,21 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
     }
 
     @Override
-    public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+    public ASWOutputPlan<CS> calculatePlan(IP inputPlan) {
         CollectivePath<CS> collectivePath = collectiveAStar.calculatePath(inputPlan);
         if (collectivePath == null) {
             return ImmutableASWOutputPlan.from(null, null);
         }
-        // System.out.println("Path found");
 
-        // long start = System.nanoTime();
         Collection<? extends DeviationSubspace<CS>> subspaces = deviationSubspaceLocator.findDeviationSubspaces(inputPlan, collectivePath);
         if (subspaces == null) {
             subspaces = Collections.emptySet();
         }
-        // System.out.println(subspaces);
-        // System.out.println("Count of states in subspaces: " + countStatesInSubspaces(subspaces));
+
         Set<DeviationSubspacePlan<CS>> deviationSubspacePlans = subspaces.stream()
                 .sorted(Comparator.comparing(o -> o.getTargetState().size()))
-                .map(devSubspace -> wavefront.buildPlanForDeviationSubspace(devSubspace, inputPlan.getDistanceHeuristic()))
+                .map(devSubspace -> wavefront.buildPlanForSubspace(devSubspace, inputPlan.getDistanceHeuristic()))
                 .collect(toCollection(LinkedHashSet::new));
-        // long duration = (System.nanoTime() - start) / 1000 / 1000;
-        // System.out.println("Duration of DSI: " + duration);
 
         return ImmutableASWOutputPlan.from(collectivePath, deviationSubspacePlans);
     }
@@ -73,5 +69,9 @@ public abstract class BaseASWPlanner<IP extends InputPlan<SS, CS, D>,
 
     public DeviationSubspaceLocator<IP, CS> getDeviationSubspaceLocator() {
         return deviationSubspaceLocator;
+    }
+
+    public void setDeviationSubspaceLocator(DeviationSubspaceLocator<IP, CS> deviationSubspaceLocator) {
+        this.deviationSubspaceLocator = checkNotNull(deviationSubspaceLocator);
     }
 }

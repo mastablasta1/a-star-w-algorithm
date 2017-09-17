@@ -4,13 +4,10 @@ package pl.edu.agh.idziak.asw.model;
  * Created by Tomasz on 29.06.2016.
  */
 public interface AbstractNumberHandler<D extends Comparable<D>> {
-    D add(D one, D two);
+    D add(D a, D b);
 
-    boolean greaterOrEqual(D one, D two);
-
-    boolean lessThan(D one, D two);
+    boolean greaterOrEqual(D a, D b);
 
     D getZero();
 
-    D getOne();
 }

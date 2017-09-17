@@ -30,8 +30,8 @@ public class GridCollectiveDeviationSubspace implements GridDeviationSubspace {
     }
 
     @Override
-    public Collection<GridCollectiveState> getNeighborStatesOf(GridCollectiveState globalState) {
-        List<GridCollectiveState> neighbors = stateSpace.getNeighborStatesOf(globalState);
+    public Collection<GridCollectiveState> getNeighborStatesOf(GridCollectiveState colState) {
+        List<GridCollectiveState> neighbors = stateSpace.getNeighborStatesOf(colState);
         neighbors.removeIf(s -> !stateSet.contains(s));
         return neighbors;
     }

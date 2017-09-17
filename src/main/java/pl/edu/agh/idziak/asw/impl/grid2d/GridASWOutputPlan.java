@@ -8,7 +8,7 @@ public class GridASWOutputPlan extends ImmutableASWOutputPlan<GridCollectiveStat
 
     private final AlgorithmType algorithmType;
 
-    public GridASWOutputPlan(ASWOutputPlan<GridCollectiveStateSpace, GridCollectiveState> origPlan,
+    public GridASWOutputPlan(ASWOutputPlan<GridCollectiveState> origPlan,
                              AlgorithmType algorithmType) {
         super(origPlan.getCollectivePath(), origPlan.getDeviationSubspacePlans());
         this.algorithmType = algorithmType;

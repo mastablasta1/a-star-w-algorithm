@@ -128,7 +128,7 @@ public class CollectiveAStarImpl<SS extends CollectiveStateSpace<CS>, CS extends
 
         Accumulator(InputPlan<SS, CS, D> inputPlan) {
             this.inputPlan = inputPlan;
-            stateSpace = inputPlan.getStateSpace();
+            stateSpace = inputPlan.getCollectiveStateSpace();
             start = inputPlan.getInitialCollectiveState();
             goal = inputPlan.getTargetCollectiveState();
             distanceHeuristic = inputPlan.getDistanceHeuristic();

@@ -16,26 +16,24 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         SS extends CollectiveStateSpace<CS>, CS extends CollectiveState, D extends Comparable<D>>
         implements ASWPlanner<IP, SS, CS> {
 
-    private final Wavefront<SS, CS, D> wavefront;
+    private final Wavefront<CS, D> wavefront;
 
     public BaseWavefrontPlanner(AbstractNumberHandler<D> numberHandler) {
         wavefront = new WavefrontImpl<>(numberHandler);
     }
 
     @Override
-    public ASWOutputPlan<SS, CS> calculatePlan(IP inputPlan) {
+    public ASWOutputPlan<CS> calculatePlan(IP inputPlan) {
         StateSpaceAsDeviationSubspace<SS, CS> stateSpaceAsDeviationSubspace = new StateSpaceAsDeviationSubspace<>(
-                inputPlan.getStateSpace(),
+                inputPlan.getCollectiveStateSpace(),
                 inputPlan.getTargetCollectiveState());
 
         DeviationSubspacePlan<CS> deviationSubspacePlan =
-                wavefront.buildPlanForDeviationSubspace(
+                wavefront.buildPlanForSubspace(
                         stateSpaceAsDeviationSubspace,
                         inputPlan.getDistanceHeuristic());
 
-        CollectivePath<CS> collectivePath = deviationSubspacePlan.constructPath(
-                inputPlan.getInitialCollectiveState(),
-                inputPlan.getTargetCollectiveState());
+        CollectivePath<CS> collectivePath = deviationSubspacePlan.getPathToGoalFrom(inputPlan.getInitialCollectiveState());
 
         return ImmutableASWOutputPlan.from(collectivePath, ImmutableSet.of(deviationSubspacePlan));
     }

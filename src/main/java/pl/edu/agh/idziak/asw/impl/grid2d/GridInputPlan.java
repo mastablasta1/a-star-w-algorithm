@@ -13,29 +13,40 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCollectiveState, Double> {
 
-    private final NeighborhoodType neighborhoodType;
+    private List<?> entities;
     private GridCollectiveState initialState;
     private GridCollectiveState targetState;
-    private final GridCollectiveStateSpace globalStateSpace;
-    private List<?> entities;
-    private GridDistanceHeuristic distanceHeuristic;
+    private final GridCollectiveStateSpace collectiveStateSpace;
+    private final NeighborhoodType neighborhoodType;
+    private final GridDistanceHeuristic distanceHeuristic;
 
     public GridInputPlan(List<?> entities,
-                         GridCollectiveStateSpace globalStateSpace,
+                         GridCollectiveStateSpace collectiveStateSpace,
                          GridCollectiveState initialState,
                          GridCollectiveState targetState,
                          NeighborhoodType neighborhoodType) {
         this.entities = checkNotNull(entities);
-        this.globalStateSpace = checkNotNull(globalStateSpace);
+        this.collectiveStateSpace = checkNotNull(collectiveStateSpace);
         this.targetState = checkNotNull(targetState);
         this.initialState = checkNotNull(initialState);
         this.neighborhoodType = checkNotNull(neighborhoodType);
-        this.globalStateSpace.setNeighborhood(this.neighborhoodType);
-        this.distanceHeuristic = new GridDistanceHeuristic(this.neighborhoodType);
-        distanceHeuristic.setGoal(targetState);
 
-        checkArgument(entities.size() == initialState.entityStatesCount());
-        checkArgument(entities.size() == targetState.entityStatesCount());
+        this.collectiveStateSpace.setNeighborhood(this.neighborhoodType);
+        this.distanceHeuristic = new GridDistanceHeuristic(this.neighborhoodType);
+        this.distanceHeuristic.setGoal(targetState);
+
+        checkArgument(entities.size() == initialState.entityStatesCount(),
+                "Initial state length does not match number of entities");
+        checkArgument(entities.size() == targetState.entityStatesCount(),
+                "Target state length does not match number of entities");
+    }
+
+    private GridInputPlan(Builder builder) {
+        this(builder.entities,
+                builder.collectiveStateSpace,
+                builder.initialState,
+                builder.targetState,
+                builder.neighborhoodType);
     }
 
     public NeighborhoodType getNeighborhoodType() {
@@ -53,8 +64,8 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
     }
 
     @Override
-    public GridCollectiveStateSpace getStateSpace() {
-        return globalStateSpace;
+    public GridCollectiveStateSpace getCollectiveStateSpace() {
+        return collectiveStateSpace;
     }
 
     @Override
@@ -70,11 +81,11 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
         this.targetState = targetState;
     }
 
-
     @Override
     public GridDistanceHeuristic getDistanceHeuristic() {
         return distanceHeuristic;
     }
+
 
     @Override
     public String toString() {
@@ -82,7 +93,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
                 .add("entities", entities)
                 .add("initialState", initialState)
                 .add("targetState", targetState)
-                .add("globalStateSpace", globalStateSpace)
+                .add("collectiveStateSpace", collectiveStateSpace)
                 .toString();
     }
 
@@ -93,5 +104,49 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
             return null;
         }
         return GridEntityState.of(colState.getArray()[2 * i], colState.getArray()[2 * i + 1]);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private List<?> entities;
+        private GridCollectiveState initialState;
+        private GridCollectiveState targetState;
+        private GridCollectiveStateSpace collectiveStateSpace;
+        private NeighborhoodType neighborhoodType;
+
+        public Builder() {
+        }
+
+        public Builder entities(List<?> val) {
+            entities = val;
+            return this;
+        }
+
+        public Builder initialState(GridCollectiveState val) {
+            initialState = val;
+            return this;
+        }
+
+        public Builder targetState(GridCollectiveState val) {
+            targetState = val;
+            return this;
+        }
+
+        public Builder collectiveStateSpace(GridCollectiveStateSpace val) {
+            collectiveStateSpace = val;
+            return this;
+        }
+
+        public Builder neighborhoodType(NeighborhoodType val) {
+            neighborhoodType = val;
+            return this;
+        }
+
+        public GridInputPlan build() {
+            return new GridInputPlan(this);
+        }
     }
 }
