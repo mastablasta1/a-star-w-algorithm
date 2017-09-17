@@ -11,4 +11,5 @@ import java.util.Collection;
 public interface DeviationSubspace<CS extends CollectiveState> {
     Collection<CS> getNeighborStatesOf(CS globalState);
     CS getTargetState();
+    boolean containsState(CS cs);
 }

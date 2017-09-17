@@ -4,6 +4,7 @@ package pl.edu.agh.idziak.asw.impl.grid2d;
 import com.google.common.collect.ImmutableList;
 import pl.edu.agh.idziak.asw.model.CollectiveState;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,11 +49,15 @@ public class GridCollectiveState implements CollectiveState {
         return state.length / 2;
     }
 
-    public static GridCollectiveState fromEntityStates(List<GridEntityState> entityStates){
+    public static GridCollectiveState fromEntityStates(List<GridEntityState> entityStates) {
         List<Integer> flatList = entityStates.stream()
                 .flatMap(s -> Stream.of(s.getRow(), s.getCol()))
                 .collect(Collectors.toList());
         return new GridCollectiveState(flatList);
+    }
+
+    public static GridCollectiveState fromEntityStates(GridEntityState... entityStates) {
+        return fromEntityStates(Arrays.asList(entityStates));
     }
 
     @Override

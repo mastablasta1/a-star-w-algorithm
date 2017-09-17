@@ -50,6 +50,12 @@ public class GridCollectiveDeviationSubspace implements GridDeviationSubspace {
     }
 
     @Override
+    public boolean containsState(GridCollectiveState gridCollectiveState) {
+        return stateSet.contains(gridCollectiveState);
+    }
+
+
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("target", targetState)

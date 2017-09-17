@@ -14,4 +14,8 @@ public interface DeviationSubspacePlan<CS extends CollectiveState> {
     CollectivePath<CS> getPathToGoalFrom(CS start);
 
     DeviationSubspace<CS> getDeviationSubspace();
+
+    default boolean containsState(CS cs) {
+        return getDeviationSubspace().containsState(cs);
+    }
 }

@@ -60,6 +60,11 @@ public abstract class BaseWavefrontPlanner<IP extends InputPlan<SS, CS, D>,
         public CS getTargetState() {
             return targetState;
         }
+
+        @Override
+        public boolean containsState(CS cs) {
+            return true;
+        }
     }
 
 }

@@ -5,10 +5,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.edu.agh.idziak.asw.impl.grid2d.*;
+import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GridUsageExample {
@@ -27,18 +27,14 @@ public class GridUsageExample {
                 {0, 0, 0, 0}
         });
 
-        List<GridEntityState> initialStates = ImmutableList.of(
+        GridCollectiveState initialCS = GridCollectiveState.fromEntityStates(
                 GridEntityState.of(0, 0),
                 GridEntityState.of(3, 3)
         );
-
-        List<GridEntityState> goalStates = ImmutableList.of(
+        GridCollectiveState targetCS = GridCollectiveState.fromEntityStates(
                 GridEntityState.of(3, 3),
                 GridEntityState.of(0, 0)
         );
-
-        GridCollectiveState initialCS = GridCollectiveState.fromEntityStates(initialStates);
-        GridCollectiveState targetCS = GridCollectiveState.fromEntityStates(goalStates);
 
         GridInputPlan inputPlan = GridInputPlan.builder()
                 .entities(entities)
@@ -64,9 +60,17 @@ public class GridUsageExample {
 
         log.info(statesString);
 
-        Set<DeviationSubspacePlan<GridCollectiveState>> subspacePlans = outputPlan.getDeviationSubspacePlans();
-        for (DeviationSubspacePlan<GridCollectiveState> subspacePlan : subspacePlans) {
-            subspacePlan.getPathToGoalFrom()
+        DeviationSubspacePlan<GridCollectiveState> plan = outputPlan.getDeviationSubspacePlans()
+                .iterator().next();
+
+        GridCollectiveState currentState = GridCollectiveState.fromEntityStates(
+                GridEntityState.of(1, 1));
+
+        GridCollectiveDeviationSubspace gridSubspace =
+                (GridCollectiveDeviationSubspace) plan.getDeviationSubspace();
+
+        if(plan.containsState(currentState)){
+            CollectivePath<GridCollectiveState> path = plan.getPathToGoalFrom(currentState);
         }
     }
 }
