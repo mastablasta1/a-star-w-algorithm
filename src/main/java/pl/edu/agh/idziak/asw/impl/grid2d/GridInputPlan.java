@@ -15,7 +15,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
 
     private List<?> entities;
     private GridCollectiveState initialState;
-    private GridCollectiveState targetState;
+    private GridCollectiveState goalState;
     private final GridCollectiveStateSpace collectiveStateSpace;
     private final NeighborhoodType neighborhoodType;
     private final GridDistanceHeuristic distanceHeuristic;
@@ -23,21 +23,21 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
     public GridInputPlan(List<?> entities,
                          GridCollectiveStateSpace collectiveStateSpace,
                          GridCollectiveState initialState,
-                         GridCollectiveState targetState,
+                         GridCollectiveState goalState,
                          NeighborhoodType neighborhoodType) {
         this.entities = checkNotNull(entities);
         this.collectiveStateSpace = checkNotNull(collectiveStateSpace);
-        this.targetState = checkNotNull(targetState);
+        this.goalState = checkNotNull(goalState);
         this.initialState = checkNotNull(initialState);
         this.neighborhoodType = checkNotNull(neighborhoodType);
 
         this.collectiveStateSpace.setNeighborhood(this.neighborhoodType);
         this.distanceHeuristic = new GridDistanceHeuristic(this.neighborhoodType);
-        this.distanceHeuristic.setGoal(targetState);
+        this.distanceHeuristic.setGoal(goalState);
 
         checkArgument(entities.size() == initialState.entityStatesCount(),
                 "Initial state length does not match number of entities");
-        checkArgument(entities.size() == targetState.entityStatesCount(),
+        checkArgument(entities.size() == goalState.entityStatesCount(),
                 "Target state length does not match number of entities");
     }
 
@@ -45,7 +45,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
         this(builder.entities,
                 builder.collectiveStateSpace,
                 builder.initialState,
-                builder.targetState,
+                builder.goalState,
                 builder.neighborhoodType);
     }
 
@@ -60,7 +60,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
 
     @Override
     public GridCollectiveState getTargetCollectiveState() {
-        return targetState;
+        return goalState;
     }
 
     @Override
@@ -77,8 +77,8 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
         this.initialState = initialState;
     }
 
-    void setTargetState(GridCollectiveState targetState) {
-        this.targetState = targetState;
+    void setGoalState(GridCollectiveState goalState) {
+        this.goalState = goalState;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
         return MoreObjects.toStringHelper(this)
                 .add("entities", entities)
                 .add("initialState", initialState)
-                .add("targetState", targetState)
+                .add("goalState", goalState)
                 .add("collectiveStateSpace", collectiveStateSpace)
                 .toString();
     }
@@ -113,7 +113,7 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
     public static final class Builder {
         private List<?> entities;
         private GridCollectiveState initialState;
-        private GridCollectiveState targetState;
+        private GridCollectiveState goalState;
         private GridCollectiveStateSpace collectiveStateSpace;
         private NeighborhoodType neighborhoodType;
 
@@ -130,8 +130,8 @@ public class GridInputPlan implements InputPlan<GridCollectiveStateSpace, GridCo
             return this;
         }
 
-        public Builder targetState(GridCollectiveState val) {
-            targetState = val;
+        public Builder goalState(GridCollectiveState val) {
+            goalState = val;
             return this;
         }
 

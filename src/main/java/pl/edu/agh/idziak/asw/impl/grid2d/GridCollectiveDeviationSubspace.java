@@ -1,6 +1,7 @@
 package pl.edu.agh.idziak.asw.impl.grid2d;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,11 +13,13 @@ public class GridCollectiveDeviationSubspace implements GridDeviationSubspace {
     private final Set<GridCollectiveState> stateSet;
     private final GridCollectiveState targetState;
     private Set<GridEntityState> containedEntityStates;
+    private List<Object> entities;
 
-    public GridCollectiveDeviationSubspace(GridCollectiveStateSpace stateSpace, Set<GridCollectiveState> stateSet, GridCollectiveState targetState) {
+    public GridCollectiveDeviationSubspace(GridCollectiveStateSpace stateSpace, Set<GridCollectiveState> stateSet, GridCollectiveState targetState, List<?> entities) {
         this.stateSpace = stateSpace;
         this.stateSet = stateSet;
         this.targetState = targetState;
+        this.entities = ImmutableList.copyOf(entities);
     }
 
     @Override
@@ -54,6 +57,9 @@ public class GridCollectiveDeviationSubspace implements GridDeviationSubspace {
         return stateSet.contains(gridCollectiveState);
     }
 
+    public List<Object> getEntities() {
+        return entities;
+    }
 
     @Override
     public String toString() {

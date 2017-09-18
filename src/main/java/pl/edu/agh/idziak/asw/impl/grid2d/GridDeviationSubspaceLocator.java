@@ -67,17 +67,22 @@ public class GridDeviationSubspaceLocator implements DeviationSubspaceLocator<Gr
         return acc.closedDevSubspaces;
     }
 
-    private void finalizeDeviationSubspace(Accumulator acc, OpenDeviationSubspace openDeviationSubspace, GridCollectiveState currentState) {
+    private void finalizeDeviationSubspace(Accumulator acc, OpenDeviationSubspace openSubspace, GridCollectiveState currentState) {
         GridCollectiveStateSpace stateSpace = acc.inputPlan.getCollectiveStateSpace();
 
-        Set<GridCollectiveState> stateSet = buildDeviationSubspaceStatesSet(stateSpace, openDeviationSubspace);
+        Set<GridCollectiveState> stateSet = buildDeviationSubspaceStatesSet(stateSpace, openSubspace);
 
         GridCollectiveState furthestContainedCollectiveState = findFurthestStateContainedInDevSubspace(acc,
-                currentState, stateSet, openDeviationSubspace);
+                currentState, stateSet, openSubspace);
 
-        GridCollectiveDeviationSubspace newDevSubspace = new GridCollectiveDeviationSubspace(stateSpace, stateSet, furthestContainedCollectiveState);
+        GridCollectiveDeviationSubspace newDevSubspace = new GridCollectiveDeviationSubspace(
+                stateSpace, stateSet, furthestContainedCollectiveState, getEntitiesFromOpenSubspace(openSubspace));
 
         acc.closedDevSubspaces.add(newDevSubspace);
+    }
+
+    private ImmutableList<Object> getEntitiesFromOpenSubspace(OpenDeviationSubspace openSubspace) {
+        return ImmutableList.copyOf(openSubspace.entitiesWithPaths.keySet());
     }
 
     private Set<GridCollectiveState> buildDeviationSubspaceStatesSet(GridCollectiveStateSpace stateSpace, OpenDeviationSubspace devSubspaceToClose) {

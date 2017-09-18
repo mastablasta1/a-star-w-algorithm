@@ -23,7 +23,7 @@ public class GridASWPlanner extends BaseASWPlanner<GridInputPlan, GridCollective
         GridCollectiveState initialState = inputPlan.getCollectiveStateSpace().collectiveStateFrom(inputPlan.getInitialCollectiveState().getArray());
         inputPlan.setInitialState(initialState);
         GridCollectiveState targetState = inputPlan.getCollectiveStateSpace().collectiveStateFrom(inputPlan.getTargetCollectiveState().getArray());
-        inputPlan.setTargetState(targetState);
+        inputPlan.setGoalState(targetState);
         if (initialState == null || targetState == null) {
             throw new IllegalStateException("Initial or target state is invalid");
         }

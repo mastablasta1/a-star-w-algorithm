@@ -9,6 +9,7 @@ import pl.edu.agh.idziak.asw.model.CollectivePath;
 import pl.edu.agh.idziak.asw.wavefront.DeviationSubspacePlan;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GridUsageExample {
@@ -31,7 +32,7 @@ public class GridUsageExample {
                 GridEntityState.of(0, 0),
                 GridEntityState.of(3, 3)
         );
-        GridCollectiveState targetCS = GridCollectiveState.fromEntityStates(
+        GridCollectiveState goalCS = GridCollectiveState.fromEntityStates(
                 GridEntityState.of(3, 3),
                 GridEntityState.of(0, 0)
         );
@@ -40,7 +41,7 @@ public class GridUsageExample {
                 .entities(entities)
                 .collectiveStateSpace(stateSpace)
                 .initialState(initialCS)
-                .targetState(targetCS)
+                .goalState(goalCS)
                 .neighborhoodType(NeighborhoodType.VON_NEUMANN)
                 .build();
 
@@ -60,17 +61,31 @@ public class GridUsageExample {
 
         log.info(statesString);
 
-        DeviationSubspacePlan<GridCollectiveState> plan = outputPlan.getDeviationSubspacePlans()
-                .iterator().next();
+        /////////////
 
-        GridCollectiveState currentState = GridCollectiveState.fromEntityStates(
+        CollectivePath<GridCollectiveState> collectivePath = outputPlan.getCollectivePath();
+
+        collectivePath.get().forEach(collectiveState -> {
+            System.out.println(collectiveState);
+        });
+
+        Set<DeviationSubspacePlan<GridCollectiveState>> deviationSubspacePlans =
+                outputPlan.getDeviationSubspacePlans();
+
+
+        GridCollectiveState exampleState = GridCollectiveState.fromEntityStates(
                 GridEntityState.of(1, 1));
 
-        GridCollectiveDeviationSubspace gridSubspace =
-                (GridCollectiveDeviationSubspace) plan.getDeviationSubspace();
+        deviationSubspacePlans.forEach(subspacePlan -> {
+            GridCollectiveDeviationSubspace gridSubspace =
+                    (GridCollectiveDeviationSubspace)
+                            subspacePlan.getDeviationSubspace();
 
-        if(plan.containsState(currentState)){
-            CollectivePath<GridCollectiveState> path = plan.getPathToGoalFrom(currentState);
-        }
+            if (gridSubspace.getEntities().equals(ImmutableList.of(1))
+                    && subspacePlan.containsState(exampleState)) {
+                CollectivePath<GridCollectiveState> rescuePath = subspacePlan.getPathToGoalFrom(exampleState);
+                GridCollectiveState nextState = subspacePlan.getNextMove(exampleState);
+            }
+        });
     }
 }
